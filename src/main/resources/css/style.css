@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@100..900&display=swap');
+
+h1,h2,h3,h4,h5,.logo-font {
+    font-family: 'Do Hyeon', sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.nav-font {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    font-optical-sizing: auto;
+}
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-optical-sizing: auto;
+}
+
+
+/* header 영역  */
+
+
+/* nav 영역 */
+@media (max-width:860px) {
+    .logo-hidden{  display: none;
+    }
+}
+
+
+.nav-link.active,
+.nav-link:hover {
+    color: #4166F5 !important;
+    font-weight: bold;
+}
+
+.nav-no-link {
+    display: block;
+    padding-top: 7px;
+    text-decoration: none;
+    background: none;
+    border: 0;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+}
+
+.dropdown-item:hover {
+    color: #4166F5;
+    font-weight: 700;
+}
+
+.nav-bg {
+    background-color: #ddf0f6;
+}
+
+.badge {
+    background-color: #FF8228;
+    padding: 2px 4px 2px;
+
+}
+
+#nav-hidden {
+    height: 82px;
+}
+
+/* .container {
+    padding-top: 82px;
+} */
+
+
+
+/* 컨텐츠 영역 */
+
+/* 테이블 색상 영역 */
+.table {
+   --bs-table-accent-bg:  #4166F5 ;
+   --bs-table-color: #fff;
+}
+
+.table-hover > tbody > tr:hover > * {
+  --bs-table-bg-state:  rgba(65, 102, 245,0.2);
+
+}
+
+.table-striped > tbody > tr:nth-of-type(even) > * {
+  --bs-table-color-type: var(--bs-table-striped-color);
+  --bs-table-bg-type: #ddf0f6;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+  --bs-table-color-type: var(--bs-table-striped-color);
+  --bs-table-bg-type: #fff;
+}
+
+    
+
+
+
+
+.footer-bg {
+    background-color: #4166F5;
+    /* height: 50px; */
+}
+
+
+
+a {
+    text-decoration: none;
+}
+
+.contact {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, .2)), url(/images/contact-bg.jpg);
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    text-shadow: 2px 2px 2px rgb(0, 0, 0);
+
+}
