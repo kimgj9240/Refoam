@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width-device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <title>Refoam</title>
+</head>
+<body>
+<!--navbar 영역-->
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+<!--content 영역-->
+<th:block layout:fragment="content"></th:block>
+<!--footer 영역-->
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<!--스크립트 영역-->
+<script th:src="@{/js/bootstrap.bundle.js}"></script>
+<th:block layout:fragment="script"></th:block>
+</body>
+</html>
