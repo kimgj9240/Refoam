@@ -15,4 +15,8 @@ public class HomeController {
     public String table(){
         return "table";
     }
+    @GetMapping("/form")
+    public String form(){
+        return "form";
+    }
 }
