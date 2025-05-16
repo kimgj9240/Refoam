@@ -4,6 +4,7 @@ h1,h2,h3,h4,h5,.logo-font {
     font-family: 'Do Hyeon', sans-serif;
     font-weight: 400;
     font-style: normal;
+    color: #4166F5;
 }
 
 .nav-font {
@@ -21,15 +22,39 @@ body {
 }
 
 
+
+
 /* header 영역  */
 
 
 /* nav 영역 */
-@media (max-width:860px) {
-    .logo-hidden{  display: none;
+@media (min-width:300px) and (max-width:860px) {
+    .md-hidden{  display: none;
     }
 }
 
+@media (max-width:767px) {
+.nav-account {
+    background: #FFF;
+    padding: 10px 5px;
+    border-radius: 5px;
+}
+
+ul.navbar-nav {
+    margin-left: 16px !important;
+}
+
+}
+
+/* 로그아웃버튼 간격용  */
+.margin-minus{
+    margin-left: -16px;
+}
+
+
+.nav-img {
+    height: 40px;
+}
 
 .nav-link.active,
 .nav-link:hover {
@@ -39,7 +64,6 @@ body {
 
 .nav-no-link {
     display: block;
-    padding-top: 7px;
     text-decoration: none;
     background: none;
     border: 0;
@@ -49,6 +73,11 @@ body {
 .dropdown-item:hover {
     color: #4166F5;
     font-weight: 700;
+}
+
+.dropdown-item:active {
+    background-color: #cfe5f9;
+    color: #4166F5;
 }
 
 .nav-bg {
@@ -65,24 +94,52 @@ body {
     height: 82px;
 }
 
-/* .container {
-    padding-top: 82px;
-} */
-
-
 
 /* 컨텐츠 영역 */
+.btn-refoam {
+  --bs-btn-color: #fff;
+  --bs-btn-bg : #4166F5;
+  --bs-btn-border-color: #4166F5;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #0b5ed7;
+  --bs-btn-hover-border-color: #0a58ca;
+  --bs-btn-focus-shadow-rgb: 49, 132, 253;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #0a58ca;
+  --bs-btn-active-border-color: #0a53be;
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: #4166F5;
+  --bs-btn-disabled-border-color: #4166F5;
+}
+
+.btn-delete {
+  --bs-btn-color: #fff;
+  --bs-btn-bg : #FF8228;
+  --bs-btn-border-color: #FF8228;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #ff6944;
+  --bs-btn-hover-border-color: #ff6944; ;
+  --bs-btn-focus-shadow-rgb: 49, 132, 253;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #ff6944;;
+  --bs-btn-active-border-color: #ff6944;;
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: #FF8228;
+  --bs-btn-disabled-border-color: #FF8228;
+}
+
+.navbar-toggler{
+    background-color: #4166F5;
+}
+
+.navbar-toggler-icon{
+   filter: invert(100%);
+}
 
 
-/* table size 설정 */
-@media (max-width: 768px) {
-    .table-lg{  display: none;
-    }
-}
-@media (min-width: 768px) {
-    .table-md{  display: none;
-    }
-}
+
 /* 테이블 색상 영역 */
 .table {
    --bs-table-accent-bg:  #4166F5 ;
@@ -118,13 +175,4 @@ body {
 
 a {
     text-decoration: none;
-}
-
-.contact {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, .2)), url(/static/images/contact-bg.jpg);
-    background-size: cover;
-    background-attachment: fixed;
-    background-position: center;
-    text-shadow: 2px 2px 2px rgb(0, 0, 0);
-
 }
