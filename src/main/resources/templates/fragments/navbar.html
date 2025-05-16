@@ -2,9 +2,9 @@
      class="navbar navbar-expand-md nav-bg">
     <!-- 메뉴바 시작-->
         <div class="container-fluid">
-            <a class="navbar-brand nav-font" href="index.html">
-                <img src="images/logo_only.svg" alt="logo" style="height: 40px;" class="my-2 ms-3">
-                <img src="images/logo_name.svg" alt="logo" style="height: 40px;" class="my-2 logo-hidden">
+            <a class="navbar-brand nav-font" th:href="@{/}">
+                <img src="/images/logo_only.svg" alt="logo" style="height: 40px;" class="my-2 ms-3">
+                <img src="/images/logo_name.svg" alt="logo" style="height: 40px;" class="my-2 logo-hidden">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
                     aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -13,20 +13,20 @@
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav ms-auto mb-2 mb-md-0">
                     <li class="nav-item my-1">
-                        <img src="images/person-circle.svg" alt="사람아이콘">
+                        <img src="/images/person-circle.svg" alt="사람아이콘">
                     </li>
                     <li class="nav-item">
                         <span class="nav-font nav-no-link mx-2">관리자</span>
                     </li>
                     <li class="nav-item my-1 mx-2">
-                        <a href="home.html"><img src="images/bell-fill.svg" alt="종모양" class="position-relative"></a>
+                        <a th:href="@{/list}"><img src="/images/bell-fill.svg" alt="종모양" class="position-relative"></a>
                         <span class="translate-middle badge rounded-pill">
                             99+
                             <span class="visually-hidden">unread messages</span>
                         </span>
                     </li>
                     <li class="nav-item my-1">
-                        <a class="nav-font btn btn-sm btn-primary" href="index.html">로그아웃</a>
+                        <a class="nav-font btn btn-sm btn-primary" th:href="@{/}">로그아웃</a>
                     </li>
 
 
@@ -36,8 +36,8 @@
                             계정관리
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item nav-font" href="private-interior.html">직원리스트</a></li>
-                            <li><a class="dropdown-item nav-font" href="business-interior.html">직원정보등록</a></li>
+                            <li><a class="dropdown-item nav-font" th:href="@{/employee/list}">직원리스트</a></li>
+                            <li><a class="dropdown-item nav-font" th:href="@{/employee/new}">직원 정보 등록</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -46,8 +46,8 @@
                             재고관리
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item nav-font" href="private-interior.html">재고 리스트</a></li>
-                            <li><a class="dropdown-item nav-font" href="business-interior.html">재고입력발주</a></li>
+                            <li><a class="dropdown-item nav-font" th:href="@{/material/list}">재고 리스트</a></li>
+                            <li><a class="dropdown-item nav-font" th:href="@{/material/new}">재고입력발주</a></li>
 
                         </ul>
                     </li>
@@ -57,13 +57,13 @@
                             공정관리
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item nav-font" href="private-interior.html">제품생산</a></li>
-                            <li><a class="dropdown-item nav-font" href="business-interior.html">공정결과</a></li>
-                            <li><a class="dropdown-item nav-font" href="business-interior.html">주문리스트</a></li>
+                            <li><a class="dropdown-item nav-font" th:href="@{/order/new}">제품생산</a></li>
+                            <li><a class="dropdown-item nav-font" th:href="@{/process/list}">공정결과</a></li>
+                            <li><a class="dropdown-item nav-font" th:href="@{/order/list}">주문리스트</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link nav-font" href="contact.html">에러모니터링</a>
+                        <a class="nav-link nav-font" th:href="@{/monitoring/main}">에러모니터링</a>
                     </li>
                 </ul>
             </div>
