@@ -4,7 +4,7 @@
         <div class="col-md-1"></div>
         <div class="col-md-10">
             <div class="row">
-                <form role="form" method="post" class="py-2 col-lg-6 order-1 order-lg-1 order-md-2">
+                <form role="form" method="post" class="py-2 col-lg-6 order-2 order-lg-1 order-md-2 mb-3">
                     <h2 class="py-4">재고 입력</h2>
                     <!--<div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors()}">
                         <div th:each="err : ${#fields.allErrors()}" th:text="${err}"></div>
@@ -29,10 +29,10 @@
                         <input class="form-control" >
                     </div>
                     <div class="text-end">
-                        <button type="submit" class="btn btn-warning btn-sm">입력</button>
+                        <button type="submit" class="btn btn-primary btn-sm">입력</button>
                     </div>
                 </form>
-                <form role="form" method="post" class="py-2 col-lg-6 order-2 order-lg-2 order-md-1">
+                <form role="form" method="post" class="py-2 col-lg-6 order-1 order-lg-2 order-md-1 mb-3">
                     <h2 class="py-4">재고 발주 예측하기</h2>
                     <!--<div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors()}">
                         <div th:each="err : ${#fields.allErrors()}" th:text="${err}"></div>
@@ -61,16 +61,16 @@
                         </div>
                         <div class="col-5 mb-2">
                             <label class="form-label fw-bold">수량</label>
-                            <input class="form-control mb-2" >
-                            <input class="form-control mb-2" >
-                            <input class="form-control mb-2" >
+                            <input class="form-control mb-2">
+                            <input class="form-control mb-2">
+                            <input class="form-control mb-2">
                         </div>
                     </div>
                     <div class="mb-2">
                         <label class=" form-label fw-bold">예측 결과</label>
                     </div>
                     <div class="mb-2">예측 일자 (D+3) : 000 개 입니다</div>
-                    <div class="mb-2">예측된 발주 수량 : 000개 입니다</div>
+                    <div>예측된 발주 수량 : 000개 입니다</div>
                 </form>
             </div>
         </div>

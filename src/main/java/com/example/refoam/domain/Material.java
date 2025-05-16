@@ -2,9 +2,7 @@ package com.example.refoam.domain;
 
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,6 +10,9 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor
+@Builder(toBuilder = true)
+@AllArgsConstructor
+@ToString(exclude = "materialQuantity")
 public class Material {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -14,11 +14,11 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td>1</td>
-                <td>EVA</td>
-                <td>50</td>
-                <td>2000-00-00 00:00</td>
+            <tr th:each="material : ${materialList}">
+                <td th:text="${material.id}">1</td>
+                <td th:text="${material.materialName}">EVA</td>
+                <td th:text="${material.materialQuantity}">50</td>
+                <td th:text="${#temporals.format(material.materialDate,'yyyy-MM-dd HH:mm')}">2000-00-00 00:00</td>
                 <td>관리자</td>
                 <td>
                     <button class="btn btn-sm">수정</button>
@@ -43,21 +43,38 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td>1</td>
-                <td>EVA</td>
-                <td>50</td>
-            </tr>
-            <tr>
-                <td>2000-00-00 00:00</td>
-                <td>관리자</td>
-                <td>
-                    <button class="btn btn-sm">수정</button>
-                    <button class="btn btn-sm">삭제</button>
-                </td>
-            </tr>
+            <th:block th:each="material : ${materialList}">
+                <tr>
+                    <td th:text="${material.id}">1</td>
+                    <td th:text="${material.materialName}">EVA</td>
+                    <td th:text="${material.materialQuantity}">50</td>
+                </tr>
+                <tr>
+                    <td th:text="${#temporals.format(material.materialDate,'yyyy-MM-dd HH:mm')}">2000-00-00 00:00</td>
+                    <td>관리자</td>
+                    <td>
+                        <button class="btn btn-sm">수정</button>
+                        <button class="btn btn-sm">삭제</button>
+                    </td>
+                </tr>
+            </th:block>
             </tbody>
         </table>
     </div>
+    <nav class="">
+        <ul class="pagination justify-content-center">
+            <li class="page-item disabled">
+                <a class="page-link">&lt Previous</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item active" aria-current="page">
+                <a class="page-link" href="#">2</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#">Next &gt</a>
+            </li>
+        </ul>
+    </nav>
 </div>
 </html>
