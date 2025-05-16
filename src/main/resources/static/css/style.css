@@ -73,6 +73,16 @@ body {
 
 /* 컨텐츠 영역 */
 
+
+/* table size 설정 */
+@media (max-width: 768px) {
+    .table-lg{  display: none;
+    }
+}
+@media (min-width: 768px) {
+    .table-md{  display: none;
+    }
+}
 /* 테이블 색상 영역 */
 .table {
    --bs-table-accent-bg:  #4166F5 ;
