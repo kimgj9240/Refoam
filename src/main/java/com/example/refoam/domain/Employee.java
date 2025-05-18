@@ -1,16 +1,17 @@
 package com.example.refoam.domain;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
+@Builder(toBuilder = true)
+@AllArgsConstructor
 @NoArgsConstructor
+@ToString(exclude = "password")
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +26,7 @@ public class Employee {
     private String password;
 
     @Setter
-    private String email;
+    private String phone;
 
     @Setter
     @Enumerated(EnumType.STRING)

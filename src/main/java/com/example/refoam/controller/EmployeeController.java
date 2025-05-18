@@ -1,25 +1,116 @@
 package com.example.refoam.controller;
 
+import com.example.refoam.domain.Employee;
+import com.example.refoam.domain.PositionName;
+import com.example.refoam.dto.EmployeeForm;
+import com.example.refoam.dto.EmployeeUpdateForm;
+import com.example.refoam.service.EmployeeService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/employee")
 public class EmployeeController {
 
+    private final EmployeeService employeeService;
+
     @GetMapping("/new")
-    public String create(){
+    public String create(Model model) {
+        model.addAttribute("employeeForm", new EmployeeForm());
         return "employee/createEmployeeForm";
     }
+
+    @PostMapping("/new")
+    public String createForm(@Valid EmployeeForm employeeForm, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "employee/createEmployeeForm";
+        }
+        Employee findEmployee = employeeService.validateDuplicate(employeeForm.getLoginId());
+
+        if (findEmployee != null) {
+            bindingResult.reject("DuplicateId","id가 존재합니다.");
+            return "employee/createEmployeeForm";
+        }
+
+        Employee employee = Employee.builder()
+                .loginId(employeeForm.getLoginId())
+                .username(employeeForm.getUsername())
+                .password(employeeForm.getPassword())
+                .position(PositionName.valueOf(employeeForm.getPosition()))
+                .phone(employeeForm.getPhone())
+                .build();
+
+        employeeService.save(employee);
+        return "redirect:/employee/list";
+    }
+
     @GetMapping("/list")
-    public String list(){
+    public String list(Model model) {
+        List<Employee> employees = employeeService.employeeList();
+        model.addAttribute("employees", employees);
         return "employee/employeeList";
     }
-    @GetMapping("/edit")
-    public String update(){
+    @GetMapping("/{employeeId}/edit")
+    public String update(@Valid @ModelAttribute("employeeForm") EmployeeUpdateForm employeeForm, BindingResult bindingResult, Model model){
+        if (bindingResult.hasErrors()) {
+            Employee employee = employeeService.findOneEmployee(employeeForm.getId()).orElseThrow(()-> new IllegalArgumentException("해당 직원을 찾을 수 없습니다"));
+
+            employeeForm.setId(employee.getId());
+            employeeForm.setLoginId(employee.getLoginId());
+            employeeForm.setUsername(employee.getUsername());
+            model.addAttribute("employeeForm", employeeForm);
+            return "employee/updateEmployeeForm";
+        }
         return "employee/editEmployeeForm";
+    }
+
+    @PostMapping("/{employeeId}/edit")
+    public String updateEmployeeForm(@Valid @ModelAttribute("employeeForm")EmployeeUpdateForm employeeForm, BindingResult bindingResult, Model model ){
+        if (bindingResult.hasErrors()) {
+            Employee employee = employeeService.findOneEmployee(employeeForm.getId()).orElseThrow(()-> new IllegalArgumentException("해당 직원을 찾을 수 없습니다."));
+
+            employeeForm.setId(employee.getId());
+            employeeForm.setLoginId(employee.getLoginId());
+            employeeForm.setUsername(employee.getUsername());
+            model.addAttribute("employeeForm", employeeForm);
+            return "employee/updateEmployeeForm";
+        }
+
+        Employee employee = employeeService.findOneEmployee(employeeForm.getId()).orElseThrow(()-> new IllegalArgumentException("해당 직원을 찾을 수 없습니다."));
+
+        String newPassword = employeeForm.getPassword();
+        if (newPassword == null || newPassword.isBlank()) {
+            newPassword = employee.getPassword();
+        }
+
+        Employee updateEmployee = employee.toBuilder()
+                .password(newPassword)
+                .position(PositionName.valueOf(employeeForm.getPosition()))
+                .phone(employeeForm.getPhone())
+                .build();
+        employeeService.save(updateEmployee);
+        return "redirect:/employee/list";
+    }
+
+    @GetMapping("/{employeeId}/delete")
+    public String deleteEmployee(@PathVariable("employeeId") Long employeeId) {
+        log.info("직원 id ? {}", employeeId);
+
+        Employee employee = employeeService.findOneEmployee(employeeId).orElseThrow(()-> new IllegalArgumentException("해당 직원을 찾을 수 없습니다."));
+
+        log.info("삭제 id? {}", employee.getId());
+
+        employeeService.deleteEmployee(employee.getId());
+        return "redirect:/employee/list";
+
     }
 }

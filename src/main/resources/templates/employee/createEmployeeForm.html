@@ -1,6 +1,44 @@
-<html layout:decorate="~{layout}" lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html layout:decorate="~{layout}"  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="container mb-5" layout:fragment="content">
-    <h2 class="py-4">직원 정보 등록</h2>
+    <div class="row">
+        <div class="col-md-2"></div>
+        <form role="form" th:object="${employeeForm}" method="post" class="py-2 col-md-8">
+            <h2 class="py-4">직원 정보 등록</h2>
+            <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
+                <div th:each="err:${#fields.allErrors()}" th:text="${err}"></div>
+            </div>
+            <div class="mb-2">
+                <label class="form-label fw-bold" th:for="*{loginId}">ID</label>
+                <input type="text" class="form-control" th:field="*{loginId}" placeholder="아이디를 입력하세요.">
+            </div>
+            <div class="mb-2">
+                <label class="form-label fw-bold" th:for="*{username}">이름</label>
+                <input type="text" class="form-control" th:field="*{username}" placeholder="이름을 입력하세요.">
+            </div>
+            <div class="mb-2">
+                <label class="form-label fw-bold" th:for="*{password}">비밀번호</label>
+                <input type="password" class="form-control" th:field="*{password}" placeholder="비밀번호를 입력하세요">
+            </div>
+            <div class="mb-2">
+                <label class="form-label fw-bold" th:for="*{position}">직위</label>
+                <select class="form-select" th:field="*{position}">
+                    <option value="">직위를 선택하세요</option>
+                    <option th:each="positionName : ${T(com.example.refoam.domain.PositionName).values()}" th:text="${positionName}" th:value="${positionName}"></option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold" th:for="*{phone}">연락처</label>
+                <input type="text" class="form-control" th:field="*{phone}" placeholder="010-xxxx-xxxx">
+            </div>
+            <div class="text-end">
+                <a th:href="@{/list}" class="btn btn-dark me-3">리스트</a>
+                <button type="submit" class="btn btn-refoam">등록</button>
+            </div>
+        </form>
+    <div class="col-md-2"></div>
+
+
+    </div>
 
 </div>
 </html>

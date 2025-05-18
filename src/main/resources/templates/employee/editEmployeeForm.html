@@ -1,6 +1,61 @@
 <html layout:decorate="~{layout}" lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="container mb-5" layout:fragment="content">
-    <h2 class="py-4">직원 리스트</h2>
+    <div class="row">
+        <div class="col-md-2"></div>
+        <form role="form" th:object="${employeeForm}" method="post" class="py-2 col-md-8">
+            <input type="hidden" th:field="*{id}"/>
+            <h2 class="py-4">직원 정보 수정</h2>
+            <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
+                <div th:each="err:${#fields.allErrors()}" th:text="${err}"></div>
+            </div>
+            <div class="mb-2">
+                <label class="form-label fw-bold" th:for="*{loginId}">ID</label>
+                <input type="text" class="form-control" th:field="*{loginId}" disabled/>
+            </div>
+            <div class="mb-2">
+                <label class="form-label fw-bold" th:for="*{username}">이름</label>
+                <input type="text" class="form-control" th:field="*{username}" disabled/>
+            </div>
+            <div class="mb-2">
+                <label class="form-label fw-bold" th:for="*{password}">비밀번호</label>
+                <input type="password" class="form-control" th:field="*{password}" th:placeholder="*{password}">
+            </div>
+            <div class="mb-2">
+                <label class="form-label fw-bold" th:for="*{position}">직위</label>
+                <select class="form-select" th:field="*{position}">
+                    <option value="">직위를 선택하세요</option>
+                    <option th:each="positionName : ${T(com.example.refoam.domain.PositionName).values()}" th:text="${positionName}" th:value="${positionName}"></option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold" th:for="*{phone}">연락처</label>
+                <input type="text" class="form-control" th:field="*{phone}" th:placeholder="*{phone}">
+            </div>
+            <div class="text-end">
+                <a th:href="@{/list}" class="btn btn-dark me-3">리스트</a>
+                <button type="submit" class="btn btn-refoam me-3">수정</button>
+                <button type="button" class="btn btn-delete" data-bs-toggle="modal" data-bs-target="#exampleModal">>삭제</button>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">삭제 확인</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" th:text="|정말로 ${employeeForm.loginId} ${employeeForm.username}님을 삭제하시겠습니까?|">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-refoam" data-bs-dismiss="modal">취소</button>
+                            <button type="button" class="btn btn-delete" th:onclick="|location.href='@{/employee/{id}/delete(id=${employeeForm.id})}'|">>삭제</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="col-md-2"></div>
 
-</div>
+    </div>
+    </div>
 </html>

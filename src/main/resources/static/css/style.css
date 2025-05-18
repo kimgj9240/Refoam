@@ -25,7 +25,17 @@ body {
 
 
 /* header 영역  */
-
+/* 로그인 홈 배경이미지 */
+.bg-login {
+    background-image: linear-gradient(to top,rgba(0, 0, 0, 0.8),rgba(0, 0, 0, 0.2)) , url('/images/refoam_login_bg.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 /* nav 영역 */
 @media (min-width:300px) and (max-width:860px) {
@@ -176,7 +186,11 @@ ul.navbar-nav {
 
 .footer-bg {
     background-color: #4166F5;
-    /* height: 50px; */
+
+}
+
+.footer-hidden{
+    height: 72px;
 }
 
 
