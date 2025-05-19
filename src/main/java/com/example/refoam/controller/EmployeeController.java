@@ -60,18 +60,23 @@ public class EmployeeController {
         return "employee/employeeList";
     }
     @GetMapping("/{employeeId}/edit")
-    public String update(@Valid @ModelAttribute("employeeForm") EmployeeUpdateForm employeeForm, BindingResult bindingResult, Model model){
-        if (bindingResult.hasErrors()) {
-            Employee employee = employeeService.findOneEmployee(employeeForm.getId()).orElseThrow(()-> new IllegalArgumentException("해당 직원을 찾을 수 없습니다"));
+    public String update(@PathVariable("employeeId") Long employeeId, Model model){
+        Employee updEmployee =  employeeService.findOneEmployee(employeeId).orElseThrow(()-> new IllegalArgumentException("해당 직원을 찾을 수 없습니다"));
 
-            employeeForm.setId(employee.getId());
-            employeeForm.setLoginId(employee.getLoginId());
-            employeeForm.setUsername(employee.getUsername());
-            model.addAttribute("employeeForm", employeeForm);
-            return "employee/updateEmployeeForm";
+        EmployeeForm employeeForm = EmployeeForm.builder()
+                .id(updEmployee.getId())
+                .loginId(updEmployee.getLoginId())
+                .username(updEmployee.getUsername())
+                .password(updEmployee.getPassword())
+                .position(String.valueOf(updEmployee.getPosition()))
+                .email(updEmployee.getEmail())
+                .build();
+
+        model.addAttribute("employeeForm", employeeForm);
+            return "employee/editEmployeeForm";
         }
-        return "employee/editEmployeeForm";
-    }
+
+
 
     @PostMapping("/{employeeId}/edit")
     public String updateEmployeeForm(@Valid @ModelAttribute("employeeForm")EmployeeUpdateForm employeeForm, BindingResult bindingResult, Model model ){
@@ -82,7 +87,7 @@ public class EmployeeController {
             employeeForm.setLoginId(employee.getLoginId());
             employeeForm.setUsername(employee.getUsername());
             model.addAttribute("employeeForm", employeeForm);
-            return "employee/updateEmployeeForm";
+            return "employee/editEmployeeForm";
         }
 
         Employee employee = employeeService.findOneEmployee(employeeForm.getId()).orElseThrow(()-> new IllegalArgumentException("해당 직원을 찾을 수 없습니다."));

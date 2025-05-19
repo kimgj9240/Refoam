@@ -30,6 +30,15 @@ public class DummyDataLoader implements CommandLineRunner {
                 .build();
         employeeService.save(employee);
 
+        Employee employee2 = Employee.builder()
+                .loginId("test2")
+                .username("직원")
+                .password("1111")
+                .position(PositionName.STAFF)
+                .email("test2@email.com")
+                .build();
+        employeeService.save(employee2);
+
         List<MaterialName> materialNameList = List.of(
                 MaterialName.EVA,
                 MaterialName.TITANIUM_DIOXIDE,

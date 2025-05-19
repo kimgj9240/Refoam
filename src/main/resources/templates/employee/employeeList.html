@@ -23,7 +23,7 @@
                 <td th:text="${employee.email}">email</td>
                 <td class="text-center">
                     <a href="#" th:href="@{/employee/{id}/edit(id=${employee.id})}" class="btn btn-refoam me-3" role="button">수정</a>
-                    <a href="#" th:href="@{/employee/{id}/delete(id=${employee.id})}" class="btn btn-delete" role="button">삭제</a>
+                    <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${employee.id}" class="btn btn-delete">삭제</button>
                 </td>
             </tr>
             </tbody>
@@ -54,21 +54,45 @@
                     <td th:text="${employee.position}">position</td>
                     <td th:text="${employee.email}">phone</td>
                     <td class="text-center">
-                        <a href="#" th:href="@{/employee/{id}/edit(id=${employee.id})}" class="btn btn-refoam" role="button">수정</a>
-                        <a href="#" th:href="@{/employee/{id}/delete(id=${employee.id})}" class="btn btn-delete" role="button">삭제</a>
+                        <a href="#" th:href="@{/employee/{id}/edit(id=${employee.id})}" class="btn btn-refoam me-3" role="button">수정</a>
+                        <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${employee.id}" class="btn btn-delete">삭제</button>
                     </td>
                 </tr>
             </th:block>
             </tbody>
         </table>
     </div>
+    <!-- 테이블 아래에 위치, employee마다 모달 한 번씩 반복 -->
+    <th:block th:each="employee : ${employees}">
+        <div class="modal fade"
+             th:id="'modal__' + ${employee.id}"
+             tabindex="-1"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">삭제 확인</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body"
+                         th:text="|ID: ${employee.loginId}, 이름: ${employee.username}님을 삭제하시겠습니까?|">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                        <button type="button" class="btn btn-danger"
+                                th:onclick="|location.href='@{/employee/{id}/delete(id=${employee.id})}'|">삭제</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
     <nav class="">
         <ul class="pagination justify-content-center">
             <li class="page-item disabled">
                 <a class="page-link">&lt Previous</a>
             </li>
-            <li class="page-item"><a class="page-link" href="#">1</a></li>
-            <li class="page-item active" aria-current="page">
+            <li class="page-item" aria-current="page"><a class="page-link" href="#">1</a></li>
+            <li class="page-item active">
                 <a class="page-link" href="#">2</a>
             </li>
             <li class="page-item"><a class="page-link" href="#">3</a></li>

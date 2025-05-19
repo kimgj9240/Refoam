@@ -32,9 +32,9 @@
                 <input type="text" class="form-control" th:field="*{email}" th:placeholder="*{email}">
             </div>
             <div class="text-end">
-                <a th:href="@{/list}" class="btn btn-dark me-3">리스트</a>
+                <a th:href="@{/employee/list}" class="btn btn-dark me-3">리스트</a>
                 <button type="submit" class="btn btn-refoam me-3">수정</button>
-                <button type="button" class="btn btn-delete" data-bs-toggle="modal" data-bs-target="#exampleModal">>삭제</button>
+                <button type="button" class="btn btn-delete" data-bs-toggle="modal" data-bs-target="#exampleModal">삭제</button>
             </div>
             <!-- Modal -->
             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -44,11 +44,11 @@
                             <h1 class="modal-title fs-5" id="exampleModalLabel">삭제 확인</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="modal-body" th:text="|정말로 ${employeeForm.loginId} ${employeeForm.username}님을 삭제하시겠습니까?|">
+                        <div class="modal-body" th:text="|정말로 ID :${employeeForm.loginId} 이름 : ${employeeForm.username}님을 삭제하시겠습니까?|">
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-refoam" data-bs-dismiss="modal">취소</button>
-                            <button type="button" class="btn btn-delete" th:onclick="|location.href='@{/employee/{id}/delete(id=${employeeForm.id})}'|">>삭제</button>
+                            <button type="button" class="btn btn-delete" th:onclick="|location.href='@{/employee/{id}/delete(id=${employeeForm.id})}'|">삭제</button>
                         </div>
                     </div>
                 </div>
