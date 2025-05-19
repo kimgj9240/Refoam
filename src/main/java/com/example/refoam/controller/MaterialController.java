@@ -1,7 +1,9 @@
 package com.example.refoam.controller;
 
+import com.example.refoam.domain.Employee;
 import com.example.refoam.domain.Material;
 import com.example.refoam.service.MaterialService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -18,9 +20,7 @@ import java.util.List;
 public class MaterialController {
     private final MaterialService materialService;
     @GetMapping("/new")
-    public String create(){
-        return "material/createMaterialForm";
-    }
+    public String create(){return "material/createMaterialForm";}
     @GetMapping("/list")
     public String list(Model model){
         List<Material> materialList = materialService.selectAll();
