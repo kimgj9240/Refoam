@@ -6,7 +6,7 @@
         <table class="table table-hover table-striped">
             <thead>
             <tr>
-                <th>#</th>
+                <th> #</th>
                 <th>ID</th>
                 <th>이름</th>
                 <th>직위</th>
@@ -20,7 +20,7 @@
                 <td th:text="${employee.loginId}">ID</td>
                 <td th:text="${employee.username}">name</td>
                 <td th:text="${employee.position}">position</td>
-                <td th:text="${employee.phone}">phone</td>
+                <td th:text="${employee.email}">email</td>
                 <td class="text-center">
                     <a href="#" th:href="@{/employee/{id}/edit(id=${employee.id})}" class="btn btn-refoam me-3" role="button">수정</a>
                     <a href="#" th:href="@{/employee/{id}/delete(id=${employee.id})}" class="btn btn-delete" role="button">삭제</a>
@@ -52,7 +52,7 @@
                 </tr>
                 <tr>
                     <td th:text="${employee.position}">position</td>
-                    <td th:text="${employee.phone}">phone</td>
+                    <td th:text="${employee.email}">phone</td>
                     <td class="text-center">
                         <a href="#" th:href="@{/employee/{id}/edit(id=${employee.id})}" class="btn btn-refoam" role="button">수정</a>
                         <a href="#" th:href="@{/employee/{id}/delete(id=${employee.id})}" class="btn btn-delete" role="button">삭제</a>
