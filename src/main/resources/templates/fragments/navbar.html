@@ -12,9 +12,9 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav ms-auto mb-2 mb-md-0">
-                    <li class="nav-item my-1 d-flex align-items-center gap-2 nav-account">
+                    <li class="nav-item my-1 d-flex align-items-center gap-2 nav-account" th:if="${loginMember != null}">
                         <img src="/images/person-circle.svg" alt="사람 아이콘">
-                        <span class="nav-font nav-no-link">관리자</span>
+                        <span class="nav-font nav-no-link" th:text="${loginMember.username}+'님'">관리자</span>
 
                         <a th:href="@{/list}" class="position-relative">
                             <img src="/images/bell-fill.svg" alt="종모양" ></a>
@@ -22,7 +22,9 @@
                             99+
                             <span class="visually-hidden">unread messages</span>
                         </span>
-                        <a class="nav-font btn btn-sm btn-refoam margin-minus" th:href="@{/}">로그아웃</a>
+                        <form th:action="@{/logout}" method="post">
+                            <button type="submit" class="nav-font btn btn-sm btn-refoam margin-minus">로그아웃</button>
+                        </form>
                         <div class="vr md-hidden"></div>
                     </li>
 
