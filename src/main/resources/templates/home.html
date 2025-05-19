@@ -9,7 +9,9 @@
                     <!-- ✅ redirectURL hidden 필드 추가 -->
 <!--                    name="redirectURL": 컨트롤러에서 @RequestParam("redirectURL")로 받을 수 있게 함
                         th:value="${param.redirectURL}": 현재 요청 URL에 있는 redirectURL 파라미터를 폼으로 넘김-->
-                    <input type="hidden" name="redirectURL" th:value="${param.redirectURL}" />
+<!--                    리다이렉트시 null 값이 올 경우엔 /main으로 가도록 유도 -->
+                    <input type="hidden" name="redirectURL" th:value="${param.redirectURL != null ? param.redirectURL : '/main'}" />
+
 
                     <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
                         <div th:each="err:${#fields.allErrors()}" th:text="${err}"></div>

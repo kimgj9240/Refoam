@@ -1,72 +1,73 @@
 <nav th:fragment="navbar(activeMenu)"
      class="navbar navbar-expand-md nav-bg fixed-top">
     <!-- 메뉴바 시작-->
-        <div class="container-fluid">
-            <a class="navbar-brand nav-font" th:href="@{/main}">
-                <img src="/images/logo_only.svg" alt="logo"  class="my-2 ms-3 nav-img">
-                <img src="/images/logo_name.svg" alt="logo"  class="my-2 md-hidden nav-img">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
-                    aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                <ul class="navbar-nav ms-auto mb-2 mb-md-0">
-                    <li class="nav-item my-1 d-flex align-items-center gap-2 nav-account" th:if="${loginMember != null}">
-                        <img src="/images/person-circle.svg" alt="사람 아이콘">
-                        <span class="nav-font nav-no-link" th:text="${loginMember.username}+'님'">관리자</span>
+    <div class="container-fluid">
+        <a class="navbar-brand nav-font" th:href="@{/main}">
+            <img src="/images/logo_only.svg" alt="logo" class="my-2 ms-3 nav-img">
+            <img src="/images/logo_name.svg" alt="logo" class="my-2 md-hidden nav-img">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav ms-auto mb-2 mb-md-0">
+                <li class="nav-item my-1 d-flex align-items-center gap-2 nav-account" th:if="${loginMember != null}">
+                    <img src="/images/person-circle.svg" alt="사람 아이콘">
+                    <span class="nav-font nav-no-link" th:text="${loginMember.username}+'님'">관리자</span>
 
-                        <a th:href="@{/list}" class="position-relative">
-                            <img src="/images/bell-fill.svg" alt="종모양" ></a>
-                        <span class="translate-middle badge rounded-pill">
+                    <a th:href="@{/list}" class="position-relative">
+                        <img src="/images/bell-fill.svg" alt="종모양"></a>
+                    <span class="translate-middle badge rounded-pill">
                             99+
                             <span class="visually-hidden">unread messages</span>
                         </span>
-                        <form th:action="@{/logout}" method="post">
-                            <button type="submit" class="nav-font btn btn-sm btn-refoam margin-minus">로그아웃</button>
-                        </form>
-                        <div class="vr md-hidden"></div>
-                    </li>
+                    <form th:action="@{/logout}" method="post">
+                        <button type="submit" class="nav-font btn btn-sm btn-refoam margin-minus">로그아웃</button>
+                    </form>
+                    <div class="vr md-hidden"></div>
+                </li>
 
 
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle nav-font" href="#" role="button" data-bs-toggle="dropdown"
-                           aria-expanded="false" th:classappend="${activeMenu == 1} ? ' active' : ''">
-                            계정관리
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item nav-font" th:href="@{/employee/list}">직원리스트</a></li>
-                            <li><a class="dropdown-item nav-font" th:href="@{/employee/new}">직원 정보 등록</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle nav-font" href="#" role="button" data-bs-toggle="dropdown"
-                           aria-expanded="false" th:classappend="${activeMenu == 2} ? ' active' : ''">
-                            재고관리
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item nav-font" th:href="@{/material/list}">재고 리스트</a></li>
-                            <li><a class="dropdown-item nav-font" th:href="@{/material/new}">재고입력발주</a></li>
+                <li class="nav-item dropdown" >
+                    <a class="nav-link dropdown-toggle nav-font" href="#" role="button" data-bs-toggle="dropdown"
+                       aria-expanded="false" th:classappend="${activeMenu == 1} ? ' active' : ''">
+                        계정관리
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li th:if="${loginMember.position.name() != 'STAFF'}"><a class="dropdown-item nav-font" th:href="@{/employee/list}">직원리스트</a></li>
+                        <li th:if="${loginMember.position.name() != 'STAFF'}"><a class="dropdown-item nav-font" th:href="@{/employee/new}">직원 정보 등록</a></li>
+                        <li th:if="${loginMember.position.name() != 'ADMIN'}"><a class="dropdown-item nav-font" th:href="@{/employee/{id}/edit(id=${loginMember.id})}">계정 정보 수정</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle nav-font" href="#" role="button" data-bs-toggle="dropdown"
+                       aria-expanded="false" th:classappend="${activeMenu == 2} ? ' active' : ''">
+                        재고관리
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item nav-font" th:href="@{/material/list}">재고 리스트</a></li>
+                        <li><a class="dropdown-item nav-font" th:href="@{/material/new}">재고입력발주</a></li>
 
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle nav-font" href="#" role="button" data-bs-toggle="dropdown"
-                           aria-expanded="false" th:classappend="${activeMenu == 3} ? ' active' : ''">
-                            공정관리
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item nav-font" th:href="@{/order/new}">제품생산</a></li>
-                            <li><a class="dropdown-item nav-font" th:href="@{/process/list}">공정결과</a></li>
-                            <li><a class="dropdown-item nav-font" th:href="@{/order/list}">주문리스트</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item" th:classappend="${activeMenu == 4} ? ' active' : ''">
-                        <a class="nav-link nav-font" th:href="@{/monitoring/main}">에러모니터링</a>
-                    </li>
-                </ul>
-            </div>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle nav-font" href="#" role="button" data-bs-toggle="dropdown"
+                       aria-expanded="false" th:classappend="${activeMenu == 3} ? ' active' : ''">
+                        공정관리
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item nav-font" th:href="@{/order/new}">제품생산</a></li>
+                        <li><a class="dropdown-item nav-font" th:href="@{/process/list}">공정결과</a></li>
+                        <li><a class="dropdown-item nav-font" th:href="@{/order/list}">주문리스트</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item" th:classappend="${activeMenu == 4} ? ' active' : ''">
+                    <a class="nav-link nav-font" th:href="@{/monitoring/main}">에러모니터링</a>
+                </li>
+            </ul>
         </div>
+    </div>
     <!-- 메뉴바 끝 -->
 </nav>
 

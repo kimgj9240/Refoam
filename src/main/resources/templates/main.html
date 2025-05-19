@@ -3,6 +3,10 @@
     <h2 class="py-4">공정 건수</h2>
     <h2 class="py-4">에러 건수</h2>
     <h2 class="py-4">재고 건수</h2>
+    <span th:text="${T(com.example.refoam.domain.PositionName).ADMIN}"></span>
+
+    <span th:if="${loginMember != null}" th:text="${loginMember.position}">포지션</span>
+
 
 </div>
 </html>

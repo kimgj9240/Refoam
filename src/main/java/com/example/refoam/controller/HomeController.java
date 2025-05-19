@@ -22,8 +22,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class HomeController {
     private final LoginService loginService;
     @GetMapping("/")
-    public String home(Model model){
+    public String home(HttpSession session, Model model,
+                       @RequestParam(value = "redirectURL", defaultValue = "/main") String redirectURL) {
+        if (session.getAttribute(SessionConst.LOGIN_MEMBER) != null) {
+            return "redirect:" + redirectURL;
+        }
         model.addAttribute("loginForm", new LoginForm());
+        model.addAttribute("redirectURL", redirectURL);
         return "home";
     }
 
@@ -42,6 +47,7 @@ public class HomeController {
         // 로그인 성공
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_MEMBER,loginMember);
+        log.info("직위: {}", loginMember.getPosition());
 
         // 원래 가려던 URL로 이동
         return "redirect:" + redirectURL;
@@ -54,13 +60,22 @@ public class HomeController {
         if (session != null){
             session.invalidate();
         }
-
-        return "redirect:/home";
+        // 로그아웃 후 로그인 페이지에서 로그인 할 시 새로고침 한 번 일어나는거 때문에 /로 다시 바꿈
+        return "redirect:/";
     }
 
     @GetMapping("/main")
     public String main(){
         return "main";}
+    
+    // 로그아웃 후 다른 아이디로 로그인했을 때 404 에러 뜨는거 방지용으로 만듦
+    @GetMapping("/home")
+    public String homeRedirect(Model model) {
+        model.addAttribute("loginForm", new LoginForm());
+        return "home";
+    }
+
+
 
     @GetMapping("/table")
     public String table(){

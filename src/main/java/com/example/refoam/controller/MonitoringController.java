@@ -2,6 +2,7 @@ package com.example.refoam.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -10,7 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/monitoring")
 public class MonitoringController {
     @GetMapping("/main")
-    public String create(){
+    public String create(Model model){
+        model.addAttribute("activeMenu", 4);
         return "monitoring/errorMonitoring";
     }
 }
