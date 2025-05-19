@@ -29,20 +29,20 @@ public class HomeController {
     @PostMapping("/")
     public String login(@Valid @ModelAttribute LoginForm loginForm, BindingResult bindingResult, HttpServletRequest request){
         if (bindingResult.hasErrors()){
-            return "/";
+            return "home";
         }
 
         Employee loginMember = loginService.login(loginForm.getLoginId(),loginForm.getPassword());
 
         if (loginMember == null){
             bindingResult.reject("loginFail","아이디 또는 비밀번호가 맞지 않습니다.");
-            return "/";
+            return "home";
         }
         HttpSession session = request.getSession();
 
         session.setAttribute(SessionConst.LOGIN_MEMBER,loginMember);
 
-        return "redirect:main";
+        return "redirect:/form";
     }
 
     @PostMapping("/logout")
@@ -56,10 +56,6 @@ public class HomeController {
         return "redirect:/";
     }
 
-    @GetMapping("/main")
-    public String main(){
-        return "main";
-    }
 
     @GetMapping("/table")
     public String table(){
