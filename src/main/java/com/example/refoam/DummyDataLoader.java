@@ -39,6 +39,7 @@ public class DummyDataLoader implements CommandLineRunner {
                 .build();
         employeeService.save(employee2);
 
+
         List<MaterialName> materialNameList = List.of(
                 MaterialName.EVA,
                 MaterialName.TITANIUM_DIOXIDE,
@@ -53,7 +54,7 @@ public class DummyDataLoader implements CommandLineRunner {
                 .materialName(materialName)
                 .materialQuantity(500)
                 .materialDate(LocalDateTime.now())
-                //.employee(employee)
+                .employee(employee)
                 .build()).toList();
         //toList() 변환된 Material객체들을 리스트로 모으기 위해 사용
 
