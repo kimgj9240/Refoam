@@ -33,7 +33,7 @@ public class Employee {
     private PositionName position;
 
     @OneToMany(mappedBy = "employee")
-    private List<Order> orders= new ArrayList<>();
+    private List<Orders> orders= new ArrayList<>();
 
     @OneToMany(mappedBy = "employee")
     private List<Material> materials = new ArrayList<>();

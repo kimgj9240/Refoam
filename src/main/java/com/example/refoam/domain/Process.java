@@ -1,11 +1,8 @@
 package com.example.refoam.domain;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,12 +10,15 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
+@Builder(toBuilder = true)
+@AllArgsConstructor
+@ToString
 public class Process {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "process_id")
-    private Long id;
+    private long id;
 
     @Setter
     private String step;
@@ -30,7 +30,7 @@ public class Process {
     private LocalDateTime processDate;
 
     @OneToMany(mappedBy = "process")
-    private List<Label> labels = new ArrayList<Label>();
+    private List<Label> labels = new ArrayList<>();
 
     @OneToMany(mappedBy = "process")
     private List<QualityCheck> qualityChecks = new ArrayList<>();
@@ -41,6 +41,6 @@ public class Process {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
-    private Order order;
+    private Orders order;
 
 }

@@ -1,6 +1,6 @@
 package com.example.refoam.service;
 
-import com.example.refoam.domain.Order;
+import com.example.refoam.domain.Orders;
 import com.example.refoam.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,18 +20,18 @@ public class OrderService {
 
     // 주문 생성
     @Transactional
-    public Long save(Order order){
+    public Long save(Orders order){
         orderRepository.save(order);
         return order.getId();
     }
 
     // 단건 조회
-    public Optional<Order> findOneOrder(Long orderId){
+    public Optional<Orders> findOneOrder(Long orderId){
         return orderRepository.findById(orderId);
     }
     
     // 전체 주문 조회
-    public List<Order> findOrders(){
+    public List<Orders> findOrders(){
         return orderRepository.findAll();
     }
     
