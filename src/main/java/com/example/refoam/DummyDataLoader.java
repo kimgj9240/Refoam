@@ -26,7 +26,7 @@ public class DummyDataLoader implements CommandLineRunner {
                 .username("관리자")
                 .password("1111")
                 .position(PositionName.ADMIN)
-                .phone("010-0000-0000")
+                .email("test@email.com")
                 .build();
         employeeService.save(employee);
 

@@ -26,7 +26,7 @@ public class Employee {
     private String password;
 
     @Setter
-    private String phone;
+    private String email;
 
     @Setter
     @Enumerated(EnumType.STRING)
