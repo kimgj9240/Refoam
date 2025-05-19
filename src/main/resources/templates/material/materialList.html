@@ -19,10 +19,10 @@
                 <td th:text="${material.materialName}">EVA</td>
                 <td th:text="${material.materialQuantity}">50</td>
                 <td th:text="${#temporals.format(material.materialDate,'yyyy-MM-dd HH:mm')}">2000-00-00 00:00</td>
-                <td>관리자</td>
-                <td>
-                    <button class="btn btn-sm">수정</button>
-                    <button class="btn btn-sm">삭제</button>
+                <td th:text="${material.employee.username}">관리자</td>
+                <td class="text-center">
+                    <a href="#" th:href="@{/material/{id}/edit(id=${material.id})}" class="btn btn-refoam btn-sm" role="button">수정</a>
+                    <a href="#" th:href="@{/material/{id}/delete(id=${material.id})}" class="btn btn-delete btn-sm" role="button">삭제</a>
                 </td>
             </tr>
             </tbody>
@@ -52,9 +52,9 @@
                 <tr>
                     <td th:text="${#temporals.format(material.materialDate,'yyyy-MM-dd HH:mm')}">2000-00-00 00:00</td>
                     <td>관리자</td>
-                    <td>
-                        <button class="btn btn-sm">수정</button>
-                        <button class="btn btn-sm">삭제</button>
+                    <td class="text-center">
+                        <a href="#" th:href="@{/material/{id}/edit(id=${material.id})}" class="btn btn-sm btn-refoam" role="button">수정</a>
+                        <a href="#" th:href="@{/material/{id}/delete(id=${material.id})}" class="btn btn-sm btn-delete" role="button">삭제</a>
                     </td>
                 </tr>
             </th:block>
