@@ -42,7 +42,7 @@ public class HomeController {
 
         session.setAttribute(SessionConst.LOGIN_MEMBER,loginMember);
 
-        return "redirect:/";
+        return "redirect:main";
     }
 
     @PostMapping("/logout")
@@ -54,6 +54,11 @@ public class HomeController {
         }
 
         return "redirect:/";
+    }
+
+    @GetMapping("/main")
+    public String main(){
+        return "main";
     }
 
     @GetMapping("/table")

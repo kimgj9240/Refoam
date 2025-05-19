@@ -3,6 +3,8 @@ package com.example.refoam;
 import com.example.refoam.domain.Employee;
 import com.example.refoam.domain.Material;
 import com.example.refoam.domain.MaterialName;
+import com.example.refoam.domain.PositionName;
+import com.example.refoam.service.EmployeeService;
 import com.example.refoam.service.MaterialService;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -14,19 +16,19 @@ import java.util.List;
 @Component
 @AllArgsConstructor
 public class DummyDataLoader implements CommandLineRunner {
-    //private final EmployeeService employeeService;
+    private final EmployeeService employeeService;
     private final MaterialService materialService;
     @Override
     public void run(String... args) throws Exception {
         //run(String... args) <가변 인자 :기본적으로 여러개의 String 값을 받을 수 있는 배열같은 개념
-        /*Employee employee = Employee.builder()
+        Employee employee = Employee.builder()
                 .loginId("test")
-                .name("관리자")
+                .username("관리자")
                 .password("1111")
-                .position(PositionName.MANAGER)
+                .position(PositionName.ADMIN)
                 .phone("010-0000-0000")
                 .build();
-        employeeService.create(employee);*/
+        employeeService.save(employee);
 
         List<MaterialName> materialNameList = List.of(
                 MaterialName.EVA,
