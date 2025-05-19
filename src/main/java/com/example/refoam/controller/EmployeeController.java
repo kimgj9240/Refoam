@@ -26,6 +26,7 @@ public class EmployeeController {
     @GetMapping("/new")
     public String create(Model model) {
         model.addAttribute("employeeForm", new EmployeeForm());
+        model.addAttribute("activeMenu", 1);
         return "employee/createEmployeeForm";
     }
 
@@ -57,6 +58,7 @@ public class EmployeeController {
     public String list(Model model) {
         List<Employee> employees = employeeService.employeeList();
         model.addAttribute("employees", employees);
+        model.addAttribute("activeMenu", 1);
         return "employee/employeeList";
     }
     @GetMapping("/{employeeId}/edit")
@@ -73,7 +75,8 @@ public class EmployeeController {
                 .build();
 
         model.addAttribute("employeeForm", employeeForm);
-            return "employee/editEmployeeForm";
+        model.addAttribute("activeMenu", 1);
+        return "employee/editEmployeeForm";
         }
 
 

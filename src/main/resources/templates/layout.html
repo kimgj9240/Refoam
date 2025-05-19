@@ -10,7 +10,7 @@
 </head>
 <body>
 <!--navbar 영역-->
-<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+<nav th:replace="~{fragments/navbar :: navbar(${activeMenu})}"></nav>
 <div id="nav-hidden"></div>
 <!--content 영역-->
 <th:block layout:fragment="content"></th:block>
