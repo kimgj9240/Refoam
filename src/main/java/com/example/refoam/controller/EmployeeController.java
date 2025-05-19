@@ -46,7 +46,7 @@ public class EmployeeController {
                 .username(employeeForm.getUsername())
                 .password(employeeForm.getPassword())
                 .position(PositionName.valueOf(employeeForm.getPosition()))
-                .phone(employeeForm.getPhone())
+                .email(employeeForm.getEmail())
                 .build();
 
         employeeService.save(employee);
@@ -95,7 +95,7 @@ public class EmployeeController {
         Employee updateEmployee = employee.toBuilder()
                 .password(newPassword)
                 .position(PositionName.valueOf(employeeForm.getPosition()))
-                .phone(employeeForm.getPhone())
+                .email(employeeForm.getEmail())
                 .build();
         employeeService.save(updateEmployee);
         return "redirect:/employee/list";
