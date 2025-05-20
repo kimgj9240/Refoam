@@ -93,14 +93,8 @@ public class DummyDataLoader implements CommandLineRunner {
                         .employee(employee)
                         .build()).toList();
         orders.forEach(orderService::save);
+
         Orders order = orderService.findOneOrder(1L).orElseThrow();
-        Process process =  Process.builder()
-                .step("1")
-                .status("PENDING")
-                .order(order)
-                .processDate(LocalDateTime.now())
-                .build();
-        processService.save(process);
 
         Standard standard1 = Standard.builder()
                 .backPressurePeak(146.3)
@@ -118,6 +112,14 @@ public class DummyDataLoader implements CommandLineRunner {
                 .torquePeak(123.5)
                 .build();
         standardService.save(standard1);
+        Process process = Process.builder()
+                .step("1")
+                .status("PENDING")
+                .order(order)
+                .processDate(LocalDateTime.now())
+                .standard(standard1)
+                .build();
+        processService.save(process);
 
         Standard standard2 = Standard.builder()
                 .backPressurePeak(146.3)
@@ -135,6 +137,14 @@ public class DummyDataLoader implements CommandLineRunner {
                 .torquePeak(115.4)
                 .build();
         standardService.save(standard2);
+        Process process2 = Process.builder()
+                .step("1")
+                .status("PENDING")
+                .order(order)
+                .processDate(LocalDateTime.now())
+                .standard(standard2)
+                .build();
+        processService.save(process2);
 
         Standard standard3 = Standard.builder()
                 .backPressurePeak(146.8)
@@ -152,6 +162,14 @@ public class DummyDataLoader implements CommandLineRunner {
                 .torquePeak(94.5)
                 .build();
         standardService.save(standard3);
+        Process process3 = Process.builder()
+                .step("1")
+                .status("PENDING")
+                .order(order)
+                .processDate(LocalDateTime.now())
+                .standard(standard3)
+                .build();
+        processService.save(process3);
 
         Standard standard4 = Standard.builder()
                 .backPressurePeak(146)
@@ -169,6 +187,15 @@ public class DummyDataLoader implements CommandLineRunner {
                 .torquePeak(121.1)
                 .build();
         standardService.save(standard4);
+        Process process4 = Process.builder()
+                .step("1")
+                .status("PENDING")
+                .order(order)
+                .processDate(LocalDateTime.now())
+                .standard(standard4)
+                .build();
+        processService.save(process4);
+
         Standard standard5 = Standard.builder()
                 .backPressurePeak(146.6)
                 .closingForce(917.1)
@@ -185,6 +212,15 @@ public class DummyDataLoader implements CommandLineRunner {
                 .torquePeak(111.5)
                 .build();
         standardService.save(standard5);
+        Process process5 = Process.builder()
+                .step("1")
+                .status("PENDING")
+                .order(order)
+                .processDate(LocalDateTime.now())
+                .standard(standard5)
+                .build();
+        processService.save(process5);
+
         Standard standard6 = Standard.builder()
                 .backPressurePeak(146.3)
                 .closingForce(881.9)
@@ -201,6 +237,15 @@ public class DummyDataLoader implements CommandLineRunner {
                 .torquePeak(119.3)
                 .build();
         standardService.save(standard6);
+        Process process6 = Process.builder()
+                .step("1")
+                .status("PENDING")
+                .order(order)
+                .processDate(LocalDateTime.now())
+                .standard(standard6)
+                .build();
+        processService.save(process6);
+
         Standard standard7 = Standard.builder()
                 .backPressurePeak(145.6)
                 .closingForce(886.9)
@@ -217,6 +262,14 @@ public class DummyDataLoader implements CommandLineRunner {
                 .torquePeak(116.9)
                 .build();
         standardService.save(standard7);
+        Process process7 = Process.builder()
+                .step("1")
+                .status("PENDING")
+                .order(order)
+                .processDate(LocalDateTime.now())
+                .standard(standard7)
+                .build();
+        processService.save(process7);
 
         Standard standard8 = Standard.builder()
                 .backPressurePeak(145.6)
@@ -234,5 +287,15 @@ public class DummyDataLoader implements CommandLineRunner {
                 .torquePeak(113.9)
                 .build();
         standardService.save(standard8);
+        Process process8 = Process.builder()
+                .step("1")
+                .status("PENDING")
+                .order(order)
+                .processDate(LocalDateTime.now())
+                .standard(standard8)
+                .build();
+        processService.save(process8);
+
     }
+
 }
