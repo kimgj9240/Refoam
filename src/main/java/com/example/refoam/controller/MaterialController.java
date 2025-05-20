@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -79,10 +80,14 @@ public class MaterialController {
         return "material/createMaterialForm";
     }
     @GetMapping("/list")
-    public String list(Model model){
-        List<Material> materialList = materialService.selectAll();
+    public String list(Model model,@RequestParam(value = "page", defaultValue = "0") int page){
+//        List<Material> materialList = materialService.selectAll();
+        // 페이지네이션 구현용
+        Page<Material> paging = this.materialService.getList(page);
+        model.addAttribute("paging", paging);
+
         model.addAttribute("activeMenu", 2);
-        model.addAttribute("materialList",materialList);
+//        model.addAttribute("materialList",materialList);
         return "material/materialList";
     }
     @GetMapping("/{id}/edit")

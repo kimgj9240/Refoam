@@ -7,9 +7,13 @@ import com.example.refoam.repository.MaterialRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -93,4 +97,16 @@ public class MaterialService {
         //모든 원재료가 주문량을 충족하는지 확인
         return requiredMaterialStock.entrySet().stream().allMatch(entry -> materialQuantities.getOrDefault(entry.getKey(), 0L) >= orderQuantity);
     }
+
+    // 페이징 구현용
+    public Page<Material> getList(int page){
+        // 최신순으로 보이게하기
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("id"));
+
+        PageRequest pageable = PageRequest.of(page,12,Sort.by(sorts));
+
+        return this.materialRepository.findAll(pageable);
+    }
+
 }

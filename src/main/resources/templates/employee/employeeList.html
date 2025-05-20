@@ -63,7 +63,7 @@
         </table>
     </div>
     <!-- 테이블 아래에 위치, employee마다 모달 한 번씩 반복 -->
-    <th:block th:each="employee : ${employees}">
+    <th:block th:each="employee : ${paging}">
         <div class="modal fade"
              th:id="'modal__' + ${employee.id}"
              tabindex="-1"

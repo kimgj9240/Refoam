@@ -10,19 +10,19 @@
                 <th>수량</th>
                 <th>입고날짜</th>
                 <th>담당직원</th>
-                <th>#</th>
+                <th class="text-center"> #</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="material : ${materialList}">
+            <tr th:each="material, index : ${paging}">
                 <td th:text="${material.id}">1</td>
                 <td th:text="${material.materialName}">EVA</td>
                 <td th:text="${material.materialQuantity}">50</td>
                 <td th:text="${#temporals.format(material.materialDate,'yyyy-MM-dd HH:mm')}">2000-00-00 00:00</td>
                 <td th:text="${material.employee.username}">관리자</td>
                 <td class="text-center">
-                    <a href="#" th:href="@{/material/{id}/edit(id=${material.id})}" class="btn btn-refoam btn-sm" role="button">수정</a>
-                    <a href="#" th:href="@{/material/{id}/delete(id=${material.id})}" class="btn btn-delete btn-sm" role="button">삭제</a>
+                    <a href="#" th:href="@{/material/{id}/edit(id=${material.id})}" class="btn btn-refoam btn-sm px-3 me-3" role="button">수정</a>
+                    <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${material.id}" class="btn btn-delete btn-sm px-3">삭 제</button>
                 </td>
             </tr>
             </tbody>
@@ -43,7 +43,7 @@
             </tr>
             </thead>
             <tbody>
-            <th:block th:each="material : ${materialList}">
+            <th:block th:each="material, index : ${paging}">
                 <tr>
                     <td th:text="${material.id}">1</td>
                     <td th:text="${material.materialName}">EVA</td>
@@ -53,26 +53,53 @@
                     <td th:text="${#temporals.format(material.materialDate,'yyyy-MM-dd HH:mm')}">2000-00-00 00:00</td>
                     <td>관리자</td>
                     <td class="text-center">
-                        <a href="#" th:href="@{/material/{id}/edit(id=${material.id})}" class="btn btn-sm btn-refoam" role="button">수정</a>
-                        <a href="#" th:href="@{/material/{id}/delete(id=${material.id})}" class="btn btn-sm btn-delete" role="button">삭제</a>
+                        <a href="#" th:href="@{/material/{id}/edit(id=${material.id})}" class="btn btn-sm btn-refoam px-3 me-3" role="button">수정</a>
+                        <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${material.id}" class="btn btn-delete btn-sm px-3">삭 제</button>
                     </td>
                 </tr>
             </th:block>
             </tbody>
         </table>
     </div>
-    <nav class="">
+    <!-- 테이블 아래에 위치, material마다 모달 한 번씩 반복 -->
+    <th:block th:each="material : ${paging}">
+        <div class="modal fade"
+             th:id="'modal__' + ${material.id}"
+             tabindex="-1"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">삭제 확인</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body"
+                         th:text="|원재료: ${material.materialName}를 삭제하시겠습니까?|">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-refoam" data-bs-dismiss="modal">취소</button>
+                        <button type="button" class="btn btn-delete"
+                                th:onclick="|location.href='@{/material/{id}/delete(id=${material.id})}'|">삭제</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+    <nav th:if="${!paging.isEmpty()}">
         <ul class="pagination justify-content-center">
-            <li class="page-item disabled">
-                <a class="page-link">&lt Previous</a>
+            <li class="page-item" th:classappend="${paging.first}">
+                <a class="page-link logo-font fw-normal" th:href="@{|?page=0|}"><span>First </span></a>
             </li>
-            <li class="page-item"><a class="page-link" href="#">1</a></li>
-            <li class="page-item active" aria-current="page">
-                <a class="page-link" href="#">2</a>
+            <li class="page-item"  th:classappend="${!paging.hasPrevious()}?'disabled'">
+                <a class="page-link" th:href="@{|?page=${paging.number -1}|}"><i class="bi bi-chevron-left"></i>Previous</a>
             </li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item">
-                <a class="page-link" href="#">Next &gt</a>
+            <li class="page-item" th:each="page:${#numbers.sequence(0,paging.totalPages -1)}" th:classappend="${page==paging.number}?'active'" th:if="${page >= paging.number -4 and page <= paging.number +4}">
+                <a class="page-link" th:text="${page + 1}" th:href="@{|?page=${page}|}">1</a></li>
+            <li class="page-item" th:classappend="${!paging.hasNext()}?'disabled'">
+                <a class="page-link" th:href="@{|?page=${paging.number +1}|}">Next <i class="bi bi-chevron-right"></i></a>
+            </li>
+            <li class="page-item" th:classappend="${paging.first}">
+                <a class="page-link logo-font fw-normal pt-2" th:href="@{|?page=${paging.totalPages -1}|}"><span>Last</span></a>
             </li>
         </ul>
     </nav>
