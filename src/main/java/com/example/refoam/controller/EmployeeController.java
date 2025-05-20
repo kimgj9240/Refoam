@@ -8,6 +8,7 @@ import com.example.refoam.service.EmployeeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -55,9 +56,14 @@ public class EmployeeController {
     }
 
     @GetMapping("/list")
-    public String list(Model model) {
-        List<Employee> employees = employeeService.employeeList();
-        model.addAttribute("employees", employees);
+    public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page) {
+//        List<Employee> employees = employeeService.employeeList();
+
+        Page<Employee> paging = this.employeeService.getList(page);
+
+        model.addAttribute("paging", paging);
+
+//        model.addAttribute("employees", employees);
         model.addAttribute("activeMenu", 1);
         return "employee/employeeList";
     }

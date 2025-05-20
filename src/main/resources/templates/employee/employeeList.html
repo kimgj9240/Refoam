@@ -15,7 +15,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="employee : ${employees}">
+            <tr th:each="employee, index : ${paging}">
                 <td th:text="${employee.id}" class="text-center">1</td>
                 <td th:text="${employee.loginId}">ID</td>
                 <td th:text="${employee.username}">name</td>
@@ -86,18 +86,21 @@
             </div>
         </div>
     </th:block>
-    <nav class="">
+    <nav th:if="${!paging.isEmpty()}">
         <ul class="pagination justify-content-center">
-            <li class="page-item disabled">
-                <a class="page-link">&lt Previous</a>
+            <li class="page-item" th:classappend="${paging.first}">
+                <a class="page-link logo-font fw-normal" th:href="@{|?page=0|}"><span>First </span></a>
             </li>
-            <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
-            <li class="page-item ">
-                <a class="page-link" href="#">2</a>
+            <li class="page-item"  th:classappend="${!paging.hasPrevious()}?'disabled'">
+                <a class="page-link" th:href="@{|?page=${paging.number -1}|}"><i class="bi bi-chevron-left"></i>Previous</a>
             </li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item">
-                <a class="page-link" href="#">Next &gt</a>
+            <li class="page-item" th:each="page:${#numbers.sequence(0,paging.totalPages -1)}" th:classappend="${page==paging.number}?'active'" th:if="${page >= paging.number -4 and page <= paging.number +4}">
+                <a class="page-link" th:text="${page + 1}" th:href="@{|?page=${page}|}">1</a></li>
+            <li class="page-item" th:classappend="${!paging.hasNext()}?'disabled'">
+                <a class="page-link" th:href="@{|?page=${paging.number +1}|}">Next <i class="bi bi-chevron-right"></i></a>
+            </li>
+            <li class="page-item" th:classappend="${paging.first}">
+                <a class="page-link logo-font fw-normal pt-2" th:href="@{|?page=${paging.totalPages -1}|}"><span>Last</span></a>
             </li>
         </ul>
     </nav>

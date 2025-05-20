@@ -12,12 +12,15 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @AllArgsConstructor
 public class DummyDataLoader implements CommandLineRunner {
     private final EmployeeService employeeService;
     private final MaterialService materialService;
+
+
     @Override
     public void run(String... args) throws Exception {
         //run(String... args) <가변 인자 :기본적으로 여러개의 String 값을 받을 수 있는 배열같은 개념
@@ -47,6 +50,19 @@ public class DummyDataLoader implements CommandLineRunner {
                 MaterialName.CARBON_BLACK,
                 MaterialName.IRON_OXIDE_RED
         );
+
+        for (int i=1; i<=50; i++){
+            Employee employee3 = Employee.builder()
+                    .loginId("test"+i)
+                    .username("관리자")
+                    .password("1111")
+                    .position(PositionName.ADMIN)
+                    .email("test@email.com")
+                    .build();
+            employeeService.save(employee3);
+        }
+
+
 
         //stream()을 호출하면 데이터를 함수형 방식으로 처리할 수 있도록 도와줌
         //map()은 스트림의 각 요소를 다른 값으로 변환하는 역할

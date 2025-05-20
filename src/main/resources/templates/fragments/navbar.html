@@ -35,8 +35,8 @@
                         계정관리
                     </a>
                     <ul class="dropdown-menu">
-                        <li th:if="${loginMember.position.name() != 'STAFF'}"><a class="dropdown-item nav-font" th:href="@{/employee/list}">직원리스트</a></li>
                         <li th:if="${loginMember.position.name() != 'STAFF'}"><a class="dropdown-item nav-font" th:href="@{/employee/new}">직원 정보 등록</a></li>
+                        <li th:if="${loginMember.position.name() != 'STAFF'}"><a class="dropdown-item nav-font" th:href="@{/employee/list}">직원리스트</a></li>
                         <li th:if="${loginMember.position.name() != 'ADMIN'}"><a class="dropdown-item nav-font" th:href="@{/employee/{id}/edit(id=${loginMember.id})}">계정 정보 수정</a></li>
                     </ul>
                 </li>
@@ -58,12 +58,11 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item nav-font" th:href="@{/order/new}">제품생산</a></li>
-                        <li><a class="dropdown-item nav-font" th:href="@{/process/list}">공정결과</a></li>
                         <li><a class="dropdown-item nav-font" th:href="@{/order/list}">주문리스트</a></li>
                     </ul>
                 </li>
-                <li class="nav-item" th:classappend="${activeMenu == 4} ? ' active' : ''">
-                    <a class="nav-link nav-font" th:href="@{/monitoring/main}">에러모니터링</a>
+                <li class="nav-item" >
+                    <a class="nav-link nav-font" th:href="@{/monitoring/main}" th:classappend="${activeMenu == 4} ? ' active' : ''">에러모니터링</a>
                 </li>
             </ul>
         </div>

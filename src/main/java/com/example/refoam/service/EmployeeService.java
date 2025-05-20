@@ -3,9 +3,13 @@ package com.example.refoam.service;
 import com.example.refoam.domain.Employee;
 import com.example.refoam.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,5 +54,17 @@ public class EmployeeService {
     public void deleteEmployee(Long employeeId) {
         this.employeeRepository.deleteById(employeeId);
     }
+
+    // 페이징 구현용 연습
+    public Page<Employee> getList(int page){
+        // 최신순으로 보이게하기
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("id"));
+
+        PageRequest pageable = PageRequest.of(page,12,Sort.by(sorts));
+
+        return this.employeeRepository.findAll(pageable);
+    }
+
 
 }

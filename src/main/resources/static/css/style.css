@@ -140,6 +140,35 @@ ul.navbar-nav {
   --bs-btn-disabled-border-color: #FF8228;
 }
 
+/* 페이지네이션 */
+.page-link {
+    padding: var(--bs-pagination-padding-y) var(--bs-pagination-padding-x);
+    font-weight: 500;
+    color: #4166F5;
+    background-color: var(--bs-pagination-bg);
+    border: none;
+    --bs-pagination-disabled-color: rgba(65, 102, 245, 0.7);
+    --bs-pagination-disabled-bg: #ddf0f6;
+
+}
+
+.page-link:hover {
+    z-index: 2;
+    color: #FF8228;
+    text-decoration: none;
+    background-color: #ddf0f6;
+
+}
+
+.page-item.active .page-link {
+    z-index: 3;
+    color: #ddf0f6;
+    background-color:  #4166F5;
+
+}
+
+
+
 .navbar-toggler{
     background-color: #4166F5;
 }
