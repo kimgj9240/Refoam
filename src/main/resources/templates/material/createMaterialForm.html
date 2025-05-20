@@ -6,9 +6,9 @@
             <div class="row">
                 <form role="form" th:action="@{/material/new}" th:method="post" th:object="${materialForm}" class="py-2 col-lg-6 order-2 order-lg-1 order-md-2 mb-3">
                     <h2 class="py-4">재고 입력</h2>
-                    <!--<div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors()}">
+                    <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors()}">
                         <div th:each="err : ${#fields.allErrors()}" th:text="${err}"></div>
-                    </div>-->
+                    </div>
                     <div class="mb-2">
                         <label th:for="*{materialName}" class="form-label fw-bold">원재료</label>
                         <select th:field="*{materialName}" class="form-select">
@@ -26,9 +26,9 @@
                 </form>
                 <form role="form" th:action="@{/material/orderPredict}" th:method="post" th:object="${predictRequest}" class="py-2 col-lg-6 order-1 order-lg-2 order-md-1 mb-3">
                     <h2 class="py-4">재고 발주 예측하기</h2>
-                    <!--<div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors()}">
+                    <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors()}">
                         <div th:each="err : ${#fields.allErrors()}" th:text="${err}"></div>
-                    </div>-->
+                    </div>
                     <div class="mb-2">
                         <p>3일 뒤 시점의 발주 수량 예측입니다</p>
                         <label  class="form-label fw-bold">원재료</label>

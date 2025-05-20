@@ -1,6 +1,38 @@
 <html layout:decorate="~{layout}" lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="container mb-5" layout:fragment="content">
-    <h2 class="py-4">재고 수정</h2>
-
+    <h2 class="hy-4 headerTitle">재고 수정</h2>
+    <div class="row">
+        <div class="col-md-2"></div>
+        <form role="form" th:object="${materialForm}" method="post" class="py-2 col-md-8">
+            <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors()}">
+                <div th:each="err : ${#fields.allErrors()}" th:text="${err}"></div>
+            </div>
+            <input type="hidden" th:field="*{id}">
+            <div class="mb-2">
+                <label th:for="*{materialName}" class="form-label fw-bold">원재료</label>
+                <select th:field="*{materialName}" class="form-select" disabled>
+                    <option value="">원재료를 선택하세요</option>
+                    <option th:each="materialli : ${T(com.example.refoam.domain.MaterialName).values()}" th:text="${materialli}" th:value="${materialli}">원재료 명</option>
+                </select>
+            </div>
+            <div class="mb-2">
+                <label th:for="*{materialQuantity}" class="form-label fw-bold">수량</label>
+                <input class="form-control" th:field="*{materialQuantity}">
+            </div>
+            <div class="mb-2">
+                <label  class="form-label fw-bold">담당직원</label>
+                <input class="form-control" th:placeholder="${materialForm.employee.username}" disabled>
+            </div>
+            <div class="mb-3">
+                <label th:for="*{materialDate}" class="form-label fw-bold">입고날짜</label>
+                <input class="form-control" th:field="*{materialDate}" type="text" disabled>
+            </div>
+            <div class="text-end">
+                <button type="submit" class="btn btn-refoam me-3">수정</button>
+                <button type="button" class="btn btn-delete" th:onclick="|location.href='@{/material/list}'|">리스트</button>
+            </div>
+        </form>
+        <div class="col-md-2"></div>
+    </div>
 </div>
 </html>

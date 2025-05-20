@@ -1,6 +1,5 @@
 package com.example.refoam.dto;
 
-import com.example.refoam.domain.MaterialName;
 import jakarta.validation.Valid;
 import lombok.Data;
 

@@ -2,10 +2,7 @@ package com.example.refoam.controller;
 
 import com.example.refoam.domain.Employee;
 import com.example.refoam.domain.Material;
-import com.example.refoam.dto.MaterialForm;
-import com.example.refoam.dto.OrderPredictionInput;
-import com.example.refoam.dto.PredictRequest;
-import com.example.refoam.dto.PredictResult;
+import com.example.refoam.dto.*;
 import com.example.refoam.service.MaterialService;
 import com.example.refoam.service.PredictService;
 import jakarta.servlet.http.HttpSession;
@@ -52,8 +49,9 @@ public class MaterialController {
         return "material/createMaterialForm";
     }
     @PostMapping("/new")
-    public String create(@Valid MaterialForm materialForm, BindingResult bindingResult, @ModelAttribute("loginMember") Employee loginMember){
+    public String create(@Valid @ModelAttribute MaterialForm materialForm, BindingResult bindingResult, @ModelAttribute("loginMember") Employee loginMember, Model model){
         if(bindingResult.hasErrors()){
+            model.addAttribute("predictRequest",new PredictRequest());
             return "material/createMaterialForm";
         }
         Material material = Material.builder()
@@ -63,17 +61,19 @@ public class MaterialController {
                 .materialDate(LocalDateTime.now())
                 .build();
         materialService.save(material);
+
         return "redirect:/material/list";
     }
 
     @PostMapping("/orderPredict")
-    public String predict(@ModelAttribute PredictRequest predictRequest, Model model) {
-        /*if(bindingResult.hasErrors()){
+    public String predict(@Valid @ModelAttribute PredictRequest predictRequest,BindingResult bindingResult2, Model model) {
+        model.addAttribute("materialForm",new MaterialForm());
+        if(bindingResult2.hasErrors()){
             return "material/createMaterialForm";
-        }*/
+        }
         PredictResult result = predictService.getPrediction(predictRequest);
         log.info("예측결과는? {} ", predictRequest.getOrders());
-        model.addAttribute("materialForm",new MaterialForm());
+
         model.addAttribute("prediction", result.getPrediction());
         model.addAttribute("predictedDate", result.getPredictedDate());
         return "material/createMaterialForm";
@@ -99,21 +99,20 @@ public class MaterialController {
         return "material/editMaterialForm";
     }
     @PostMapping("/{id}/edit")
-    public String update(@Valid MaterialForm materialForm, BindingResult bindingResult, @PathVariable("id") Long id, Model model){
+    public String update(@Valid @ModelAttribute MaterialUpdateForm materialForm, BindingResult bindingResult, @PathVariable("id") Long id, Model model){
+        Material findMaterial = materialService.findOne(id).orElseThrow(()-> new IllegalArgumentException("해당 제품을 찾을 수 없습니다."));
         if(bindingResult.hasErrors()){
             model.addAttribute("materialForm",materialForm);
-            return "/material/editMaterialForm";
+            return "material/editMaterialForm";
         }
-        Material findMaterial = materialService.findOne(id).orElseThrow(()-> new IllegalArgumentException("해당 제품을 찾을 수 없습니다."));
         Material updateMaterial = findMaterial.toBuilder()
-                .materialName(materialForm.getMaterialName())
                 .materialQuantity(materialForm.getMaterialQuantity())
                 .build();
         materialService.save(updateMaterial);
         return "redirect:/material/list";
     }
 
-    @PostMapping("/{id}/delete")
+    @GetMapping("/{id}/delete")
     public String delete(@PathVariable("id") Long id){
         Material delMaterial = materialService.findOne(id).orElseThrow(()-> new IllegalArgumentException("해당 제품을 찾을 수 없습니다."));
         materialService.delete(delMaterial.getId());

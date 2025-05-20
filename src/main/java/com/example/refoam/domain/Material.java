@@ -17,7 +17,7 @@ public class Material {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "material_id")
-    private long id;
+    private Long id;
 
     @Setter
     @Enumerated(EnumType.STRING)
