@@ -52,7 +52,7 @@
                 <tr>
                     <td th:text="${#temporals.format(material.materialDate,'yyyy-MM-dd HH:mm')}">2000-00-00 00:00</td>
                     <td>관리자</td>
-                    <td class="text-center">
+                    <td>
                         <a href="#" th:href="@{/material/{id}/edit(id=${material.id})}" class="btn btn-sm btn-refoam px-3 me-3" role="button">수 정</a>
                         <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${material.id}" class="btn btn-delete btn-sm px-3">삭 제</button>
                     </td>
