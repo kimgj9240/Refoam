@@ -80,7 +80,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-refoam" data-bs-dismiss="modal">취소</button>
                         <button type="button" class="btn btn-delete"
-                                th:onclick="|location.href='@{/employee/{id}/delete(id=${employee.id})}'|">삭제</button>
+                                th:onclick="|location.href='@{/employee/{id}/delete(id=${employee.id})}'|">삭 제</button>
                     </div>
                 </div>
             </div>
@@ -88,19 +88,19 @@
     </th:block>
     <nav th:if="${!paging.isEmpty()}">
         <ul class="pagination justify-content-center">
-            <li class="page-item" th:classappend="${paging.first}">
-                <a class="page-link logo-font fw-normal" th:href="@{|?page=0|}"><span>First </span></a>
+            <li class="page-item" th:classappend="${paging.first} ? 'disabled'">
+                <a class="page-link logo-font fw-normal" th:href="@{|?page=0|}"><i class="bi bi-chevron-double-left"></i>First</a>
             </li>
             <li class="page-item"  th:classappend="${!paging.hasPrevious()}?'disabled'">
-                <a class="page-link" th:href="@{|?page=${paging.number -1}|}"><i class="bi bi-chevron-left"></i>Previous</a>
+                <a class="page-link ps-0" th:href="@{|?page=${paging.number -1}|}"><i class="bi bi-chevron-left"></i>Previous</a>
             </li>
             <li class="page-item" th:each="page:${#numbers.sequence(0,paging.totalPages -1)}" th:classappend="${page==paging.number}?'active'" th:if="${page >= paging.number -4 and page <= paging.number +4}">
                 <a class="page-link" th:text="${page + 1}" th:href="@{|?page=${page}|}">1</a></li>
             <li class="page-item" th:classappend="${!paging.hasNext()}?'disabled'">
-                <a class="page-link" th:href="@{|?page=${paging.number +1}|}">Next <i class="bi bi-chevron-right"></i></a>
+                <a class="page-link pe-0" th:href="@{|?page=${paging.number +1}|}">Next <i class="bi bi-chevron-right"></i></a>
             </li>
-            <li class="page-item" th:classappend="${paging.first}">
-                <a class="page-link logo-font fw-normal pt-2" th:href="@{|?page=${paging.totalPages -1}|}"><span>Last</span></a>
+            <li class="page-item" th:classappend="${paging.last} ? 'disabled'">
+                <a class="page-link " th:href="@{|?page=${paging.totalPages -1}|}">Last<i class="bi bi-chevron-double-right"></i></a>
             </li>
         </ul>
     </nav>
