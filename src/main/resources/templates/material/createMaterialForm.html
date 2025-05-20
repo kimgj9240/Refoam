@@ -21,7 +21,7 @@
                         <input th:field="*{materialQuantity}" class="form-control">
                     </div>
                     <div class="text-end">
-                        <button th:type="submit" class="btn btn-primary btn-sm">입력</button>
+                        <button th:type="submit" class="btn btn-refoam px-3">입 력</button>
                     </div>
                 </form>
                 <form role="form" th:action="@{/material/orderPredict}" th:method="post" th:object="${predictRequest}" class="py-2 col-lg-6 order-1 order-lg-2 order-md-1 mb-3">
@@ -37,18 +37,20 @@
                                 <option value="">원자재를 선택하세요</option>
                                 <option th:each="materialName2 : ${T(com.example.refoam.domain.MaterialName).values()}" th:text="${materialName2}" th:value="${materialName2}"></option>
                             </select>
-                            <button th:type="submit" class="btn btn-primary ms-auto">예측하기</button>
+                            <button th:type="submit" class="btn btn-refoam px-3 ms-auto">예측하기</button>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-7 mb-2">
-                            <label class="form-label fw-bold">날짜</label>
+                        <div class="col-7 my-2">
+                            <label class="form-label logo-font fs-4 ">날짜</label>
+                            <hr class="p-0">
                             <input class="form-control mb-2" type="date" th:field="*{orders[0].date}">
                             <input class="form-control mb-2" type="date" th:field="*{orders[1].date}">
                             <input class="form-control mb-2" type="date" th:field="*{orders[2].date}">
                         </div>
-                        <div class="col-5 mb-2">
-                            <label class="form-label fw-bold">수량</label>
+                        <div class="col-5 my-2">
+                            <label class="form-label logo-font fs-4">수량</label>
+                            <hr class="p-0">
                             <input class="form-control mb-2" type="number" th:field="*{orders[0].qty}">
                             <input class="form-control mb-2" type="number" th:field="*{orders[1].qty}">
                             <input class="form-control mb-2" type="number" th:field="*{orders[2].qty}">
@@ -57,8 +59,9 @@
                         <input type="hidden" th:field="*{orders[1].materialName2}" id="material1">
                         <input type="hidden" th:field="*{orders[2].materialName2}" id="material2">
                     </div>
+
                     <div class="mb-2">
-                        <label class=" form-label fw-bold">예측 결과</label>
+                        <label class=" form-label logo-font fs-4">예측 결과</label>
                     </div>
                     <p th:if="${prediction}" th:text="'예측 일자 (D+3) : ' + ${#temporals.format(predictedDate, 'yyyy-MM-dd')} + ' 입니다'"></p>
                     <p th:if="${predictedDate}" th:text="'예측된 발주 수량 : ' + ${#numbers.formatDecimal(prediction, 1, 2)} + '개 입니다'"></p>
