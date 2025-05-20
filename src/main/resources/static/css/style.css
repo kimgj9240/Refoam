@@ -210,6 +210,11 @@ ul.navbar-nav {
 
     
 
+/* 플레이스홀더 색상 오류때메 만듦*/
+input::placeholder {
+    color: #595959 !important;
+    opacity: 1;
+}
 
 
 
