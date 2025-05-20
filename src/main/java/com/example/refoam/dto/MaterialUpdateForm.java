@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MaterialUpdateForm {
-    private long id;
+    private Long id;
     private MaterialName materialName;
     @NotNull(message = "수량은 필수입니다.")
     private int materialQuantity;

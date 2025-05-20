@@ -1,6 +1,91 @@
 <html layout:decorate="~{layout}" lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="container mb-5" layout:fragment="content">
     <h2 class="py-4">주문 리스트</h2>
-
+    <div class="table-responsive table-lg">
+        <table class="table table-hover table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>제품명</th>
+                <th>주문수량</th>
+                <th>주문날짜</th>
+                <th>담당직원</th>
+                <th>공정상태</th>
+                <th>#</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order : ${ordersList}">
+                <td th:text="${order.id}"></td>
+                <td th:text="${order.productName}"></td>
+                <td th:text="${order.orderQuantity}"></td>
+                <td th:text="${#temporals.format(order.orderDate,'yyyy-MM-dd HH:mm')}"></td>
+                <td>관리자</td>
+                <td th:text="${order.orderState}"></td>
+                <td>
+<!--                    <form th:action="@{/order/first-process/{id}(id=${order.id})}" method="post">-->
+<!--                        <button class="btn btn-sm btn-refoam" type="submit" th:disabled="${order.processList[0].status != null}">배합공정</button>-->
+<!--                    </form>-->
+                    <a href="#" th:href="@{/process/{id}/list(id=${order.id})}" class="btn btn-refoam btn-sm" role="button">공정결과</a>
+                    <button class="btn btn-sm btn-dark">주문취소</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="table-responsive table-md">
+        <table class="table table-hover table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>제품명</th>
+                <th>주문수량</th>
+                <th>주문날짜</th>
+            </tr>
+            <tr>
+                <th>담당직원</th>
+                <th>공정상태</th>
+                <th>#</th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:each="order : ${ordersList}">
+                <tr>
+                    <td>#</td>
+                    <td th:text="${order.id}"></td>
+                    <td th:text="${order.productName}"></td>
+                    <td th:text="${order.orderQuantity}"></td>
+                    <td th:text="${#temporals.format(order.orderDate,'yyyy-MM-dd HH:mm')}"></td>
+                </tr>
+                <tr>
+                    <td>관리자</td>
+                    <td th:text="${order.orderState}"></td>
+                    <td>
+<!--                        <form th:action="@{/order/first-process/{id}(id=${order.id})}" method="post">-->
+<!--                            <button class="btn btn-sm btn-refoam" type="submit" th:disabled="${order.processList[0].status != null}">배합공정</button>-->
+<!--                        </form>-->
+                        <a href="#" th:href="@{/process/{id}/list(id=${order.id})}" class="btn btn-refoam btn-sm" role="button">공정결과</a>
+                        <button class="btn btn-sm btn-dark">주문취소</button>
+                    </td>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+    </div>
+    <nav class="">
+        <ul class="pagination justify-content-center">
+            <li class="page-item disabled">
+                <a class="page-link">&lt Previous</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item active" aria-current="page">
+                <a class="page-link" href="#">2</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#">Next &gt</a>
+            </li>
+        </ul>
+    </nav>
 </div>
 </html>

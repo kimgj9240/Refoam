@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MaterialForm {
-    private long id;
+    private Long id;
     @NotNull(message = "원재료 명은 필수입니다.")
     private MaterialName materialName;
     @NotNull(message = "수량은 필수입니다.")

@@ -18,9 +18,9 @@ public class Process {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "process_id")
-    private long id;
+    private Long id;
 
-    @Setter
+    @Setter 
     private String step;
 
     @Setter

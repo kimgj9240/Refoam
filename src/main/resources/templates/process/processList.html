@@ -1,6 +1,89 @@
 <html layout:decorate="~{layout}" lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="container mb-5" layout:fragment="content">
     <h2 class="py-4">공정 결과</h2>
-
+    <div class="table-responsive table-lg">
+        <table class="table table-hover table-striped">
+            <thead>
+            <tr>
+                <th>번호</th>
+                <th>제품명</th>
+                <th>금형온도</th>
+                <th>충전시간</th>
+                <th>최고사출압</th>
+                <th>보압끝점</th>
+                <th>공정일자</th>
+                <th>결과</th>
+                <th>#</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="process : ${processes}">
+                <td th:text="${process.id}">1</td>
+                <td th:text="${process.order.productName}">EVA</td>
+                <td th:text="${process.standard.moldTemperature}">50</td>
+                <td th:text="${process.standard.timeToFill}">50</td>
+                <td th:text="${process.standard.injPressurePeak}">50</td>
+                <td th:text="${process.standard.screwPosEndHold}">50</td>
+                <td th:text="${#temporals.format(process.processDate,'yyyy-MM-dd HH:mm')}">2000-00-00 00:00</td>
+                <td>
+                    <span th:each="label : ${process.labels}">
+                        <span th:text="${label.stateCode}"></span>
+                    </span>
+                </td>
+                <td class="text-center">
+                    <a href="#" th:href="@{/material/{id}/edit(id=${material.id})}" class="btn btn-refoam btn-sm" role="button">품질검수</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="table-responsive table-md">
+        <table class="table table-hover table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>원재료명</th>
+                <th>수량</th>
+            </tr>
+            <tr>
+                <th>입고날짜</th>
+                <th>담당직원</th>
+                <th>#</th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:each="material : ${materialList}">
+                <tr>
+                    <td th:text="${material.id}">1</td>
+                    <td th:text="${material.materialName}">EVA</td>
+                    <td th:text="${material.materialQuantity}">50</td>
+                </tr>
+                <tr>
+                    <td th:text="${#temporals.format(material.materialDate,'yyyy-MM-dd HH:mm')}">2000-00-00 00:00</td>
+                    <td>관리자</td>
+                    <td class="text-center">
+                        <a href="#" th:href="@{/material/{id}/edit(id=${material.id})}" class="btn btn-sm btn-refoam" role="button">수정</a>
+                        <a href="#" th:href="@{/material/{id}/delete(id=${material.id})}" class="btn btn-sm btn-delete" role="button">삭제</a>
+                    </td>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+    </div>
+    <nav class="">
+        <ul class="pagination justify-content-center">
+            <li class="page-item disabled">
+                <a class="page-link">&lt Previous</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item active" aria-current="page">
+                <a class="page-link" href="#">2</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#">Next &gt</a>
+            </li>
+        </ul>
+    </nav>
 </div>
 </html>
