@@ -46,6 +46,10 @@ public class Standard {
 
     private double shotVolume;
 
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Orders order;
+
     @OneToMany(mappedBy = "standard", cascade = CascadeType.ALL)
     private List<Process> processes = new ArrayList<>();
 }

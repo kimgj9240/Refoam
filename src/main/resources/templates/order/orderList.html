@@ -23,11 +23,22 @@
                 <td>관리자</td>
                 <td th:text="${order.orderState}"></td>
                 <td>
-<!--                    <form th:action="@{/order/first-process/{id}(id=${order.id})}" method="post">-->
-<!--                        <button class="btn btn-sm btn-refoam" type="submit" th:disabled="${order.processList[0].status != null}">배합공정</button>-->
-<!--                    </form>-->
-                    <a href="#" th:href="@{/process/{id}/list(id=${order.id})}" class="btn btn-refoam btn-sm" role="button">공정결과</a>
-                    <a href="#" th:href="@{/order/{id}/delete(id=${order.id})}" class="btn btn-sm btn-dark" th:disabled="${order.orderState == '배합완료'}">주문취소</a>
+                    <!-- 배합시작 버튼-->
+                    <form th:action="@{/order/{id}/first-process(id=${order.id})}" method="post" style="display:inline;">
+                        <button type="submit"
+                                class="btn btn-sm btn-primary"
+                                th:disabled="${order.orderState != '준비 중'}">배합시작</button>
+                    </form>
+                    <!-- 공정시작 버튼 -->
+                    <form th:action="@{/process/{id}/list(id=${order.id})}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-delete btn-sm"
+                                th:disabled="${order.orderState =='준비 중' or order.orderState == '배합실패'}">공정시작</button>
+                    </form>
+                    <!-- 주문취소 버튼 -->
+                    <a th:href="@{/order/{id}/delete(id=${order.id})}"
+                       class="btn btn-sm btn-dark"
+                       th:if="${order.orderState == '준비 중'}">주문취소</a>
+                    <span class="btn btn-sm btn-dark disabled" th:if="${order.orderState != '준비 중'}">주문취소</span>
                 </td>
             </tr>
             </tbody>

@@ -20,14 +20,14 @@
             <tr th:each="process : ${processes}">
                 <td th:text="${process.id}">1</td>
                 <td th:text="${process.order.productName}">EVA</td>
-                <td th:text="${process.standard.moldTemperature}">50</td>
-                <td th:text="${process.standard.timeToFill}">50</td>
-                <td th:text="${process.standard.injPressurePeak}">50</td>
-                <td th:text="${process.standard.screwPosEndHold}">50</td>
-                <td th:text="${#temporals.format(process.processDate,'yyyy-MM-dd HH:mm')}">2000-00-00 00:00</td>
+                <td th:text="${#numbers.formatDecimal(process.standard.moldTemperature, 1, 3)}"></td>
+                <td th:text="${#numbers.formatDecimal(process.standard.timeToFill, 1, 3)}">50</td>
+                <td th:text="${#numbers.formatDecimal(process.standard.injPressurePeak, 1, 3)}">50</td>
+                <td th:text="${#numbers.formatDecimal(process.standard.screwPosEndHold, 1, 3)}">50</td>
+                <td th:text="${#temporals.format(process.processDate,'yy-MM-dd HH:mm')}">2000-00-00 00:00</td>
                 <td>
                     <span th:each="label : ${process.labels}">
-                        <span th:text="${label.stateCode}"></span>
+                        <span th:text="${label.stateCode.name()}"></span>
                     </span>
                 </td>
                 <td class="text-center">
