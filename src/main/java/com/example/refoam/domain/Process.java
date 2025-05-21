@@ -29,6 +29,7 @@ public class Process {
     @Setter
     private LocalDateTime processDate;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "standard_id")
     private Standard standard;

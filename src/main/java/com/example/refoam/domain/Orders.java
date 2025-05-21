@@ -43,8 +43,8 @@ public class Orders {
     @OneToMany(mappedBy = "order")
     private List<Process> processList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Standard> standardList = new ArrayList<>();
+    /*@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Standard> standardList = new ArrayList<>();*/
 
     // 연관관계 매핑
     @Builder.Default // 기본값이 무시되지 않도록 보장하는 어노테이션

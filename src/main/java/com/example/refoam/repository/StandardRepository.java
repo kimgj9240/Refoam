@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface StandardRepository extends JpaRepository<Standard, Long> {
     //주문 번호로 공정 결과 모두 가져오기
-    List<Standard> findAllByOrderId(Long orderId);
+    //List<Standard> findAllByOrderId(Long orderId);
 }
