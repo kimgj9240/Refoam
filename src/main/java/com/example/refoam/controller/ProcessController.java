@@ -77,11 +77,9 @@ public class ProcessController {
 
 
             Process process = Process.builder()
-                    .step("2공정")
                     .status("COMPLETED")
                     .standard(standard)
                     .order(order)
-                    //.labels(labelList)
                     .processDate(LocalDateTime.now())
                     .build();
 

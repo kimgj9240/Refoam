@@ -46,12 +46,12 @@ public class Standard {
 
     private double shotVolume;
 
+    @Enumerated(EnumType.STRING)
+    private ProductLabel productLabel;
+
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Orders order;
-
-    @OneToMany(mappedBy = "standard")
-    private List<Label> labels = new ArrayList<>();
 
     @OneToMany(mappedBy = "standard")
     private List<QualityCheck> qualityChecks = new ArrayList<>();

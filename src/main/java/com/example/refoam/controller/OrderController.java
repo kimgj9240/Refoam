@@ -67,7 +67,7 @@ public class OrderController {
                 .orderQuantity(orderForm.getOrderQuantity())
                 .orderDate(LocalDateTime.now())
                 .employee(loginMember)
-                //.orderState("준비 중")
+                .orderState("준비 중")
                 .build();
 
         orderService.save(order);

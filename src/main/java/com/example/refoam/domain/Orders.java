@@ -31,9 +31,9 @@ public class Orders {
 
     private LocalDateTime orderDate;
 
-    /*// 주문 리스트 공정상태
+    // 주문 리스트 공정상태
     @Setter
-    private String orderState;*/
+    private String orderState;
 
 
     @OneToMany(mappedBy = "order")

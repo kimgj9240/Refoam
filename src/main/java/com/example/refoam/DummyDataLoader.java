@@ -113,7 +113,6 @@ public class DummyDataLoader implements CommandLineRunner {
                 .build();
         standardService.save(standard1);
         Process process = Process.builder()
-                .step("1")
                 .status("PENDING")
                 .order(order)
                 .processDate(LocalDateTime.now())
@@ -138,7 +137,6 @@ public class DummyDataLoader implements CommandLineRunner {
                 .build();
         standardService.save(standard2);
         Process process2 = Process.builder()
-                .step("1")
                 .status("PENDING")
                 .order(order)
                 .processDate(LocalDateTime.now())
@@ -163,7 +161,6 @@ public class DummyDataLoader implements CommandLineRunner {
                 .build();
         standardService.save(standard3);
         Process process3 = Process.builder()
-                .step("1")
                 .status("PENDING")
                 .order(order)
                 .processDate(LocalDateTime.now())
@@ -188,7 +185,6 @@ public class DummyDataLoader implements CommandLineRunner {
                 .build();
         standardService.save(standard4);
         Process process4 = Process.builder()
-                .step("1")
                 .status("PENDING")
                 .order(order)
                 .processDate(LocalDateTime.now())
@@ -213,7 +209,6 @@ public class DummyDataLoader implements CommandLineRunner {
                 .build();
         standardService.save(standard5);
         Process process5 = Process.builder()
-                .step("1")
                 .status("PENDING")
                 .order(order)
                 .processDate(LocalDateTime.now())
@@ -238,7 +233,6 @@ public class DummyDataLoader implements CommandLineRunner {
                 .build();
         standardService.save(standard6);
         Process process6 = Process.builder()
-                .step("1")
                 .status("PENDING")
                 .order(order)
                 .processDate(LocalDateTime.now())
@@ -263,7 +257,6 @@ public class DummyDataLoader implements CommandLineRunner {
                 .build();
         standardService.save(standard7);
         Process process7 = Process.builder()
-                .step("1")
                 .status("PENDING")
                 .order(order)
                 .processDate(LocalDateTime.now())
@@ -288,7 +281,6 @@ public class DummyDataLoader implements CommandLineRunner {
                 .build();
         standardService.save(standard8);
         Process process8 = Process.builder()
-                .step("1")
                 .status("PENDING")
                 .order(order)
                 .processDate(LocalDateTime.now())
