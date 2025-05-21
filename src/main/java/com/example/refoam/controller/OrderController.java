@@ -80,20 +80,11 @@ public class OrderController {
         Orders order = orderService.findOneOrder(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 주문은 존재하지 않습니다."));
 
-        /*// "준비 중" 상태일 때만 배합 처리
-        if (!"준비 중".equals(p.g())) {
-            return "redirect:/order/list";
-        }
+        // 80% 확률로 '배합완료', 20% 확률로 '배합실패'
+        String state = Math.random() < 0.8 ? "배합완료" : "배합실패";
+        order.setOrderState(state);
 
-        // 95% 확률 배합완료, 5% 배합실패
-        double chance = Math.random();
-        if (chance < 0.5) {
-            order.setOrderState("배합완료");
-        } else {
-            order.setOrderState("배합실패");
-        }*/
-
-        orderService.save(order); // 상태 업데이트
+        orderService.save(order);
 
         return "redirect:/order/list";
     }

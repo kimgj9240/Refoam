@@ -1,5 +1,7 @@
 package com.example.refoam.service;
 
+import com.example.refoam.domain.ProductLabel;
+
 import java.util.Random;
 
 import static org.codehaus.groovy.runtime.DefaultGroovyMethods.round;

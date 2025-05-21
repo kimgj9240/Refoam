@@ -49,16 +49,10 @@ public class Standard {
     @Enumerated(EnumType.STRING)
     private ProductLabel productLabel;
 
-    /*@ManyToOne
-    @JoinColumn(name = "order_id")
-    private Orders order;*/
-
     @OneToMany(mappedBy = "standard")
     private List<QualityCheck> qualityChecks = new ArrayList<>();
 
-    /*@OneToMany(mappedBy = "standard", cascade = CascadeType.ALL)
-    private List<Process> processes = new ArrayList<>();*/
-    @ManyToOne
-    @JoinColumn(name = "process_id")
+    // standard <-> process 간 양방향 연결 ( 1 : 1 )
+    @OneToOne(mappedBy = "standard" , cascade = CascadeType.ALL)
     private Process process;
 }
