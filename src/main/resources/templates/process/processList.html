@@ -1,6 +1,7 @@
 <html layout:decorate="~{layout}" lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="container mb-5" layout:fragment="content">
     <h2 class="py-4">공정 결과</h2>
+    <a href="#" th:href="@{/quality/{id}/check(id=${processes[0].id})}" class="btn btn-refoam ms-auto" role="button">전체 품질검수</a>
     <div class="table-responsive table-lg">
         <table class="table table-hover table-striped">
             <thead>
@@ -26,14 +27,14 @@
                 <td th:text="${#numbers.formatDecimal(process.standard.screwPosEndHold, 1, 3)}">50</td>
                 <td th:text="${#temporals.format(process.processDate,'yy-MM-dd HH:mm')}">2000-00-00 00:00</td>
                 <td>
-                    <span th:each="label : ${process.labels}">
+                    <!--<span th:each="label : ${process.labels}">
                         <span th:text="${label.stateCode.name()}"></span>
-                    </span>
+                    </span>-->
                 </td>
                 <td class="text-center">
-<!--                    <a href="#" th:href="@{/process/{id}/list(id=${process.id})}" class="btn btn-refoam btn-sm" role="button">품질검수</a>-->
+<!--                    <a href="#" th:href="@{/process/{id}/list(id=${process.id})}" class="btn btn-refoam btn-sm" role="button">품질검수</a>   th:onclick="|location.href='@{/quality/{id}/check(id=${process.standard.id})}'|"-->
                     <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-refoam btn-sm" data-bs-toggle="modal" th:attr="data-bs-target='#exampleModal'+${process.id}">
+                    <button type="button"  class="btn btn-refoam btn-sm" data-bs-toggle="modal" th:attr="data-bs-target='#exampleModal'+${process.standard.id}">
                         품질검수
                     </button>
                     <!-- Modal -->
@@ -98,12 +99,12 @@
                                             <td>샷 볼륨</td>
                                             <td th:text="${process.standard.shotVolume}">18.74</td>
                                             <td>공정결과</td>
-                                            <td th:text="${process.labels}">OK</td><!--라벨 매핑 수정필요-->
+                                            <td>OK</td><!--라벨 매핑 수정-->
                                         </tr>
                                     </table>
                                     <div>
                                         <p>검수결과</p>
-                                        <span>NORMAL60</span> 제품은 양품으로 판정되었습니다.
+                                        <span th:text="${process.order.productName.name()}">NORMAL60</span> 제품은 <span th:each="qualitycheck : ${process.standard.qualityChecks}" th:if="${qualitycheck.standard.id ==process.standard.id}" th:text="${qualitycheck.checkResult}">양품</span>으로 판정되었습니다.
                                     </div>
                                 </div>
                                 <div class="modal-footer">

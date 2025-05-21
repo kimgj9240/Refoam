@@ -53,6 +53,9 @@ public class Standard {
     @OneToMany(mappedBy = "standard")
     private List<Label> labels = new ArrayList<>();
 
+    @OneToMany(mappedBy = "standard")
+    private List<QualityCheck> qualityChecks = new ArrayList<>();
+
     @OneToMany(mappedBy = "standard", cascade = CascadeType.ALL)
     private List<Process> processes = new ArrayList<>();
 }

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +18,7 @@ public class StandardService {
     }
 
     //주문 번호로 공정 결과 조회
-    public List<Standard> findByOrderId(Long orderId){
-        return standardRepository.findAllByOrderId(orderId);
+    public Optional<Standard> findOne(Long id){
+        return standardRepository.findById(id);
     }
 }

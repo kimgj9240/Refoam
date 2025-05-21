@@ -29,10 +29,6 @@ public class Process {
     @Setter
     private LocalDateTime processDate;
 
-    @OneToMany(mappedBy = "process")
-    private List<QualityCheck> qualityChecks = new ArrayList<>();
-
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "standard_id")
     private Standard standard;

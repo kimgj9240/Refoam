@@ -2,6 +2,10 @@ package com.example.refoam.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -9,14 +13,15 @@ public class QualityCheck {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Setter
+    private String checkResult;
 
-    private boolean checkResult;
+    @Setter
+    private String inputDate;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "process_id")
-    private Process process;
+    @JoinColumn(name = "standard_id")
+    private Standard standard;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "qualityCheckInput_id")
-    private QualityCheckInput qualityCheckInput;
 }
