@@ -30,10 +30,8 @@ public class Process {
     private LocalDateTime processDate;
 
     @OneToMany(mappedBy = "process")
-    private List<Label> labels = new ArrayList<>();
-
-    @OneToMany(mappedBy = "process")
     private List<QualityCheck> qualityChecks = new ArrayList<>();
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "standard_id")

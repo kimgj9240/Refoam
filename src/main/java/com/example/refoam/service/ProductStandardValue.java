@@ -1,6 +1,9 @@
 package com.example.refoam.service;
 
 import java.util.Random;
+
+import static org.codehaus.groovy.runtime.DefaultGroovyMethods.round;
+
 interface ProductStandardConst {
     double MIN_MELT_TEMPERATURE = 105.900;
     double MAX_MELT_TEMPERATURE = 107.989;
@@ -57,6 +60,6 @@ interface ProductStandardConst {
 public class ProductStandardValue implements ProductStandardConst{
     public double getRandomValue(double min, double max){
         Random random = new Random();
-        return random.nextDouble(min,max);
+        return round(random.nextDouble(min,max),3);
     }
 }

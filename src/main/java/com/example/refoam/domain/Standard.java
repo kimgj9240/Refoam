@@ -50,6 +50,9 @@ public class Standard {
     @JoinColumn(name = "order_id")
     private Orders order;
 
+    @OneToMany(mappedBy = "standard")
+    private List<Label> labels = new ArrayList<>();
+
     @OneToMany(mappedBy = "standard", cascade = CascadeType.ALL)
     private List<Process> processes = new ArrayList<>();
 }

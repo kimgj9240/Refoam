@@ -64,15 +64,24 @@ public class ProcessController {
                     .build();
 
             standardService.save(standard);
+            /*  라벨 기준
+            screw_pos_end_hold
+            8.835
+            inj_pressure_peak
+            915
+            # time_to_fill
+            11
+            # mold_temp
+            81.5~80.5 사이의 time_to_fill 6.864인 경우에서 가장 많은 불량 발생*/
 
-            List<Label> labelList = new ArrayList<>();
+
 
             Process process = Process.builder()
                     .step("2공정")
                     .status("COMPLETED")
                     .standard(standard)
                     .order(order)
-                    .labels(labelList)
+                    //.labels(labelList)
                     .processDate(LocalDateTime.now())
                     .build();
 
@@ -81,7 +90,7 @@ public class ProcessController {
 
 
 
-        order.setOrderState("공정완료");
+        //order.setOrderState("공정완료");
         orderService.save(order);
 
         return "redirect:/process/" + orderId + "/list";

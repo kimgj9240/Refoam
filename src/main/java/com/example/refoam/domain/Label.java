@@ -18,6 +18,6 @@ public class Label {
     private StateCode stateCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "process_id")
-    private Process process;
+    @JoinColumn(name = "standard_id")
+    private Standard standard;
 }
