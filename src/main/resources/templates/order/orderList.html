@@ -62,13 +62,12 @@
             <tr>
                 <th>담당직원</th>
                 <th>공정상태</th>
-                <th>#</th>
+                <th colspan="2">#</th>
             </tr>
             </thead>
             <tbody>
             <th:block th:each="order : ${ordersList}">
                 <tr>
-                    <td>#</td>
                     <td th:text="${order.id}"></td>
                     <td th:text="${order.productName}"></td>
                     <td th:text="${order.orderQuantity}"></td>
@@ -77,7 +76,7 @@
                 <tr>
                     <td th:text="${order.employee.username}"></td>
                     <td th:text="${order.orderState}"></td>
-                    <td>
+                    <td colspan="2">
                         <!-- 배합시작 버튼-->
                         <form th:action="@{/order/{id}/first-process(id=${order.id})}" method="post" style="display:inline;">
                             <button type="submit"

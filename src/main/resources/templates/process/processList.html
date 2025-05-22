@@ -128,7 +128,7 @@
                 <th>보압끝점</th>
                 <th>공정일자</th>
                 <th>결과</th>
-                <th>#</th>
+                <th colspan="2">#</th>
             </tr>
             </thead>
             <tbody>
@@ -144,7 +144,7 @@
                     <td th:text="${process.standard.screwPosEndHold}">50</td>
                     <td th:text="${#temporals.format(process.processDate,'yy-MM-dd HH:mm')}">20-00-00 00:00</td>
                     <td th:text="${process.standard.productLabel}"></td>
-                    <td class="text-center">
+                    <td class="text-center" colspan="2">
                         <!--                    <a href="#" th:href="@{/process/{id}/list(id=${process.id})}" class="btn btn-refoam btn-sm" role="button">품질검수</a>   th:onclick="|location.href='@{/quality/{id}/check(id=${process.standard.id})}'|"-->
                         <!-- Button trigger modal -->
                         <button type="button"  class="btn btn-refoam btn-sm" data-bs-toggle="modal" th:attr="data-bs-target='#exampleModal'+${process.standard.id}">
