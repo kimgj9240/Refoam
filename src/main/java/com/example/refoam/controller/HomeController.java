@@ -32,7 +32,7 @@ public class HomeController {
         return "home";
     }
 
-    @PostMapping("/")
+    @PostMapping("/login")
     public String login(@Valid @ModelAttribute LoginForm loginForm, BindingResult bindingResult, @RequestParam(value = "redirectURL", defaultValue = "/main")String redirectURL, HttpServletRequest request){
         if (bindingResult.hasErrors()){
             return "home";
