@@ -8,12 +8,14 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <title>Refoam</title>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 <!--navbar 영역-->
 <nav th:replace="~{fragments/navbar :: navbar(${activeMenu})}"></nav>
 <div id="nav-hidden"></div>
 <!--content 영역-->
+<main class="flex-grow-1">
 <th:block layout:fragment="content"></th:block>
+</main>
 <!--footer 영역-->
 <footer th:replace="~{fragments/footer :: footer}"></footer>
 <!--스크립트 영역-->

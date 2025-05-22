@@ -219,14 +219,11 @@ input::placeholder {
 
 
 .footer-bg {
-    background-color: #4166F5;
+    color: #4166F5;
+    background-color: #ddf0f6;
+    font-weight: 600;
 
 }
-
-.footer-hidden{
-    height: 72px;
-}
-
 
 
 a {

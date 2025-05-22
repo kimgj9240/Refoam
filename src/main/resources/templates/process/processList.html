@@ -1,7 +1,7 @@
 <html layout:decorate="~{layout}" lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="container mb-5" layout:fragment="content">
     <h2 class="py-4">공정 결과</h2>
-    <a href="#" th:href="@{/quality/{id}/check(id=${processes[0].id})}" class="btn btn-refoam ms-auto" role="button">전체 품질검수</a>
+    <a href="#" th:href="@{/quality/{id}/check(id=${orderId})}" class="btn btn-refoam ms-auto" role="button">전체 품질검수</a>
     <div class="table-responsive table-lg">
         <table class="table table-hover table-striped">
             <thead>
