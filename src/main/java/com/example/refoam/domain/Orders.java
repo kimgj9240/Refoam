@@ -35,7 +35,6 @@ public class Orders {
     @Setter
     private String orderState;
 
-
     @OneToMany(mappedBy = "order")
     private List<ErrorStats> errorStateList = new ArrayList<>();
 
@@ -43,14 +42,11 @@ public class Orders {
     @OneToMany(mappedBy = "order")
     private List<Process> processList = new ArrayList<>();
 
-    /*@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Standard> standardList = new ArrayList<>();*/
-
     // 연관관계 매핑
     @Builder.Default // 기본값이 무시되지 않도록 보장하는 어노테이션
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderMaterial> orderMaterials = new ArrayList<>();
-    
+
     public void addOrderMaterial(OrderMaterial orderMaterial){
         orderMaterials.add(orderMaterial); // 1. 자식 리스트에 추가
         orderMaterial.setOrder(this); // 2. 자식의 부모 설정

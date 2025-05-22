@@ -91,12 +91,12 @@ public class OrderService {
     public Optional<Orders> findOneOrder(Long orderId){
         return orderRepository.findById(orderId);
     }
-    
+
     // 전체 주문 조회
     public List<Orders> findOrders(){
         return orderRepository.findAll();
     }
-    
+
     // 주문 삭제
     @Transactional
     public void deleteOrder(Long orderId){

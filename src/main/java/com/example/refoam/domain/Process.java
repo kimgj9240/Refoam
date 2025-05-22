@@ -20,17 +20,15 @@ public class Process {
     @Column(name = "process_id")
     private Long id;
 
-//    @Setter
-//    private String step;
-
     @Setter
     private String status;
 
     @Setter
     private LocalDateTime processDate;
 
+    // standard <-> process 간 양방향 연결 ( 1 : 1 )
     @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "standard_id")
     private Standard standard;
 
