@@ -5,7 +5,7 @@
         <div class="col-md-10">
             <div class="row">
                 <form role="form" th:action="@{/material/new}" th:method="post" th:object="${materialForm}" class="py-2 col-lg-6 order-2 order-lg-1 order-md-2 mb-3">
-                    <h2 class="py-4">재고 입력</h2>
+                    <h2 class="py-2 py-md-4">재고 입력</h2>
                     <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors()}">
                         <div th:each="err : ${#fields.allErrors()}" th:text="${err}"></div>
                     </div>
@@ -65,7 +65,7 @@
                     </div>
                     <p th:if="${prediction}" th:text="'예측 일자 (D+3) : ' + ${#temporals.format(predictedDate, 'yyyy-MM-dd')} + ' 입니다'"></p>
                     <p th:if="${predictedDate}" th:text="'예측된 발주 수량 : ' + ${#numbers.formatDecimal(prediction, 1, 2)} + '개 입니다'"></p>
-                    <hr class="my-2 my-md-4">
+                    <hr class="mt-2 mb-0 my-md-4">
                 </form>
             </div>
             <script>
