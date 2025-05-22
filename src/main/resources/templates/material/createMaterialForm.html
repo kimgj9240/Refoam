@@ -65,7 +65,7 @@
                     </div>
                     <p th:if="${prediction}" th:text="'예측 일자 (D+3) : ' + ${#temporals.format(predictedDate, 'yyyy-MM-dd')} + ' 입니다'"></p>
                     <p th:if="${predictedDate}" th:text="'예측된 발주 수량 : ' + ${#numbers.formatDecimal(prediction, 1, 2)} + '개 입니다'"></p>
-                    <hr class="my-4">
+                    <hr class="my-2 my-md-4">
                 </form>
             </div>
             <script>
