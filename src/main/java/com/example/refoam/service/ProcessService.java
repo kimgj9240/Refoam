@@ -29,9 +29,7 @@ public class ProcessService {
         ProductStandardValue productStandardValue = new ProductStandardValue();
 
         // 조회한 주문 번호의 주문 수량
-        int quantity = order.getOrderQuantity();
-
-        for (int i = 0; i < quantity; i++) {
+        for (int i = 0; i < order.getOrderQuantity(); i++) {
             // 랜덤값 생성
             double melt = productStandardValue.getRandomValue(ProductStandardValue.MIN_MELT_TEMPERATURE, ProductStandardValue.MAX_MELT_TEMPERATURE);
             double mold = productStandardValue.getRandomValue(ProductStandardValue.MIN_MOLD_TEMPERATURE, ProductStandardValue.MAX_MOLD_TEMPERATURE);
