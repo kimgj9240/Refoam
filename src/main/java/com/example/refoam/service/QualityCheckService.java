@@ -88,7 +88,8 @@ public class QualityCheckService {
             qualityCheckRepository.save(record);
         }
     }
-    public Optional<QualityCheck> findOne(Standard standard){
-        return qualityCheckRepository.findByStandard(standard);
+    public int selectQualityCheck(Long orderId){
+        Process selectprocess = processService.findOneProcess(orderId).orElseThrow(()-> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
+        return selectprocess.getStandard().getQualityChecks().size();
     }
 }

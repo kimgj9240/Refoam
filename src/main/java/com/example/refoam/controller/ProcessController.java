@@ -2,10 +2,7 @@ package com.example.refoam.controller;
 
 import com.example.refoam.domain.*;
 import com.example.refoam.domain.Process;
-import com.example.refoam.service.OrderService;
-import com.example.refoam.service.ProcessService;
-import com.example.refoam.service.ProductStandardValue;
-import com.example.refoam.service.StandardService;
+import com.example.refoam.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -25,13 +22,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProcessController {
     private final ProcessService processService;
-    private final OrderService orderService;
-    private final StandardService standardService;
+    private final QualityCheckService qualityCheckService;
 
     @GetMapping("/{id}/list")
     public String processList(@PathVariable("id") Long orderId, Model model){
         List<Process> processes = processService.findAllOrder(orderId);
+        int qualityCheckCount = qualityCheckService.selectQualityCheck(orderId);
         model.addAttribute("processes",processes);
+        model.addAttribute("qualityCheckCount",qualityCheckCount);
         model.addAttribute("orderId",orderId);
 
         return "process/processList";
