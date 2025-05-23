@@ -1,8 +1,10 @@
 package com.example.refoam.controller;
 
 import com.example.refoam.domain.Employee;
+import com.example.refoam.domain.MaterialName;
 import com.example.refoam.dto.LoginForm;
 import com.example.refoam.service.LoginService;
+import com.example.refoam.service.MaterialService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -16,11 +18,18 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Controller
 @Slf4j
 @RequiredArgsConstructor
 public class HomeController {
     private final LoginService loginService;
+    private final MaterialService materialService;
+
     @GetMapping("/")
     public String home(HttpSession session, Model model,
                        @RequestParam(value = "redirectURL", defaultValue = "/main") String redirectURL) {
@@ -65,7 +74,42 @@ public class HomeController {
     }
 
     @GetMapping("/main")
-    public String main(){
+    public String main(Model model){
+        Map<MaterialName, Long> rawMap = materialService.getMaterialQuantities();
+
+        // 재고 차트 순서 고정 (새로고침시 순서 바뀌는 거 방지)
+        Map<MaterialName, Long> materialMap = rawMap.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (a,b) -> a,
+                        LinkedHashMap::new
+                ));
+
+        List<String> materialLabels = materialMap.keySet().stream()
+                .map(Enum::name)
+                .toList();
+
+        List<Long> materialData = materialMap.values().stream().toList();
+
+        // 원자재 그래프 막대 색 지정
+        Map<MaterialName, String> colorMap = Map.of(
+                MaterialName.EVA, "rgba(102, 204, 204, 1)",
+                MaterialName.CARBON_BLACK, "rgba(50, 50, 50, 1)",
+                MaterialName.TITANIUM_DIOXIDE, "rgba(230, 230, 230, 1)",
+                MaterialName.ULTRAMARINE_BLUE, "rgba(54, 92, 235, 1)",
+                MaterialName.IRON_OXIDE_RED, "rgba(180, 60, 60, 1)"
+        );
+
+
+        List<String> materialColors = materialMap.keySet().stream()
+                .map(colorMap::get)
+                .toList();
+
+        model.addAttribute("materialLabels", materialLabels);
+        model.addAttribute("materialData", materialData);
+        model.addAttribute("materialColors", materialColors);
         return "main";}
     
     // 로그아웃 후 다른 아이디로 로그인했을 때 404 에러 뜨는거 방지용으로 만듦

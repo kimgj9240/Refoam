@@ -3,8 +3,44 @@
     <h2 class="py-4">공정 건수</h2>
     <h2 class="py-4">에러 건수</h2>
     <h2 class="py-4">재고 건수</h2>
-    <span th:text="${T(com.example.refoam.domain.PositionName).ADMIN}"></span>
+    <canvas id="materialChart" height="100"></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script th:inline="javascript">
+        const materialLabels = /*[[${materialLabels}]]*/ [];
+        const materialData = /*[[${materialData}]]*/ [];
+        const materialColors = /*[[${materialColors}]]*/ [];
 
+
+        const ctx2 = document.getElementById('materialChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: materialLabels,
+                datasets: [{
+                    label: '원재료별 수량',
+                    data: materialData,
+                    backgroundColor: materialColors,
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true },
+                    x: { title: { display: true, text: '원재료' } }
+                }
+            }
+        });
+    </script>
+    <span th:text="${T(com.example.refoam.domain.PositionName).ADMIN}"></span>
     <span th:if="${loginMember != null}" th:text="${loginMember.position}">포지션</span>
 
 

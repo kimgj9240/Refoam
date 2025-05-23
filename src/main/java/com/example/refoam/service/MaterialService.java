@@ -3,6 +3,7 @@ package com.example.refoam.service;
 import com.example.refoam.domain.Material;
 import com.example.refoam.domain.MaterialName;
 import com.example.refoam.domain.ProductName;
+import com.example.refoam.dto.MaterialChart;
 import com.example.refoam.repository.MaterialRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -13,10 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -108,5 +106,17 @@ public class MaterialService {
 
         return this.materialRepository.findAll(pageable);
     }
+    public List<MaterialChart> getMaterialChart() {
+        List<Material> materials = materialRepository.findAll();
 
+        return materials.stream()
+                .collect(Collectors.groupingBy(
+                        m -> m.getMaterialDate().toLocalDate(),
+                        Collectors.summingInt(Material::getMaterialQuantity)
+                ))
+                .entrySet().stream()
+                .map(entry -> new MaterialChart(entry.getKey(), entry.getValue()))
+                .sorted(Comparator.comparing(MaterialChart::getDate))
+                .toList();
+    }
 }
