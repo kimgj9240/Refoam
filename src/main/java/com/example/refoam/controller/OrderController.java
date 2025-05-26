@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -90,9 +91,13 @@ public class OrderController {
     }
 
     @GetMapping("/list")
-    public String list(Model model){
-        List<Orders> ordersList = orderService.findOrders();
-        model.addAttribute("ordersList", ordersList);
+    public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page){
+//        List<Orders> ordersList = orderService.findOrders();
+        Page<Orders> paging = this.orderService.getList(page);
+
+//        model.addAttribute("ordersList", ordersList);
+        model.addAttribute("ordersList", paging);
+        model.addAttribute("activeMenu", 3);
         return "order/orderList";
     }
 

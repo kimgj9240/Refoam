@@ -7,6 +7,8 @@ import com.example.refoam.domain.Standard;
 import com.example.refoam.repository.ProcessRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -100,4 +102,12 @@ public class ProcessService {
 //        log.info("랜덤값 : {}", productStandardValue.getRandomValue(ProductStandardConst.MIN_MELT_TEMPERATURE, ProductStandardConst.MAX_MELT_TEMPERATURE));
         return processRepository.findAllByOrder_Id(orderId);
     }
+    // 페이지네이션 구현용 메서드
+    public Page<Process> getList(Long orderId, int page){
+        PageRequest pageable = PageRequest.of(page, 12);
+
+
+        return this.processRepository.findAllByOrder_Id(orderId,pageable);
+    }
+
 }

@@ -9,7 +9,7 @@
         <table class="table table-hover table-striped">
             <thead>
             <tr>
-                <th class="ps-3">번호</th>
+                <th class="text-center">번호</th>
                 <th>제품명</th>
                 <th>금형온도</th>
                 <th>충전시간</th>
@@ -17,12 +17,12 @@
                 <th>보압끝점</th>
                 <th>공정일자</th>
                 <th>결과</th>
-                <th colspan="2">#</th>
+                <th class="text-center"> #</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="process : ${processes}">
-                <td th:text="${process.id}">1</td>
+            <tr th:each="process : ${processes.content}">
+                <td th:text="${process.id}" class="text-center">1</td>
                 <td th:text="${process.order.productName}">EVA</td>
                 <td th:text="${process.standard.moldTemperature}"></td>
                 <td th:text="${process.standard.timeToFill}">50</td>
@@ -33,86 +33,10 @@
                 <td class="text-center">
                     <!--                    <a href="#" th:href="@{/process/{id}/list(id=${process.id})}" class="btn btn-refoam btn-sm" role="button">품질검수</a>   th:onclick="|location.href='@{/quality/{id}/check(id=${process.standard.id})}'|"-->
                     <!-- Button trigger modal -->
-                    <button type="button"  class="btn btn-refoam btn-sm" data-bs-toggle="modal" th:attr="data-bs-target='#exampleModal'+${process.standard.id}"
-                    th:disabled="${process.standard.qualityChecks.isEmpty()}">
+                    <button type="button"  class="btn btn-refoam btn-sm"  th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${process.standard.id}"
+                            th:disabled="${process.standard.qualityChecks.isEmpty()}">
                         품질검수
                     </button>
-                    <!-- Modal -->
-                    <div class="modal fade" th:id="'exampleModal'+${process.id}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="exampleModalLabel">검수 결과</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <table class="table table-bordered  border-dark table-striped-columns table-processes">
-                                        <tr>
-                                            <td>제품번호</td>
-                                            <td th:text="${process.id}">1</td>
-                                            <td>제품명</td>
-                                            <td th:text="${process.order.productName}">NORMAL60</td>
-                                        </tr>
-                                        <tr>
-                                            <td>공정일자</td>
-                                            <td th:text="${#temporals.format(process.processDate,'yyyy-MM-dd HH:mm')}">2025-05-01 14:00</td>
-                                            <td>담당자</td>
-                                            <td th:text="${process.order.employee.username}">관리자</td>
-                                        </tr>
-                                        <tr>
-                                            <td>융용온도</td>
-                                            <td th:text="${process.standard.meltTemperature}">105.49</td>
-                                            <td>금형온도</td>
-                                            <td th:text="${process.standard.moldTemperature}">80.5</td>
-                                        </tr>
-                                        <tr>
-                                            <td>충전시간</td>
-                                            <td th:text="${process.standard.timeToFill}">6.864</td>
-                                            <td>가소화시간</td>
-                                            <td th:text="${process.standard.plasticizingTime}">3.21</td>
-                                        </tr>
-                                        <tr>
-                                            <td>사이클시간</td>
-                                            <td th:text="${process.standard.cycleTime}">74.78</td>
-                                            <td>폐쇄 힘</td>
-                                            <td th:text="${process.standard.closingForce}">901.22</td>
-                                        </tr>
-                                        <tr>
-                                            <td>최고 형체하중</td>
-                                            <td th:text="${process.standard.clampingForcePeak}">918.4</td>
-                                            <td>최고 회전력</td>
-                                            <td th:text="${process.standard.torquePeak}">117.1</td>
-                                        </tr>
-                                        <tr>
-                                            <td>평균 회전력</td>
-                                            <td th:text="${process.standard.torqueMean}">106.2</td>
-                                            <td>최고 배압력</td>
-                                            <td th:text="${process.standard.backPressurePeak}">145.9</td>
-                                        </tr>
-                                        <tr>
-                                            <td>최고 사출압력</td>
-                                            <td th:text="${process.standard.injPressurePeak}">900.2</td>
-                                            <td>보압끝점</td>
-                                            <td th:text="${process.standard.screwPosEndHold}">8.85</td>
-                                        </tr>
-                                        <tr>
-                                            <td>샷 볼륨</td>
-                                            <td th:text="${process.standard.shotVolume}">18.74</td>
-                                            <td>공정결과</td>
-                                            <td>OK</td><!--라벨 매핑 수정-->
-                                        </tr>
-                                    </table>
-                                    <div>
-                                        <p>검수결과</p>
-                                        <span th:text="${process.order.productName.name()}">NORMAL60</span> 제품은 <span th:each="qualitycheck : ${process.standard.qualityChecks}" th:if="${qualitycheck.standard.id ==process.standard.id}" th:text="${qualitycheck.checkResult}">양품</span>으로 판정되었습니다.
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-refoam" data-bs-dismiss="modal">닫기</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </td>
             </tr>
             </tbody>
@@ -122,7 +46,7 @@
         <table class="table table-hover table-striped">
             <thead>
             <tr>
-                <th>번호</th>
+                <th class="ps-3">번호</th>
                 <th>제품명</th>
                 <th>금형온도</th>
                 <th>충전시간</th>
@@ -136,7 +60,7 @@
             </tr>
             </thead>
             <tbody>
-            <th:block th:each="process : ${processes}">
+            <th:block th:each="process : ${processes.content}">
                 <tr>
                     <td th:text="${process.id}">1</td>
                     <td th:text="${process.order.productName}">EVA</td>
@@ -148,106 +72,121 @@
                     <td th:text="${process.standard.screwPosEndHold}">50</td>
                     <td th:text="${#temporals.format(process.processDate,'yy-MM-dd HH:mm')}">20-00-00 00:00</td>
                     <td th:text="${process.standard.productLabel}"></td>
-                    <td class="text-center" colspan="2">
+                    <td colspan="2">
                         <!--                    <a href="#" th:href="@{/process/{id}/list(id=${process.id})}" class="btn btn-refoam btn-sm" role="button">품질검수</a>   th:onclick="|location.href='@{/quality/{id}/check(id=${process.standard.id})}'|"-->
                         <!-- Button trigger modal -->
                         <button type="button"  class="btn btn-refoam btn-sm" data-bs-toggle="modal" th:attr="data-bs-target='#exampleModal'+${process.standard.id}" th:disabled="${process.standard.qualityChecks.isEmpty()}">
                             품질검수
                         </button>
-                        <!-- Modal -->
-                        <div class="modal fade" th:id="'exampleModal'+${process.id}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h1 class="modal-title fs-5" id="exampleModalLabel">검수 결과</h1>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <table class="table border-1">
-                                            <tr>
-                                                <td>제품번호</td>
-                                                <td th:text="${process.id}">1</td>
-                                                <td>제품명</td>
-                                                <td th:text="${process.order.productName}">NORMAL60</td>
-                                            </tr>
-                                            <tr>
-                                                <td>공정일자</td>
-                                                <td th:text="${#temporals.format(process.processDate,'yyyy-MM-dd HH:mm')}">2025-05-01 14:00</td>
-                                                <td>담당자</td>
-                                                <td th:text="${process.order.employee.username}">관리자</td>
-                                            </tr>
-                                            <tr>
-                                                <td>융용온도</td>
-                                                <td th:text="${process.standard.meltTemperature}">105.49</td>
-                                                <td>금형온도</td>
-                                                <td th:text="${process.standard.moldTemperature}">80.5</td>
-                                            </tr>
-                                            <tr>
-                                                <td>충전시간</td>
-                                                <td th:text="${process.standard.timeToFill}">6.864</td>
-                                                <td>가소화시간</td>
-                                                <td th:text="${process.standard.plasticizingTime}">3.21</td>
-                                            </tr>
-                                            <tr>
-                                                <td>사이클시간</td>
-                                                <td th:text="${process.standard.cycleTime}">74.78</td>
-                                                <td>폐쇄 힘</td>
-                                                <td th:text="${process.standard.closingForce}">901.22</td>
-                                            </tr>
-                                            <tr>
-                                                <td>최고 형체하중</td>
-                                                <td th:text="${process.standard.clampingForcePeak}">918.4</td>
-                                                <td>최고 회전력</td>
-                                                <td th:text="${process.standard.torquePeak}">117.1</td>
-                                            </tr>
-                                            <tr>
-                                                <td>평균 회전력</td>
-                                                <td th:text="${process.standard.torqueMean}">106.2</td>
-                                                <td>최고 배압력</td>
-                                                <td th:text="${process.standard.backPressurePeak}">145.9</td>
-                                            </tr>
-                                            <tr>
-                                                <td>최고 사출압력</td>
-                                                <td th:text="${process.standard.injPressurePeak}">900.2</td>
-                                                <td>보압끝점</td>
-                                                <td th:text="${process.standard.screwPosEndHold}">8.85</td>
-                                            </tr>
-                                            <tr>
-                                                <td>샷 볼륨</td>
-                                                <td th:text="${process.standard.shotVolume}">18.74</td>
-                                                <td>공정결과</td>
-                                                <td>OK</td><!--라벨 매핑 수정-->
-                                            </tr>
-                                        </table>
-                                        <div>
-                                            <p>검수결과</p>
-                                            <span th:text="${process.order.productName.name()}">NORMAL60</span> 제품은 <span th:each="qualitycheck : ${process.standard.qualityChecks}" th:if="${qualitycheck.standard.id ==process.standard.id}" th:text="${qualitycheck.checkResult}">양품</span>으로 판정되었습니다.
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-refoam" data-bs-dismiss="modal">닫기</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </td>
                 </tr>
             </th:block>
             </tbody>
         </table>
     </div>
-    <nav class="">
+    <!-- 테이블 아래에 위치, order마다 모달 한 번씩 반복 -->
+    <th:block th:each="process : ${processes.content}">
+        <div class="modal fade"
+             th:id="'modal__' + ${process.standard.id}"
+             tabindex="-1"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">검수 결과</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-bordered  border-dark table-striped-columns table-processes">
+                            <tbody>
+                            <tr>
+                                <td>제품번호</td>
+                                <td th:text="${process.id}">1</td>
+                                <td>제품명</td>
+                                <td th:text="${process.order.productName}">NORMAL60</td>
+                            </tr>
+                            <tr>
+                                <td>공정일자</td>
+                                <td th:text="${#temporals.format(process.processDate,'yyyy-MM-dd HH:mm')}">2025-05-01
+                                    14:00
+                                </td>
+                                <td>담당자</td>
+                                <td th:text="${process.order.employee.username}">관리자</td>
+                            </tr>
+                            <tr>
+                                <td>융용온도</td>
+                                <td th:text="${process.standard.meltTemperature}">105.49</td>
+                                <td>금형온도</td>
+                                <td th:text="${process.standard.moldTemperature}">80.5</td>
+                            </tr>
+                            <tr>
+                                <td>충전시간</td>
+                                <td th:text="${process.standard.timeToFill}">6.864</td>
+                                <td>가소화시간</td>
+                                <td th:text="${process.standard.plasticizingTime}">3.21</td>
+                            </tr>
+                            <tr>
+                                <td>사이클시간</td>
+                                <td th:text="${process.standard.cycleTime}">74.78</td>
+                                <td>폐쇄 힘</td>
+                                <td th:text="${process.standard.closingForce}">901.22</td>
+                            </tr>
+                            <tr>
+                                <td>최고 형체하중</td>
+                                <td th:text="${process.standard.clampingForcePeak}">918.4</td>
+                                <td>최고 회전력</td>
+                                <td th:text="${process.standard.torquePeak}">117.1</td>
+                            </tr>
+                            <tr>
+                                <td>평균 회전력</td>
+                                <td th:text="${process.standard.torqueMean}">106.2</td>
+                                <td>최고 배압력</td>
+                                <td th:text="${process.standard.backPressurePeak}">145.9</td>
+                            </tr>
+                            <tr>
+                                <td>최고 사출압력</td>
+                                <td th:text="${process.standard.injPressurePeak}">900.2</td>
+                                <td>보압끝점</td>
+                                <td th:text="${process.standard.screwPosEndHold}">8.85</td>
+                            </tr>
+                            <tr>
+                                <td>샷 볼륨</td>
+                                <td th:text="${process.standard.shotVolume}">18.74</td>
+                                <td>공정결과</td>
+                                <td>OK</td><!--라벨 매핑 수정-->
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div>
+                            <p>검수결과</p>
+                            <span th:text="${process.order.productName.name()}">NORMAL60</span> 제품은 <span
+                                th:each="qualitycheck : ${process.standard.qualityChecks}"
+                                th:if="${qualitycheck.standard.id ==process.standard.id}"
+                                th:text="${qualitycheck.checkResult}">양품</span>으로 판정되었습니다.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-refoam" data-bs-dismiss="modal">닫기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+    <nav th:if="${!processes.isEmpty()}">
         <ul class="pagination justify-content-center">
-            <li class="page-item disabled">
-                <a class="page-link">&lt Previous</a>
+            <li class="page-item" th:classappend="${processes.first} ? 'disabled'">
+                <a class="page-link logo-font fw-normal" th:href="@{|?page=0|}"><i class="bi bi-chevron-double-left"></i>First</a>
             </li>
-            <li class="page-item"><a class="page-link" href="#">1</a></li>
-            <li class="page-item active" aria-current="page">
-                <a class="page-link" href="#">2</a>
+            <li class="page-item"  th:classappend="${!processes.hasPrevious()}?'disabled'">
+                <a class="page-link ps-0" th:href="@{|?page=${processes.number -1}|}"><i class="bi bi-chevron-left"></i>Previous</a>
             </li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item">
-                <a class="page-link" href="#">Next &gt</a>
+            <li class="page-item" th:each="page:${#numbers.sequence(0,processes.totalPages -1)}" th:classappend="${page==processes.number}?'active'" th:if="${page >= processes.number -4 and page <= processes.number +4}">
+                <a class="page-link" th:text="${page + 1}" th:href="@{|?page=${page}|}">1</a></li>
+            <li class="page-item" th:classappend="${!processes.hasNext()}?'disabled'">
+                <a class="page-link pe-0" th:href="@{|?page=${processes.number +1}|}">Next <i class="bi bi-chevron-right"></i></a>
+            </li>
+            <li class="page-item" th:classappend="${processes.last} ? 'disabled'">
+                <a class="page-link " th:href="@{|?page=${processes.totalPages -1}|}">Last<i class="bi bi-chevron-double-right"></i></a>
             </li>
         </ul>
     </nav>

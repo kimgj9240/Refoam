@@ -5,7 +5,7 @@
         <table class="table table-hover table-striped">
             <thead>
             <tr>
-                <th>#</th>
+                <th class="text-center"> #</th>
                 <th>원재료명</th>
                 <th>수량</th>
                 <th>입고날짜</th>
@@ -15,7 +15,7 @@
             </thead>
             <tbody>
             <tr th:each="material, index : ${paging}">
-                <td th:text="${material.id}">1</td>
+                <td th:text="${paging.number * paging.size + index.count}" class="text-center">1</td>
                 <td th:text="${material.materialName}">EVA</td>
                 <td th:text="${material.materialQuantity}">50</td>
                 <td th:text="${#temporals.format(material.materialDate,'yyyy-MM-dd HH:mm')}">2000-00-00 00:00</td>
@@ -45,7 +45,7 @@
             <tbody>
             <th:block th:each="material, index : ${paging}">
                 <tr>
-                    <td th:text="${material.id}">1</td>
+                    <td th:text="${paging.number * paging.size + index.count}" class="text-center">1</td>
                     <td th:text="${material.materialName}">EVA</td>
                     <td th:text="${material.materialQuantity}">50</td>
                 </tr>

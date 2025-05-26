@@ -1,32 +1,32 @@
-<html layout:decorate="~{layout}" lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html layout:decorate="~{layout}" lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="container mb-5" layout:fragment="content">
     <h2 class="py-4">주문 리스트</h2>
     <div class="table-responsive table-lg">
         <table class="table table-hover table-striped">
             <thead>
             <tr>
-                <th>#</th>
+                <th class="text-center"> #</th>
                 <th>제품명</th>
                 <th>주문수량</th>
                 <th>주문날짜</th>
                 <th>담당직원</th>
                 <th>공정상태</th>
-                <th>#</th>
+                <th class="text-center"> #</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="order : ${ordersList}">
-                <td th:text="${order.id}"></td>
+            <tr th:each="order, index : ${ordersList}">
+                <td th:text="${ordersList.number * ordersList.size + index.count}" class="text-center">1</td>
                 <td th:text="${order.productName}"></td>
                 <td th:text="${order.orderQuantity}"></td>
                 <td th:text="${#temporals.format(order.orderDate,'yyyy-MM-dd HH:mm')}"></td>
                 <td th:text="${order.employee.username}"></td>
                 <td th:text="${order.orderState}"></td>
-                <td>
+                <td class="text-center">
                     <!-- 배합시작 버튼-->
                     <form th:action="@{/order/{id}/first-process(id=${order.id})}" method="post" style="display:inline;">
                         <button type="submit"
-                                class="btn btn-sm btn-primary"
+                                class="btn btn-sm btn-refoam me-2"
                                 th:disabled="${order.orderState != '준비 중'}">배합시작</button>
                     </form>
                     <!-- 공정시작 버튼 -->
@@ -34,17 +34,16 @@
                     <form th:if="${order.orderState != '공정완료'}"
                           th:action="@{/process/{id}/list(id=${order.id})}"
                           method="post" style="display:inline;">
-                        <button type="submit" class="btn btn-delete btn-sm" th:disabled="${order.orderState != '배합완료'}">공정시작</button>
+                        <button type="submit" class="btn btn-light border border-1 border-dark btn-sm me-2" th:disabled="${order.orderState != '배합완료'}">공정시작</button>
                     </form>
                     <!-- 공정완료 상태일 때 → 공정결과 (GET) -->
                     <a th:if="${order.orderState == '공정완료'}"
                        th:href="@{/process/{id}/list(id=${order.id})}"
-                       class="btn btn-info btn-sm">공정결과</a>
+                       class="btn btn-dark btn-sm border me-2">공정결과</a>
                     <!-- 주문취소 버튼 -->
-                    <a th:href="@{/order/{id}/delete(id=${order.id})}"
-                       class="btn btn-sm btn-dark"
-                       th:if="${order.orderState == '준비 중'}">주문취소</a>
-                    <span class="btn btn-sm btn-dark disabled" th:if="${order.orderState != '준비 중'}">주문취소</span>
+                    <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${order.id}" class="btn btn-delete btn-sm " th:if="${order.orderState == '준비 중'}"> 주문 취소</button>
+
+                    <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${order.id}" class="btn btn-delete btn-sm disabled" th:if="${order.orderState != '준비 중'}"> 주문 취소</button>
                 </td>
             </tr>
             </tbody>
@@ -54,7 +53,7 @@
         <table class="table table-hover table-striped">
             <thead>
             <tr>
-                <th>#</th>
+                <th class="ps-3">#</th>
                 <th>제품명</th>
                 <th>주문수량</th>
                 <th>주문날짜</th>
@@ -66,9 +65,9 @@
             </tr>
             </thead>
             <tbody>
-            <th:block th:each="order : ${ordersList}">
+            <th:block th:each="order, index : ${ordersList}">
                 <tr>
-                    <td th:text="${order.id}"></td>
+                    <td th:text="${ordersList.number * ordersList.size + index.count}" class="ps-3">1</td>
                     <td th:text="${order.productName}"></td>
                     <td th:text="${order.orderQuantity}"></td>
                     <td th:text="${#temporals.format(order.orderDate,'yyyy-MM-dd HH:mm')}"></td>
@@ -80,7 +79,7 @@
                         <!-- 배합시작 버튼-->
                         <form th:action="@{/order/{id}/first-process(id=${order.id})}" method="post" style="display:inline;">
                             <button type="submit"
-                                    class="btn btn-sm btn-primary"
+                                    class="btn btn-sm btn-refoam me-2"
                                     th:disabled="${order.orderState != '준비 중'}">배합시작</button>
                         </form>
                         <!-- 공정시작 버튼 -->
@@ -88,37 +87,64 @@
                         <form th:if="${order.orderState != '공정완료'}"
                               th:action="@{/process/{id}/list(id=${order.id})}"
                               method="post" style="display:inline;">
-                            <button type="submit" class="btn btn-delete btn-sm" th:disabled="${order.orderState != '배합완료'}">공정시작</button>
+                            <button type="submit" class="btn btn-light border border-1 border-dark btn-sm me-2" th:disabled="${order.orderState != '배합완료'}">공정시작</button>
                         </form>
                         <!-- 공정완료 상태일 때 → 공정결과 (GET) -->
                         <a th:if="${order.orderState == '공정완료'}"
                            th:href="@{/process/{id}/list(id=${order.id})}"
-                           class="btn btn-info btn-sm">공정결과</a>
+                           class="btn btn-dark btn-sm border me-2">공정결과</a>
                         <!-- 주문취소 버튼 -->
-                        <a th:href="@{/order/{id}/delete(id=${order.id})}"
-                           class="btn btn-sm btn-dark"
-                           th:if="${order.orderState == '준비 중'}">주문취소</a>
-                        <span class="btn btn-sm btn-dark disabled" th:if="${order.orderState != '준비 중'}">주문취소</span>
+                        <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${order.id}" class="btn btn-delete btn-sm " th:if="${order.orderState == '준비 중'}"> 주문 취소</button>
+
+                        <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${order.id}" class="btn btn-delete btn-sm disabled" th:if="${order.orderState != '준비 중'}"> 주문 취소</button>
                     </td>
                 </tr>
             </th:block>
             </tbody>
         </table>
     </div>
-    <nav class="">
+    <!--     테이블 아래에 위치, order마다 모달 한 번씩 반복 -->
+    <th:block th:each="order : ${ordersList}">
+        <div class="modal fade"
+             th:id="'modal__' + ${order.id}"
+             tabindex="-1"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5">삭제 확인</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body"
+                         th:text="|제품명: ${order.productName}을 삭제하시겠습니까?|">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-refoam" data-bs-dismiss="modal">취소</button>
+                        <button type="button" class="btn btn-delete"
+                                th:onclick="|location.href='@{/order/{id}/delete(id=${order.id})}'|">삭 제</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+    <nav th:if="${!ordersList.isEmpty()}">
         <ul class="pagination justify-content-center">
-            <li class="page-item disabled">
-                <a class="page-link">&lt Previous</a>
+            <li class="page-item" th:classappend="${ordersList.first} ? 'disabled'">
+                <a class="page-link logo-font fw-normal" th:href="@{|?page=0|}"><i class="bi bi-chevron-double-left"></i>First</a>
             </li>
-            <li class="page-item"><a class="page-link" href="#">1</a></li>
-            <li class="page-item active" aria-current="page">
-                <a class="page-link" href="#">2</a>
+            <li class="page-item"  th:classappend="${!ordersList.hasPrevious()}?'disabled'">
+                <a class="page-link ps-0" th:href="@{|?page=${ordersList.number -1}|}"><i class="bi bi-chevron-left"></i>Previous</a>
             </li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item">
-                <a class="page-link" href="#">Next &gt</a>
+            <li class="page-item" th:each="page:${#numbers.sequence(0,ordersList.totalPages -1)}" th:classappend="${page==ordersList.number}?'active'" th:if="${page >= ordersList.number -4 and page <= ordersList.number +4}">
+                <a class="page-link" th:text="${page + 1}" th:href="@{|?page=${page}|}">1</a></li>
+            <li class="page-item" th:classappend="${!ordersList.hasNext()}?'disabled'">
+                <a class="page-link pe-0" th:href="@{|?page=${ordersList.number +1}|}">Next <i class="bi bi-chevron-right"></i></a>
+            </li>
+            <li class="page-item" th:classappend="${ordersList.last} ? 'disabled'">
+                <a class="page-link " th:href="@{|?page=${ordersList.totalPages -1}|}">Last<i class="bi bi-chevron-double-right"></i></a>
             </li>
         </ul>
     </nav>
+
 </div>
 </html>
