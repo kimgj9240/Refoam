@@ -1,4 +1,4 @@
-<html layout:decorate="~{layout}" lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html layout:decorate="~{layout}" lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="container mb-5" layout:fragment="content">
     <h2 class="py-4">공정 결과</h2>
     <div class="mb-3">
@@ -9,7 +9,7 @@
         <table class="table table-hover table-striped">
             <thead>
             <tr>
-                <th>번호</th>
+                <th class="ps-3">번호</th>
                 <th>제품명</th>
                 <th>금형온도</th>
                 <th>충전시간</th>
@@ -17,7 +17,7 @@
                 <th>보압끝점</th>
                 <th>공정일자</th>
                 <th>결과</th>
-                <th>#</th>
+                <th colspan="2">#</th>
             </tr>
             </thead>
             <tbody>
@@ -46,7 +46,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <table class="table border-1">
+                                    <table class="table table-bordered  border-dark table-striped-columns table-processes">
                                         <tr>
                                             <td>제품번호</td>
                                             <td th:text="${process.id}">1</td>
