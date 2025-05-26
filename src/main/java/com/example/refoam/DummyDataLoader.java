@@ -105,7 +105,7 @@ public class DummyDataLoader implements CommandLineRunner {
         int minQuantity = 5;
         int maxQuantity = 20;
         AtomicInteger index = new AtomicInteger(0);
-        List<Orders> orders = productNameList.stream().map(productName -> {
+        List<Orders> orders2 = productNameList.stream().map(productName -> {
             int daysAgo = index.getAndIncrement() % 9; // 0,1,2,3,4 반복
             LocalDateTime orderDate = LocalDateTime.now().minusDays(9 - daysAgo);
 
@@ -119,7 +119,7 @@ public class DummyDataLoader implements CommandLineRunner {
                     .employee(employee)
                     .build();
         }).toList();
-        orders.forEach(orderService::save);
+        orders2.forEach(orderService::save);
 
 //        List<Orders> orders = productNameList.stream().map(
 //                productName -> Orders.builder()
