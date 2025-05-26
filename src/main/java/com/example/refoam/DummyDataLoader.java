@@ -8,12 +8,15 @@ import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
+
+import static java.lang.Math.round;
 
 @Component
 @AllArgsConstructor
@@ -88,6 +91,14 @@ public class DummyDataLoader implements CommandLineRunner {
                 ProductName.HALF60,
                 ProductName.HALF90
         );
+        List<Orders> orders = productNameList.stream().map(
+                productName -> Orders.builder()
+                        .productName(ProductName.valueOf(productName.name()))
+                        .orderQuantity(10)
+                        .orderDate(LocalDateTime.now())
+                        .orderState("준비 중")
+                        .employee(employee)
+                        .build()).toList();
 
 
         Random orderRandom = new Random();

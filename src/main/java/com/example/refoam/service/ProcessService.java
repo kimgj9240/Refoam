@@ -69,11 +69,14 @@ public class ProcessService {
                     .build();
             standardService.save(standard);
 
+
+            String status = (label == ProductLabel.OK) ? "OK" : label.name();
+
             // process 생성
             Process process = Process.builder()
                     .order(order) // process가 어느 주문에 속하는지
                     .standard(standard)
-                    .status("공정완료")
+                    .status(status)
                     .processDate(LocalDateTime.now())
                     .build();
             processRepository.save(process);
