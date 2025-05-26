@@ -208,6 +208,32 @@ ul.navbar-nav {
   --bs-table-bg-type: #fff;
 }
 
+/* 공정결과용 테이블 색상만 따로 지정 */
+.table-processes {
+    --bs-table-bg: #ddf0f6;
+    --bs-table-color: #000;
+    --bs-table-accent-bg: #ddf0f6;
+    --bs-table-bg-type: #ddf0f6;
+    --bs-table-bg-state: #ddf0f6;
+}
+
+/* 이거 안하면 공정 모달의 색상 이상해지므로 건들지 말 것*/
+.table-processes td {
+    box-shadow: none !important;
+}
+
+/* 세로 줄무늬만 흰 배경으로 */
+.table-processes tbody tr td:nth-child(even) {
+    background-color: #fff !important;
+    color: #000;
+}
+
+.table-processes tbody tr td:nth-child(odd) {
+    background-color: #ddf0f6 !important;
+    color: #000;
+}
+
+
     
 
 /* 플레이스홀더 색상 오류때메 만듦*/
