@@ -82,7 +82,7 @@ public class OrderController {
                 .orElseThrow(() -> new IllegalArgumentException("해당 주문은 존재하지 않습니다."));
 
         // 80% 확률로 '배합완료', 20% 확률로 '배합실패'
-        String state = Math.random() < 0.8 ? "배합완료" : "배합실패";
+        String state = Math.random() < 0.95 ? "배합완료" : "배합실패";
         order.setOrderState(state);
 
         orderService.save(order);

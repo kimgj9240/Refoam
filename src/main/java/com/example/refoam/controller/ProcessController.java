@@ -5,10 +5,12 @@ import com.example.refoam.domain.Process;
 import com.example.refoam.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,18 +25,13 @@ public class ProcessController {
     private final QualityCheckService qualityCheckService;
 
     @GetMapping("/{id}/list")
-    public String processList(@PathVariable("id") Long orderId, Model model, @RequestParam(value = "page", defaultValue = "0") int page){
-//        List<Process> processes = processService.findAllOrder(orderId);
-
-        Page<Process> paging = processService.getList(orderId, page);
-
-
+    public String processList(@PathVariable("id") Long orderId, Model model){
+        List<Process> processes = processService.findAllOrder(orderId);
         int qualityCheckCount = qualityCheckService.selectQualityCheck(orderId);
-        model.addAttribute("processes",paging);
-//        model.addAttribute("processes",processes);
-
+        model.addAttribute("processes",processes);
         model.addAttribute("qualityCheckCount",qualityCheckCount);
         model.addAttribute("orderId",orderId);
+
         model.addAttribute("activeMenu", 3);
 
         return "process/processList";

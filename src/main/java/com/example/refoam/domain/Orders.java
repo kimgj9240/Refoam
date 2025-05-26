@@ -30,7 +30,7 @@ public class Orders {
     private int orderQuantity;
 
     private LocalDateTime orderDate;
-
+    @Setter
     private boolean statisticsIntervalCheck;
 
     // 주문 리스트 공정상태
