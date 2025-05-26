@@ -44,9 +44,9 @@
                         <div class="col-7 my-2">
                             <label class="form-label logo-font fs-4 ">날짜</label>
                             <hr class="mt-0 mb-3">
-                            <input class="form-control mb-2" type="date" th:field="*{orders[0].date}">
-                            <input class="form-control mb-2" type="date" th:field="*{orders[1].date}">
-                            <input class="form-control mb-2" type="date" th:field="*{orders[2].date}">
+                            <input class="form-control mb-2" type="date" id="date0" onchange="fillNextDates()" th:field="*{orders[0].date}">
+                            <input class="form-control mb-2" type="date" id="date1" th:field="*{orders[1].date}" readonly>
+                            <input class="form-control mb-2" type="date" id="date2" th:field="*{orders[2].date}" readonly>
                         </div>
                         <div class="col-5 my-2">
                             <label class="form-label logo-font fs-4">수량</label>
@@ -73,6 +73,23 @@
                     document.getElementById("material0").value = value;
                     document.getElementById("material1").value = value;
                     document.getElementById("material2").value = value;
+                }
+                function fillNextDates() {
+                    const date0 = document.getElementById("date0").value;
+                    if (!date0) return;
+
+                    const baseDate = new Date(date0);
+                    const date1 = new Date(baseDate);
+                    const date2 = new Date(baseDate);
+
+                    date1.setDate(baseDate.getDate() + 1);
+                    date2.setDate(baseDate.getDate() + 2);
+
+                    // 날짜포맷 yyyy-MM-dd
+                    const formatDate = (d) => d.toISOString().split('T')[0];
+
+                    document.getElementById("date1").value = formatDate(date1);
+                    document.getElementById("date2").value = formatDate(date2);
                 }
             </script>
         </div>
