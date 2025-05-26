@@ -107,6 +107,9 @@ public class HomeController {
                 .map(colorMap::get)
                 .toList();
 
+        // 공정 건수 그래프용?
+
+
         model.addAttribute("materialLabels", materialLabels);
         model.addAttribute("materialData", materialData);
         model.addAttribute("materialColors", materialColors);

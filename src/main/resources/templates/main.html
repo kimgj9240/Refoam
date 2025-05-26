@@ -1,6 +1,70 @@
 <html layout:decorate="~{layout}" lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="container mb-5" layout:fragment="content">
     <h2 class="py-4">공정 건수</h2>
+    <!-- 그래프를 감싸는 div를 생성하여 크기를 제어합니다. -->
+    <div>
+        <input type="checkbox" id="dataset1Checkbox" checked>
+        <label for="dataset1Checkbox">공정 총 건수</label>
+        <input type="checkbox" id="dataset2Checkbox" checked>
+        <label for="dataset2Checkbox">공정 완제품 건수</label>
+        <input type="checkbox" id="dataset3Checkbox" checked>
+        <label for="dataset3Checkbox">공정 에러 건수</label>
+    </div>
+
+    <!-- 그래프를 감싸는 div를 생성하여 크기를 제어합니다. -->
+    <div style=" width: 400px; height: 400px;">
+        <!-- 그래프가 그려질 캔버스 요소를 생성합니다. -->
+        <canvas id="myChart" width="400" height="400"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const orderData = [];
+
+
+        // 캔버스 요소에서 그래픽 컨텍스트를 가져옵니다.
+        const ctx = document.getElementById('myChart').getContext('2d');
+        // 그래프에 사용될 데이터를 선언합니다.
+        let datasets = [{
+            label: '공정 총 건수',  // 데이터셋 1의 레이블
+            data: [10, 20, 30, 40, 50],  // 데이터셋 1의 데이터
+        }, {
+            label: '공정 완제품 건수',  // 데이터셋 2의 레이블
+            data: [40, 30, 20, 10, 0],  // 데이터셋 2의 데이터
+        }, {
+            label: '공정 에러 건수',  // 데이터셋 3의 레이블
+            data: [50, 30, 40, 10, 20],  // 데이터셋 3의 데이터
+        }];
+
+        // 페이지가 로드될 때 그래프를 초기화합니다.
+        let myChart = new Chart(ctx, {
+            type: 'line',  // 선 그래프 유형을 설정합니다.
+            data: {
+                labels: ['02-05', '02-06', '02-07', '02-08', '02-09'],  // x축 레이블을 설정합니다.
+                datasets,  // 데이터셋을 설정합니다.
+            }
+        });
+
+
+        // 모든 데이터셋 체크박스에 대한 change 이벤트 리스너를 추가합니다.
+        for (let i = 1; i <= datasets.length; i++) {
+            // 데이터셋 체크박스의 ID를 동적으로 생성합니다.
+            let checkboxId = 'dataset' + i + 'Checkbox';
+            // 해당 ID의 체크박스 요소를 가져옵니다.
+            let checkbox = document.getElementById(checkboxId);
+            // 체크박스에 change 이벤트 리스너를 추가합니다.
+            checkbox.addEventListener('change', function () {
+                // 체크박스가 변경될 때마다 해당 데이터셋의 숨김 상태를 토글합니다.
+                myChart.data.datasets[i - 1].hidden = !this.checked;
+                // 변경된 상태를 적용하기 위해 차트를 업데이트합니다.
+                myChart.update();
+            });
+        }
+
+    </script>
+
+
+
     <h2 class="py-4">에러 건수</h2>
     <h2 class="py-4">재고 건수</h2>
     <canvas id="materialChart" height="100"></canvas>
@@ -34,8 +98,8 @@
             options: {
                 responsive: true,
                 scales: {
-                    y: { beginAtZero: true },
-                    x: { title: { display: true, text: '원재료' } }
+                    y: {beginAtZero: true},
+                    x: {title: {display: true, text: '원재료'}}
                 }
             }
         });
