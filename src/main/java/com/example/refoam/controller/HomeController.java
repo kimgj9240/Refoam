@@ -3,6 +3,7 @@ package com.example.refoam.controller;
 import com.example.refoam.domain.Employee;
 import com.example.refoam.domain.MaterialName;
 import com.example.refoam.dto.LoginForm;
+import com.example.refoam.repository.OrderRepository;
 import com.example.refoam.service.LoginService;
 import com.example.refoam.service.MaterialService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 public class HomeController {
     private final LoginService loginService;
     private final MaterialService materialService;
+    private final OrderRepository orderRepository;
 
     @GetMapping("/")
     public String home(HttpSession session, Model model,
@@ -74,7 +76,7 @@ public class HomeController {
     }
 
     @GetMapping("/main")
-    public String main(Model model){
+    public String main(Model model, @RequestParam(value = "page", defaultValue = "0") int page){
         Map<MaterialName, Long> rawMap = materialService.getMaterialQuantities();
 
         // 재고 차트 순서 고정 (새로고침시 순서 바뀌는 거 방지)
@@ -107,7 +109,10 @@ public class HomeController {
                 .map(colorMap::get)
                 .toList();
 
-        // 공정 건수 그래프용?
+        // 공정 건수 그래프 연습용
+
+        long totalOrderCount = orderRepository.count();  // 공정 총 건수만 보는용
+        model.addAttribute("totalOrderCount", totalOrderCount);
 
 
         model.addAttribute("materialLabels", materialLabels);

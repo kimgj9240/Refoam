@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 @Component
@@ -86,15 +88,37 @@ public class DummyDataLoader implements CommandLineRunner {
                 ProductName.HALF60,
                 ProductName.HALF90
         );
-        List<Orders> orders = productNameList.stream().map(
-                productName -> Orders.builder()
-                        .productName(ProductName.valueOf(productName.name()))
-                        .orderQuantity(5)
-                        .orderDate(LocalDateTime.now())
-                        .orderState("준비 중")
-                        .employee(employee)
-                        .build()).toList();
+
+
+        Random orderRandom = new Random();
+        int minQuantity = 5;
+        int maxQuantity = 20;
+        AtomicInteger index = new AtomicInteger(0);
+        List<Orders> orders = productNameList.stream().map(productName -> {
+            int daysAgo = index.getAndIncrement() % 9; // 0,1,2,3,4 반복
+            LocalDateTime orderDate = LocalDateTime.now().minusDays(9 - daysAgo);
+
+            int orderQuantity = orderRandom.nextInt(maxQuantity - minQuantity + 1) + minQuantity; // min~max 랜덤
+
+            return Orders.builder()
+                    .productName(ProductName.valueOf(productName.name()))
+                    .orderQuantity(orderQuantity)
+                    .orderDate(orderDate)
+                    .orderState("준비 중")
+                    .employee(employee)
+                    .build();
+        }).toList();
         orders.forEach(orderService::save);
+
+//        List<Orders> orders = productNameList.stream().map(
+//                productName -> Orders.builder()
+//                        .productName(ProductName.valueOf(productName.name()))
+//                        .orderQuantity(5)
+//                        .orderDate(LocalDateTime.now())
+//                        .orderState("준비 중")
+//                        .employee(employee)
+//                        .build()).toList();
+//        orders.forEach(orderService::save);
 
         Orders order = Orders.builder()
                 .productName(ProductName.NORMAL30)

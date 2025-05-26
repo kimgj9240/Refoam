@@ -21,6 +21,20 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: refoam.test@gmail.com
+    password: ealvoysghbybuedk
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+    protocol: smtp
+
 logging:
   level:
     org.hibernate.SQL: debug
