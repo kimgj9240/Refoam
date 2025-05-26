@@ -31,12 +31,14 @@ public class Orders {
 
     private LocalDateTime orderDate;
 
+    private boolean statisticsIntervalCheck;
+
     // 주문 리스트 공정상태
     @Setter
     private String orderState; // 준비 중, 배합완료, 배합실패, 공정완료, 진행 중
 
     @OneToMany(mappedBy = "order")
-    private List<ErrorStats> errorStateList = new ArrayList<>();
+    private List<ErrorStatistics> errorStateList = new ArrayList<>();
 
     @Setter
     @OneToMany(mappedBy = "order")
