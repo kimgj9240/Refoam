@@ -31,13 +31,11 @@ public class ProcessController {
         model.addAttribute("processes",processes);
         model.addAttribute("qualityCheckCount",qualityCheckCount);
         model.addAttribute("orderId",orderId);
-
         return "process/processList";
     }
-
     @PostMapping("/{id}/list")
     public String startProcess(@PathVariable("id") Long orderId) {
         processService.startMainProcess(orderId);
-        return "redirect:/process/" + orderId + "/list";
+        return "redirect:/order/list";
     }
 }

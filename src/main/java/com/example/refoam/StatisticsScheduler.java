@@ -45,6 +45,8 @@ public class StatisticsScheduler {
                     errorStatisticsRepository.save(errorStatistics);
                 }
             }
+            orders.setStatisticsIntervalCheck(true);
+            orderRepository.save(orders);
         }
 
     }
