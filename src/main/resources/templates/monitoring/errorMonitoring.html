@@ -1,6 +1,74 @@
 <html layout:decorate="~{layout}" lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="container mb-5" layout:fragment="content">
     <h2 class="py-4">에러 모니터링</h2>
+    <canvas id="monitoringChart" width="900" height="400"></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script th:inline="javascript">
+        const stats = /*[[${productionMonitorings}]]*/ [];
+        console.log(stats);
+        const labels = stats.map(s => s.date);
+        const ok = stats.map(s => s.okCount);
+        console.log("ok count", ok);
+        const err = stats.map(s => s.errCount);
+        console.log("err count", err);
+        const order = stats.map(stat => stat.orderCount);
+
+        new Chart(document.getElementById('monitoringChart'), {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: '총 주문 건수',
+                        data: order,
+                        backgroundColor: 'rgba(0, 255, 0, 0.5)',
+                    },
+                    {
+                        label: '완제품 수',
+                        data: ok,
+                        backgroundColor: 'rgba(255, 0, 0, 0.5)',
+                    },
+                    {
+                        label: '불량품 수',
+                        data: err,
+                        backgroundColor: 'rgba(0, 0, 255, 0.5)',
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '생산량 통계'
+                    },
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: '공정 날짜'
+                        },
+                        ticks: {
+                            autoSkip: true,
+                            maxRotation: 45
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: '수량'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 
 </div>
 </html>

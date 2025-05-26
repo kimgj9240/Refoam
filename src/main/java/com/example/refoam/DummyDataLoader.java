@@ -8,9 +8,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.IntStream;
 
 @Component
@@ -96,14 +98,6 @@ public class DummyDataLoader implements CommandLineRunner {
                         .build()).toList();
         orders.forEach(orderService::save);
 
-        Orders order = Orders.builder()
-                .productName(ProductName.NORMAL30)
-                .orderQuantity(16)
-                .orderDate(LocalDateTime.now())
-                .orderState("공정완료")
-                .employee(employee)
-                .build();
-        orderService.save(order);
 
 
         double[] backPressurePeak = {1145.6,145.6,147,145.6,146.6,146.3,146.6,145.4,146.8,146,146.4,146.6,146.3,146.3,144.9,145.4};
@@ -133,36 +127,63 @@ public class DummyDataLoader implements CommandLineRunner {
 
         String[] label = {"ERR_TIME_01","ERR_TIME_01","ERR_TIME_01","ERR_TIME_01","OK","OK","OK","OK","OK","OK","OK","OK","ERR_TIME_01","ERR_TIME_01","ERR_TIME_01","ERR_TIME_01"};
 
-        for (int i = 0; i < 16; i++) {
-            Standard standard = Standard.builder()
-                    .backPressurePeak(backPressurePeak[i])
-                    .closingForce(closingForce[i])
-                    .clampingForcePeak(clampingForcePeak[i])
-                    .cycleTime(cycleTime[i])
-                    .meltTemperature(meltTemperature[i])
-                    .moldTemperature(moldTemperature[i])
-                    .plasticizingTime(plasticizingTime[i])
-                    .injPressurePeak(injPressurePeak[i])
-                    .screwPosEndHold(screwPosEndHold[i])
-                    .shotVolume(shotVolume[i])
-                    .timeToFill(timeToFill[i])
-                    .torqueMean(torqueMean[i])
-                    .torquePeak(torquePeak[i])
-                    .productLabel(ProductLabel.valueOf(label[i]))
+
+
+
+        // 7일치 더미 데이터 생
+        // 랜덤 인스턴스 생성
+        Random random = new Random();
+
+        for (int d = 6; d >= 0; d--) {
+            LocalDateTime baseDate = LocalDate.now().minusDays(d).atTime(10, 0);
+
+            Orders orders1 = Orders.builder()
+                    .productName(ProductName.NORMAL30)
+                    .orderQuantity(10)
+                    .orderDate(baseDate)
+                    .orderState("공정완료")
+                    .employee(employee)
                     .build();
-            standardService.save(standard);
+            orderService.save(orders1);
 
-            Process process = Process.builder()
-                    .status("공정완료")
-                    .order(order)
-                    .standard(standard)
-                    .processDate(LocalDateTime.now())
-                    .build();
-            processRepository.save(process);
+            for (int i = 0; i < 10; i++) {
 
-            standard.setProcess(process);
+                // ✅ 확률에 따라 상태 설정 (70% OK / 30% ERR_TEMP_01)
+                boolean isOk = random.nextDouble() < 0.7; // 0.0 ~ 0.999 중 70%는 true
+                String status = isOk ? "OK" : "ERR_TEMP_01";
+                ProductLabel label1 = isOk ? ProductLabel.OK : ProductLabel.ERR_TIME_01;
 
-            standardService.save(standard);
+                Standard standard = Standard.builder()
+                        .meltTemperature(105 + random.nextDouble())
+                        .moldTemperature(80 + random.nextDouble())
+                        .timeToFill(6 + random.nextDouble())
+                        .plasticizingTime(3 + random.nextDouble())
+                        .cycleTime(74 + random.nextDouble())
+                        .closingForce(890 + random.nextDouble())
+                        .clampingForcePeak(910 + random.nextDouble())
+                        .torquePeak(115 + random.nextDouble())
+                        .torqueMean(100 + random.nextDouble())
+                        .backPressurePeak(145 + random.nextDouble())
+                        .injPressurePeak(930 + random.nextDouble())
+                        .screwPosEndHold(8.5 + random.nextDouble())
+                        .shotVolume(18 + random.nextDouble())
+                        .productLabel(label1)
+                        .build();
+                standardService.save(standard);
+
+                Process process = Process.builder()
+                        .status(status)
+                        .order(orders1)
+                        .standard(standard)
+                        .processDate(baseDate.plusMinutes(i))
+                        .build();
+                processRepository.save(process);
+
+                standard.setProcess(process);
+                standardService.save(standard);
+            }
         }
     }
 }
+
+
