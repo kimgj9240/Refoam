@@ -101,7 +101,7 @@ ul.navbar-nav {
 }
 
 #nav-hidden {
-    height: 82px;
+    height: 66px;
 }
 
 
@@ -189,8 +189,8 @@ ul.navbar-nav {
 
 /* 테이블 색상 영역 */
 .table {
-   --bs-table-accent-bg:  #4166F5 ;
-   --bs-table-color: #fff;
+   --bs-table-accent-bg:  #ddf0f6 ;
+   --bs-table-color: #000;
 }
 
 .table-hover > tbody > tr:hover > * {
@@ -200,7 +200,7 @@ ul.navbar-nav {
 
 .table-striped > tbody > tr:nth-of-type(even) > * {
   --bs-table-color-type: var(--bs-table-striped-color);
-  --bs-table-bg-type: #ddf0f6;
+  --bs-table-bg-type: rgba(221, 240, 246, 0.4);
 }
 
 .table-striped > tbody > tr:nth-of-type(odd) > * {

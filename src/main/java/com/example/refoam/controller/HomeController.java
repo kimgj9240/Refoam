@@ -2,10 +2,13 @@ package com.example.refoam.controller;
 
 import com.example.refoam.domain.Employee;
 import com.example.refoam.domain.MaterialName;
+import com.example.refoam.domain.Orders;
 import com.example.refoam.dto.LoginForm;
+import com.example.refoam.dto.ProductionMonitoring;
 import com.example.refoam.repository.OrderRepository;
 import com.example.refoam.service.LoginService;
 import com.example.refoam.service.MaterialService;
+import com.example.refoam.service.MonitoringService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -19,10 +22,19 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
 
 @Controller
 @Slf4j
@@ -31,6 +43,7 @@ public class HomeController {
     private final LoginService loginService;
     private final MaterialService materialService;
     private final OrderRepository orderRepository;
+    private final MonitoringService monitoringService;
 
     @GetMapping("/")
     public String home(HttpSession session, Model model,
@@ -111,9 +124,55 @@ public class HomeController {
 
         // 공정 건수 그래프 연습용
 
-        long totalOrderCount = orderRepository.count();  // 공정 총 건수만 보는용
-        model.addAttribute("totalOrderCount", totalOrderCount);
+        // 1) 오늘부터 과거 9일치 날짜 리스트 만들기
+        LocalDate today = LocalDate.now();
+        List<LocalDate> last10Days = IntStream.rangeClosed(0, 9)
+                .mapToObj(i -> today.minusDays(9 - i))
+                .collect(Collectors.toList());
 
+        // 2) 해당 기간의 주문을 DB에서 조회
+        LocalDateTime start = last10Days.get(0).atStartOfDay();
+        LocalDateTime end   = last10Days.get(last10Days.size() - 1)
+                .plusDays(1).atStartOfDay();
+        // 해당 기간 주문 조회
+        List<Orders> orders = orderRepository.findByOrderDateBetween(start, end);
+
+        // 3) 상태별·일자별 건수 집계 (TreeMap 으로 키 정렬)
+        Map<LocalDate, Long> totalMap = orders.stream()
+                .collect(groupingBy(o -> o.getOrderDate().toLocalDate(),
+                        TreeMap::new,
+                        counting()));
+
+        Map<LocalDate, Long> completeMap = orders.stream()
+                .filter(o -> "완제품".equals(o.getOrderState()))
+                .collect(groupingBy(o -> o.getOrderDate().toLocalDate(),
+                        TreeMap::new,
+                        counting()));
+        Map<LocalDate, Long> errorMap = orders.stream()
+                .filter(o -> "에러".equals(o.getOrderState()))
+                .collect(groupingBy(o -> o.getOrderDate().toLocalDate(),
+                        TreeMap::new,
+                        counting()));
+
+
+        // 4) 누락 날짜 0 채우고 라벨/데이터 리스트 만들기
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MM-dd");
+        List<String> dateLabels    = new ArrayList<>();
+        List<Long>   totalCounts    = new ArrayList<>();
+        List<Long>   completeCounts = new ArrayList<>();
+        List<Long>   errorCounts    = new ArrayList<>();
+
+        for (LocalDate d : last10Days) {
+            dateLabels   .add(d.format(fmt));
+            totalCounts   .add(totalMap  .getOrDefault(d, 0L));
+            completeCounts.add(completeMap.getOrDefault(d, 0L));
+            errorCounts   .add(errorMap  .getOrDefault(d, 0L));
+        }
+
+        model.addAttribute("dateLabels",    dateLabels);
+        model.addAttribute("totalCounts",    totalCounts);
+        model.addAttribute("completeCounts", completeCounts);
+        model.addAttribute("errorCounts",    errorCounts);
 
         model.addAttribute("materialLabels", materialLabels);
         model.addAttribute("materialData", materialData);
