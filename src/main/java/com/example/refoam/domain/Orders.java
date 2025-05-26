@@ -32,6 +32,8 @@ public class Orders {
     private LocalDateTime orderDate;
     @Setter
     private boolean statisticsIntervalCheck;
+    @Setter
+    private boolean smtpCheck;
 
     // 주문 리스트 공정상태
     @Setter

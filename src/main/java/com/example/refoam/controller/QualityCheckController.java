@@ -17,6 +17,7 @@ public class QualityCheckController {
     @GetMapping("/{id}/check")
     public String check(@PathVariable("id") Long orderId){
         qualityCheckService.getQualityCheck(orderId);
+
         return "redirect:/process/{id}/list";
     }
 }
