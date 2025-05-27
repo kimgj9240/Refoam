@@ -1,6 +1,130 @@
 <html layout:decorate="~{layout}" lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="container mb-5" layout:fragment="content">
     <h2 class="py-4">공정 건수</h2>
+    <script>
+        window.onload = function () {
+
+            var chart = new CanvasJS.Chart("chartContainer", {
+                title: {
+                    text: "폼롤러 각 사출 온도"
+                },
+                axisY: {
+                    title: "온도 (°C)",
+                    includeZero: true,
+                    suffix: " °C"
+                },
+                data: [{
+                    type: "column",
+                    yValueFormatString: "#,### °C",
+                    indexLabel: "{y}",
+                    dataPoints: [
+                        { label: "보일러1", y: 206 },
+                        { label: "보일러2", y: 163 },
+                        { label: "boiler3", y: 154 },
+                        { label: "boiler4", y: 176 },
+                        { label: "boiler5", y: 184 },
+                        { label: "boiler6", y: 122 }
+                    ]
+                }]
+            });
+
+            function updateChart() {
+                var boilerColor, deltaY, yVal;
+                var dps = chart.options.data[0].dataPoints;
+                for (var i = 0; i < dps.length; i++) {
+                    deltaY = Math.round(2 + Math.random() *(-2-2));
+                    yVal = deltaY + dps[i].y > 0 ? dps[i].y + deltaY : 0;
+                    boilerColor = yVal > 200 ? "#FF2500" : yVal >= 170 ? "#FF6000" : yVal < 170 ? "#4166F5 " : null;
+                    dps[i] = {label: "Boiler "+(i+1) , y: yVal, color: boilerColor};
+                }
+                chart.options.data[0].dataPoints = dps;
+                chart.render();
+            };
+            updateChart();
+
+            setInterval(function() {updateChart()}, 500);
+
+        }
+    </script>
+
+    <div id="chartContainer" style="height: 370px; width: 100;" class="my-4"></div>
+    <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+
+<!--    ㅋㅋㅋ-->
+    <div id="preview">
+        <canvas width=380 height=150 id="foo"></canvas>
+        <div id="preview-text"></div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+
+    <script src="dist/gauge.js"></script>
+
+    <script>
+        var opts = {
+            angle: 0.1, // The span of the gauge arc
+            lineWidth: 0.3, // The line thickness
+            radiusScale: 1, // Relative radius
+            pointer: {
+                length: 0.6, // // Relative to gauge radius
+                strokeWidth: 0.035, // The thickness
+                color: '#000000' // Fill color
+            },
+            limitMax: false,     // If false, max value increases automatically if value > maxValue
+            limitMin: false,     // If true, the min value of the gauge will be fixed
+            colorStart: '#6FADCF',   // Colors
+            colorStop: '#8FC0DA',    // just experiment with them
+            strokeColor: '#E0E0E0',  // to see which ones work best for you
+            generateGradient: true,
+            highDpiSupport: true,     // High resolution support
+
+        };
+        var target = document.getElementById('foo'); // your canvas element
+        var gauge = new Gauge(target).setOptions(opts); // create sexy gauge!
+        gauge.maxValue = 3000; // set max gauge value
+        gauge.setMinValue(0);  // Prefer setter over gauge.minValue = 0
+        gauge.animationSpeed = 32; // set animation speed (32 is default value)
+        gauge.set(1250); // set actual value
+
+
+        //값을 바꾸는 함수
+        function changeval(val){
+            gauge.set(parseInt(val));
+            AnimationUpdater.run();
+        }
+
+        //1초마다 타이머함수
+        var timer = setInterval(() => {
+
+            changeval(getRandomInt(-20,20));
+        }, 1000);
+
+        //숫자를 랜덤으로 뽑아오는 함수
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
+        }
+
+        $.fn.gauge = function(opts) {
+            this.each(function() {
+                var $this = $(this),
+                    data = $this.data();
+
+                if (data.gauge) {
+                    data.gauge.stop();
+                    delete data.gauge;
+                }
+                if (opts !== false) {
+                    data.gauge = new Gauge(this).setOptions(opts);
+                }
+            });
+            return this;
+        };
+
+    </script>
+
+
     <!-- 그래프를 감싸는 div를 생성하여 크기를 제어합니다. -->
 <!--    <div class="form-check form-check-inline ms-4">-->
 <!--        <input type="checkbox" id="dataset1Checkbox" checked>-->

@@ -3,7 +3,7 @@
     <div class="row">
         <div class="col-md-2"></div>
         <form role="form" th:object="${orderForm}" method="post" class="py-2 col-md-8">
-            <h2 class="py-4">제품 생산</h2>
+            <h2 class="my-4">제품 생산</h2>
             <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors()}">
                 <div th:each="err : ${#fields.allErrors()}" th:text="${err}"></div>
             </div>
@@ -22,7 +22,7 @@
                 <button type="submit" class="btn btn-primary btn-sm">생산 등록</button>
             </div>
         </form>
-        <div class="col-md-2"> <img src="/images/logo_aside.svg"> </div>
+        <div class="col-md-2"></div>
     </div>
 </div>
 </html>
