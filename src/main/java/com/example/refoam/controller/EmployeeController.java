@@ -49,6 +49,7 @@ public class EmployeeController {
                 .password(employeeForm.getPassword())
                 .position(PositionName.valueOf(employeeForm.getPosition()))
                 .email(employeeForm.getEmail())
+                .sendMail(employeeForm.isSendMail())
                 .build();
 
         employeeService.save(employee);
@@ -78,6 +79,7 @@ public class EmployeeController {
                 .password(updEmployee.getPassword())
                 .position(String.valueOf(updEmployee.getPosition()))
                 .email(updEmployee.getEmail())
+                .sendMail(updEmployee.isSendMail())
                 .build();
 
         model.addAttribute("employeeForm", employeeForm);
@@ -95,6 +97,7 @@ public class EmployeeController {
             employeeForm.setId(employee.getId());
             employeeForm.setLoginId(employee.getLoginId());
             employeeForm.setUsername(employee.getUsername());
+            employeeForm.setSendMail(employee.isSendMail());
             model.addAttribute("employeeForm", employeeForm);
             return "employee/editEmployeeForm";
         }
@@ -110,6 +113,7 @@ public class EmployeeController {
                 .password(newPassword)
                 .position(PositionName.valueOf(employeeForm.getPosition()))
                 .email(employeeForm.getEmail())
+                .sendMail(employeeForm.isSendMail())
                 .build();
         employeeService.save(updateEmployee);
         return "redirect:/employee/list";

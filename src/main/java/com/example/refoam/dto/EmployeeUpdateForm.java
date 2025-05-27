@@ -1,6 +1,7 @@
 package com.example.refoam.dto;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,5 +26,8 @@ public class EmployeeUpdateForm {
 
     @NotEmpty(message = "이메일입력은 필수입니다.")
     private String email;
+
+    @NotNull(message = "메일알림 여부를 체크하세요.")
+    private boolean sendMail;
 
 }
