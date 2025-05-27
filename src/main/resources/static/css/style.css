@@ -57,8 +57,17 @@ ul.navbar-nav {
 }
 
 /* 로그아웃버튼 간격용  */
-.margin-minus{
+.margin-minus {
     margin-left: -16px;
+}
+
+.badge-size{
+    min-width: 2rem;        /* 최소 너비 */
+    /* 높이 */
+    padding: 0;               /* 기본 패딩 제거 */
+    display: flex;            /* 가운데 정렬용 */
+    align-items: center;
+    justify-content: center;
 }
 
 

@@ -18,8 +18,10 @@
 
                     <a th:href="@{/list}" class="position-relative">
                         <img src="/images/bell-fill.svg" alt="종모양"></a>
-                    <span class="translate-middle badge rounded-pill">
-                            99+
+                    <!--                    th:text 로 0 ~ 99+ 까지 모두 처리 &ndash;&gt;-->
+                    <span th:text=" ${(badgeCount == null or badgeCount == 0) ? 11 : (badgeCount > 20 ? '20+' : badgeCount)}"
+                          class="translate-middle badge rounded-pill badge-size">
+                            20+
                             <span class="visually-hidden">unread messages</span>
                         </span>
                     <form th:action="@{/logout}" method="post">
@@ -29,15 +31,21 @@
                 </li>
 
 
-                <li class="nav-item dropdown" >
+                <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle nav-font" href="#" role="button" data-bs-toggle="dropdown"
                        aria-expanded="false" th:classappend="${activeMenu == 1} ? ' active' : ''">
                         계정관리
                     </a>
                     <ul class="dropdown-menu">
-                        <li th:if="${loginMember.position.name() != 'STAFF'}"><a class="dropdown-item nav-font" th:href="@{/employee/list}">직원리스트</a></li>
-                        <li th:if="${loginMember.position.name() != 'STAFF'}"><a class="dropdown-item nav-font" th:href="@{/employee/new}">직원 정보 등록</a></li>
-                        <li th:if="${loginMember.position.name() != 'ADMIN'}"><a class="dropdown-item nav-font" th:href="@{/employee/{id}/edit(id=${loginMember.id})}">계정 정보 수정</a></li>
+                        <li th:if="${loginMember.position.name() != 'STAFF'}"><a class="dropdown-item nav-font"
+                                                                                 th:href="@{/employee/list}">직원리스트</a>
+                        </li>
+                        <li th:if="${loginMember.position.name() != 'STAFF'}"><a class="dropdown-item nav-font"
+                                                                                 th:href="@{/employee/new}">직원 정보 등록</a>
+                        </li>
+                        <li th:if="${loginMember.position.name() != 'ADMIN'}"><a class="dropdown-item nav-font"
+                                                                                 th:href="@{/employee/{id}/edit(id=${loginMember.id})}">계정
+                            정보 수정</a></li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
@@ -61,8 +69,9 @@
                         <li><a class="dropdown-item nav-font" th:href="@{/order/list}">주문리스트</a></li>
                     </ul>
                 </li>
-                <li class="nav-item" >
-                    <a class="nav-link nav-font" th:href="@{/monitoring/main}" th:classappend="${activeMenu == 4} ? ' active' : ''">에러모니터링</a>
+                <li class="nav-item">
+                    <a class="nav-link nav-font" th:href="@{/monitoring/main}"
+                       th:classappend="${activeMenu == 4} ? ' active' : ''">에러모니터링</a>
                 </li>
             </ul>
         </div>

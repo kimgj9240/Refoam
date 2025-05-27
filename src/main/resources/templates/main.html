@@ -2,7 +2,7 @@
 <div class="container mb-5" layout:fragment="content">
     <h2 class="py-4">공정 건수</h2>
     <!-- 그래프를 감싸는 div를 생성하여 크기를 제어합니다. -->
-    <div>
+    <div class="form-check form-check-inline ms-4">
         <input type="checkbox" id="dataset1Checkbox" checked>
         <label for="dataset1Checkbox">공정 총 건수</label>
         <input type="checkbox" id="dataset2Checkbox" checked>
@@ -20,16 +20,16 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script th:inline="javascript">
         // 모델 바인딩
-        var labels         = [[${dateLabels}]];
-        var totalData      = [[${totalCounts}]];
-        var completeData   = [[${completeCounts}]];
-        var errorData      = [[${errorCounts}]];
+        var labels = [[${dateLabels}]];
+        var totalData = [[${totalCounts}]];
+        var completeData = [[${completeCounts}]];
+        var errorData = [[${errorCounts}]];
 
         // 데이터셋 배열
         var datasets = [
-            { label: '공정 총 건수',      data: totalData,    fill: false, tension: 0.1 },
-            { label: '공정 완제품 건수',  data: completeData, fill: false, tension: 0.1 },
-            { label: '공정 에러 건수',    data: errorData,    fill: false, tension: 0.1 }
+            {label: '공정 총 건수', data: totalData, fill: false, tension: 0.1},
+            {label: '공정 완제품 건수', data: completeData, fill: false, tension: 0.1},
+            {label: '공정 에러 건수', data: errorData, fill: false, tension: 0.1}
         ];
 
         // 차트 초기화
@@ -40,11 +40,27 @@
                 labels: labels,
                 datasets: datasets
             },
-            options: {
+            options: {plugins: {
+                    legend: {
+                        // 기본 레전드는 보이게 둡니다.
+                        onClick: function(e, legendItem, legend) {
+                            const index = legendItem.datasetIndex;
+                            const chart = legend.chart;
+
+                            // Chart.js v3: toggleDataVisibility 쓰면 legend 아이템 스타일도 같이 바뀝니다.
+                            chart.toggleDataVisibility(index);
+                            chart.update();
+
+                            // 체크박스도 동기화
+                            const cb = document.getElementById(`dataset${index+1}Checkbox`);
+                            if (cb) cb.checked = chart.isDatasetVisible(index);
+                        }
+                    }
+                },
                 scales: {
-                    x: {title: {display: true, text: '날짜 (MM-DD)'}},
+                    x: {title: {display: true, text: '날짜'}},
                     y: {
-                        title: {display: true, text: '건수'},
+                        title: {display: true, text: '건수', padding: 2},
                         beginAtZero: true,
                         ticks: {
                             stepSize: 10
@@ -57,7 +73,7 @@
         // 체크박스 토글 기능
         for (let i = 1; i <= datasets.length; i++) {
             let cb = document.getElementById('dataset' + i + 'Checkbox');
-            cb.addEventListener('change', function() {
+            cb.addEventListener('change', function () {
                 myChart.data.datasets[i - 1].hidden = !this.checked;
                 myChart.update();
             });
