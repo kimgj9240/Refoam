@@ -16,16 +16,29 @@
                     <img src="/images/person-circle.svg" alt="사람 아이콘">
                     <span class="nav-font nav-no-link" th:text="${loginMember.username}+'님'">관리자</span>
 
-                    <a th:href="@{/list}" class="position-relative">
-                        <img src="/images/bell-fill.svg" alt="종모양"></a>
-                    <!--                    th:text 로 0 ~ 99+ 까지 모두 처리 &ndash;&gt;-->
-                    <span th:text=" ${(badgeCount == null or badgeCount == 0) ? 0 : (badgeCount > 50 ? '50+' : badgeCount)}"
-                          class="translate-middle badge rounded-pill badge-size">
-                            20+
-                            <span class="visually-hidden">unread messages</span>
-                        </span>
+                    <!-- 종 아이콘 + 알림 개수 표시 + 드롭다운 -->
+                    <div class="nav-item dropdown position-relative">
+                        <a class="nav-link dropdown-toggle p-0" href="#" id="alertDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="/images/bell-fill.svg" alt="종모양">
+                            <span th:text="${(alertCount == null or alertCount == 0) ? 0 : (alertCount > 99 ? '99+' : alertCount)}"
+                                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill badge-size">0</span>
+                        </a>
+                        <ul class="dropdown-menu alert-dropdown dropdown-center" aria-labelledby="alertDropdown">
+                            <li><h6 class="dropdown-header border-bottom pb-3">알림</h6></li>
+                            <li th:each="alert : ${alertList}">
+                                <a class="dropdown-item border-bottom alert-item py-2"
+                                   th:href="@{'/alert/read/' + ${alert.id} + '?orderId=' + ${alert.order.id}}">
+                                    <div><strong th:text="'[주문 ' + ${alert.order.id} + ']'"></strong></div>
+                                    <div th:text="${alert.order.productName} + ' 제품 공정 중 '+ ${alert.message}"></div>
+                                </a>
+                            </li>
+                            <li th:if="${#lists.isEmpty(alertList)}">
+                                <span class="dropdown-item text-muted">알림이 없습니다.</span>
+                            </li>
+                        </ul>
+                    </div>
                     <form th:action="@{/logout}" method="post">
-                        <button type="submit" class="nav-font btn btn-sm btn-refoam margin-minus">로그아웃</button>
+                        <button type="submit" class="nav-font btn btn-sm btn-refoam margin-minus ms-3">로그아웃</button>
                     </form>
                     <div class="vr md-hidden"></div>
                 </li>
@@ -36,7 +49,7 @@
                        aria-expanded="false" th:classappend="${activeMenu == 1} ? ' active' : ''">
                         계정관리
                     </a>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu dropdown-menu-end">
                         <li th:if="${loginMember.position.name() != 'STAFF'}"><a class="dropdown-item nav-font"
                                                                                  th:href="@{/employee/list}">직원리스트</a>
                         </li>
@@ -77,6 +90,27 @@
         </div>
     </div>
     <!-- 메뉴바 끝 -->
+    <script>
+        async function checkErrorAlert() {
+            try {
+                const res = await fetch('/api/alerts/check');
+                const data = await res.json();
+                const bellIcon = document.getElementById('error-alert-bell');
+
+                if (data.alert) {
+                    bellIcon.classList.add('active'); // 색상 변경 or 효과 추가
+                } else {
+                    bellIcon.classList.remove('active');
+                }
+            } catch (e) {
+                console.error("알림 확인 실패:", e);
+            }
+        }
+
+        // 30초마다 확인
+        setInterval(checkErrorAlert, 30000);
+        checkErrorAlert(); // 페이지 로드 시 최초 실행
+    </script>
 </nav>
 
 

@@ -181,7 +181,7 @@ public class DummyDataLoader implements CommandLineRunner {
             ProductStandardValue productStandardValue = new ProductStandardValue();
 
 
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 2; i++) {
                 double melt = productStandardValue.getRandomValue(ProductStandardValue.MIN_MELT_TEMPERATURE, ProductStandardValue.MAX_MELT_TEMPERATURE);
                 double mold = productStandardValue.getRandomValue(ProductStandardValue.MIN_MOLD_TEMPERATURE, ProductStandardValue.MAX_MOLD_TEMPERATURE);
                 double screw = productStandardValue.getRandomValue(ProductStandardValue.MIN_SCREW_POS_END_HOLD, ProductStandardValue.MAX_SCREW_POS_END_HOLD);

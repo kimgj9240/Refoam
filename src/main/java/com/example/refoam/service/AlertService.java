@@ -1,35 +1,42 @@
 package com.example.refoam.service;
 
-import com.example.refoam.domain.ErrorStatistics;
 import com.example.refoam.domain.Orders;
+import com.example.refoam.repository.AlertLogRepository;
 import com.example.refoam.repository.ErrorStatisticsRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AlertService {
+
     private final ErrorStatisticsRepository errorStatisticsRepository;
     private final OrderService orderService;
+    private final AlertLogRepository alertLogRepository;
 
-    private final double THRESHOLD = 0.3; // 기준값
+    private static final double THRESHOLD = 0.3;
 
-    public boolean isCountExceeded() {
+    public boolean isAnyOrderExceeded() {
         List<Orders> orders = orderService.findOrders();
-        for(Orders order : orders){
-            ErrorStatistics errorStatistics = errorStatisticsRepository.findErrorCountAndOrderQuantity(order);
-            int errorCount = errorStatistics.getErrorCount();
-            int orderQuantity = errorStatistics.getOrder().getOrderQuantity();
-            // 0으로 나누는 예외 방지
-            if (orderQuantity > 0) {
-                double errorRate = (double) errorCount / orderQuantity;
-                if (errorRate >= THRESHOLD) {
-                    return true;
-                }
+        for (Orders order : orders) {
+            int errorCount = Optional.ofNullable(
+                    errorStatisticsRepository.findMaxErrorCountGroupedByOrderId(order)
+            ).orElse(0);
+            int quantity = order.getOrderQuantity();
+
+            if (quantity > 0 && (double) errorCount / quantity >= THRESHOLD) {
+                return true;
             }
         }
-    return false;
+        return false;
+    }
+
+    public void markAsRead(Long alertId){
+        alertLogRepository.markAsRead(alertId);
     }
 }

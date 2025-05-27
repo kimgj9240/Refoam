@@ -70,6 +70,14 @@ ul.navbar-nav {
     justify-content: center;
 }
 
+.alert-dropdown {
+    max-height: 400px; /* 원하는 높이로 조절 */
+    overflow-y: auto;
+}
+
+#alertDropdown.dropdown-toggle::after {
+    display: none !important;
+}
 
 .nav-img {
     height: 40px;

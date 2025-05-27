@@ -1,9 +1,8 @@
 package com.example.refoam;
 
-import com.example.refoam.domain.ErrorStatistics;
-import com.example.refoam.domain.Orders;
+import com.example.refoam.domain.*;
 import com.example.refoam.domain.Process;
-import com.example.refoam.domain.ProductLabel;
+import com.example.refoam.repository.AlertLogRepository;
 import com.example.refoam.repository.ErrorStatisticsRepository;
 import com.example.refoam.repository.OrderRepository;
 import com.example.refoam.repository.ProcessRepository;
@@ -26,6 +25,7 @@ public class StatisticsScheduler {
     private final ErrorStatisticsRepository errorStatisticsRepository;
     private final ProcessRepository processRepository;
     private final OrderMonitorService orderMonitorService;
+    private final AlertLogRepository alertLogRepository;
 
     @Scheduled(fixedRate = 60000)//interval 1 minutes
     public void statistics(){
@@ -50,6 +50,23 @@ public class StatisticsScheduler {
                         .build();
                 errorStatisticsRepository.save(errorStatistics);
             }
+            // 에러율 30% 이상일 경우 알림 생성
+            double errorRate = (double) errorCount / orders.getOrderQuantity();
+            if (errorRate >= 0.3) {
+                boolean alreadyAlerted = alertLogRepository.existsByOrderAndCheckedFalse(orders);
+                if (!alreadyAlerted) {
+                    AlertLog alert = AlertLog.builder()
+                            .order(orders)
+                            .employee(orders.getEmployee())
+                            .message("다량의 에러가 발생했습니다.")
+                            .checked(false)
+                            .createdAt(LocalDateTime.now())
+                            .build();
+                    alertLogRepository.save(alert);
+                    log.info("알림 생성: 주문 ID={}, 에러율={}", orders.getId(), errorRate);
+                }
+            }
+
             orders.setStatisticsIntervalCheck(true);
             orderRepository.save(orders);
         }
