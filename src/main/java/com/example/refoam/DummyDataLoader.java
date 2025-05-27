@@ -131,16 +131,6 @@ public class DummyDataLoader implements CommandLineRunner {
 //                        .build()).toList();
 //        orders.forEach(orderService::save);
 
-        Orders order = Orders.builder()
-                .productName(ProductName.NORMAL30)
-                .orderQuantity(16)
-                .orderDate(LocalDateTime.now())
-                .orderState("공정완료")
-                .employee(employee)
-                .build();
-        orderService.save(order);
-
-
         double[] backPressurePeak = {1145.6,145.6,147,145.6,146.6,146.3,146.6,145.4,146.8,146,146.4,146.6,146.3,146.3,144.9,145.4};
         double[] closingForce ={886.9,919.409791006952,908.6,879.410870514183,917.1,881.9,887,882.8,895.2,890.4,893.5,896.6,897.4,895.2,891.7,900.5};
         double[] clampingForcePeak ={904,935.9,902.344823440673,902.033653277801,935.9,897,903.5,900.1,915.3,912.1,917.3,913.6,916,917.3,912.7,918.4};

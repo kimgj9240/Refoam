@@ -1,18 +1,23 @@
 package com.example.refoam.controller;
 
 import com.example.refoam.domain.Employee;
+import com.example.refoam.dto.ProductionMonitoring;
 import com.example.refoam.service.BadgeService;
+import com.example.refoam.service.MonitoringService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import java.util.List;
+
 @ControllerAdvice
 @RequiredArgsConstructor
 public class GlobalControllerAdvice {
     private final HttpSession session;
     private final BadgeService badgeService;
+    private final MonitoringService monitoringService;
 
     @ModelAttribute
     public void addLoginMemberToModel(Model model){
@@ -28,10 +33,14 @@ public class GlobalControllerAdvice {
         Employee loginMember = (Employee) session.getAttribute(SessionConst.LOGIN_MEMBER);
         if (loginMember != null) {
             // 2) 서비스에서 미확인 배지 개수 조회
-            long count = badgeService.getUnreadCount(loginMember.getId());
+            long count = badgeService.getErrorBadgeCount();
+
             // 3) 모델에 추가
             model.addAttribute("badgeCount", count);
         }
+
+
+
     }
 
 

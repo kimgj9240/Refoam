@@ -19,7 +19,7 @@
                     <a th:href="@{/list}" class="position-relative">
                         <img src="/images/bell-fill.svg" alt="종모양"></a>
                     <!--                    th:text 로 0 ~ 99+ 까지 모두 처리 &ndash;&gt;-->
-                    <span th:text=" ${(badgeCount == null or badgeCount == 0) ? 11 : (badgeCount > 20 ? '20+' : badgeCount)}"
+                    <span th:text=" ${(badgeCount == null or badgeCount == 0) ? 0 : (badgeCount > 50 ? '50+' : badgeCount)}"
                           class="translate-middle badge rounded-pill badge-size">
                             20+
                             <span class="visually-hidden">unread messages</span>
