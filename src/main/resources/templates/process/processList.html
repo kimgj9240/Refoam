@@ -1,10 +1,17 @@
 <html layout:decorate="~{layout}" lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="container mb-5" layout:fragment="content">
-    <h2 class="py-4">공정 결과</h2>
+    <h2 class="my-4">공정 결과</h2>
     <div class="mb-3">
-        <a href="#" th:href="@{/quality/{id}/check(id=${orderId})}" th:disabled="${qualityCheckCount<0}" class="btn btn-refoam ms-auto" role="button">전체 품질검수</a>
-        <!--th:disabled="${qualityCheckCount==null}"-->
+        <div class="d-flex">
+            <a href="#" th:href="@{/quality/{id}/check(id=${orderId})}" th:disabled="${qualityCheckCount<0}"
+               class="btn btn-refoam" role="button">전체 품질검수</a>
+
+            <div class="d-inline ms-auto">
+                <a class="btn btn-dark" th:href="@{/order/list}">주문리스트</a>
+            </div>
+        </div>
     </div>
+
     <div class="table-responsive table-lg">
         <table class="table table-hover table-striped">
             <thead>
@@ -33,7 +40,8 @@
                 <td class="text-center">
                     <!--                    <a href="#" th:href="@{/process/{id}/list(id=${process.id})}" class="btn btn-refoam btn-sm" role="button">품질검수</a>   th:onclick="|location.href='@{/quality/{id}/check(id=${process.standard.id})}'|"-->
                     <!-- Button trigger modal -->
-                    <button type="button"  class="btn btn-refoam btn-sm"  th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${process.standard.id}"
+                    <button type="button" class="btn btn-refoam btn-sm"
+                            th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${process.standard.id}"
                             th:disabled="${process.standard.qualityChecks.isEmpty()}">
                         품질검수
                     </button>
@@ -75,7 +83,9 @@
                     <td colspan="2">
                         <!--                    <a href="#" th:href="@{/process/{id}/list(id=${process.id})}" class="btn btn-refoam btn-sm" role="button">품질검수</a>   th:onclick="|location.href='@{/quality/{id}/check(id=${process.standard.id})}'|"-->
                         <!-- Button trigger modal -->
-                        <button type="button"  class="btn btn-refoam btn-sm" data-bs-toggle="modal" th:attr="data-bs-target='#exampleModal'+${process.standard.id}" th:disabled="${process.standard.qualityChecks.isEmpty()}">
+                        <button type="button" class="btn btn-refoam btn-sm" data-bs-toggle="modal"
+                                th:attr="data-bs-target='#exampleModal'+${process.standard.id}"
+                                th:disabled="${process.standard.qualityChecks.isEmpty()}">
                             품질검수
                         </button>
                     </td>
@@ -175,18 +185,23 @@
     <nav th:if="${!processes.isEmpty()}">
         <ul class="pagination justify-content-center">
             <li class="page-item" th:classappend="${processes.first} ? 'disabled'">
-                <a class="page-link logo-font fw-normal" th:href="@{|?page=0|}"><i class="bi bi-chevron-double-left"></i>First</a>
+                <a class="page-link logo-font fw-normal" th:href="@{|?page=0|}"><i
+                        class="bi bi-chevron-double-left"></i>First</a>
             </li>
-            <li class="page-item"  th:classappend="${!processes.hasPrevious()}?'disabled'">
+            <li class="page-item" th:classappend="${!processes.hasPrevious()}?'disabled'">
                 <a class="page-link ps-0" th:href="@{|?page=${processes.number -1}|}"><i class="bi bi-chevron-left"></i>Previous</a>
             </li>
-            <li class="page-item" th:each="page:${#numbers.sequence(0,processes.totalPages -1)}" th:classappend="${page==processes.number}?'active'" th:if="${page >= processes.number -4 and page <= processes.number +4}">
+            <li class="page-item" th:each="page:${#numbers.sequence(0,processes.totalPages -1)}"
+                th:classappend="${page==processes.number}?'active'"
+                th:if="${page >= processes.number -4 and page <= processes.number +4}">
                 <a class="page-link" th:text="${page + 1}" th:href="@{|?page=${page}|}">1</a></li>
             <li class="page-item" th:classappend="${!processes.hasNext()}?'disabled'">
-                <a class="page-link pe-0" th:href="@{|?page=${processes.number +1}|}">Next <i class="bi bi-chevron-right"></i></a>
+                <a class="page-link pe-0" th:href="@{|?page=${processes.number +1}|}">Next <i
+                        class="bi bi-chevron-right"></i></a>
             </li>
             <li class="page-item" th:classappend="${processes.last} ? 'disabled'">
-                <a class="page-link " th:href="@{|?page=${processes.totalPages -1}|}">Last<i class="bi bi-chevron-double-right"></i></a>
+                <a class="page-link " th:href="@{|?page=${processes.totalPages -1}|}">Last<i
+                        class="bi bi-chevron-double-right"></i></a>
             </li>
         </ul>
     </nav>
