@@ -25,6 +25,7 @@
                 <td class="text-center">
                     <!-- 배합시작 버튼-->
                     <form th:action="@{/order/{id}/first-process(id=${order.id})}" method="post" style="display:inline;">
+                        <input type="hidden" name="page" th:value="${ordersList.number}" />
                         <button type="submit"
                                 class="btn btn-sm btn-refoam me-2"
                                 th:disabled="${order.orderState != '준비 중'}">배합시작</button>
@@ -34,6 +35,7 @@
                     <form th:if="${order.orderState != '공정완료'}"
                           th:action="@{/process/{id}/list(id=${order.id})}"
                           method="post" style="display:inline;">
+                        <input type="hidden" name="page" th:value="${ordersList.number}" />
                         <button type="submit" class="btn btn-light border border-1 border-dark btn-sm me-2" th:disabled="${order.orderState != '배합완료'}">공정시작</button>
                     </form>
                     <!-- 공정완료 상태일 때 → 공정결과 (GET) -->
@@ -78,6 +80,7 @@
                     <td colspan="2">
                         <!-- 배합시작 버튼-->
                         <form th:action="@{/order/{id}/first-process(id=${order.id})}" method="post" style="display:inline;">
+                            <input type="hidden" name="page" th:value="${ordersList.number}" />
                             <button type="submit"
                                     class="btn btn-sm btn-refoam me-2"
                                     th:disabled="${order.orderState != '준비 중'}">배합시작</button>
@@ -87,6 +90,7 @@
                         <form th:if="${order.orderState != '공정완료'}"
                               th:action="@{/process/{id}/list(id=${order.id})}"
                               method="post" style="display:inline;">
+                            <input type="hidden" name="page" th:value="${ordersList.number}" />
                             <button type="submit" class="btn btn-light border border-1 border-dark btn-sm me-2" th:disabled="${order.orderState != '배합완료'}">공정시작</button>
                         </form>
                         <!-- 공정완료 상태일 때 → 공정결과 (GET) -->

@@ -77,17 +77,16 @@ public class OrderController {
     }
 
     @PostMapping("/{id}/first-process")
-    public String mixOrder(@PathVariable("id") Long id) {
+    public String mixOrder(@PathVariable("id") Long id,@RequestParam(value = "page", defaultValue = "0") int page) {
         Orders order = orderService.findOneOrder(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 주문은 존재하지 않습니다."));
 
         // 95% 확률로 '배합완료', 20% 확률로 '배합실패'
         String state = Math.random() < 0.95 ? "배합완료" : "배합실패";
         order.setOrderState(state);
-
         orderService.save(order);
 
-        return "redirect:/order/list";
+        return "redirect:/order/list?page=" + page;
     }
 
     @GetMapping("/list")

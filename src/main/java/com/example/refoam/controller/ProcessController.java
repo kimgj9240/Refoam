@@ -40,8 +40,8 @@ public class ProcessController {
     }
 
     @PostMapping("/{id}/list")
-    public String startProcess(@PathVariable("id") Long orderId) {
+    public String startProcess(@PathVariable("id") Long orderId, Model model, @RequestParam(value = "page", defaultValue = "0") int page) {
         processService.startMainProcess(orderId);
-        return "redirect:/order/list";
+        return "redirect:/order/list?page=" + page;
     }
 }
