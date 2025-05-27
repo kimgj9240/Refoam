@@ -14,4 +14,8 @@ public interface ErrorStatisticsRepository extends JpaRepository<ErrorStatistics
     //@Query("SELECT p FROM Process p WHERE p.order=:orderId and p.processDate >= :interval")
     @Query("SELECT e.errorCount FROM ErrorStatistics e WHERE e.order=:orderId")
     Integer findMaxErrorCountGroupedByOrderId(@Param("orderId") Orders orderId);
+
+    @Query("SELECT e.errorCount, o.orderQuantity FROM ErrorStatistics e JOIN e.order o WHERE e.order=:orderId")
+     ErrorStatistics findErrorCountAndOrderQuantity(@Param("orderId") Orders orderId);
+
 }
