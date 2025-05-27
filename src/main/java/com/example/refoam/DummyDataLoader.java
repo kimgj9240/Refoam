@@ -169,7 +169,7 @@ public class DummyDataLoader implements CommandLineRunner {
                 // ✅ 확률에 따라 상태 설정 (70% OK / 30% ERR_TEMP_01)
                 boolean isOk = random.nextDouble() < 0.7; // 0.0 ~ 0.999 중 70%는 true
                 String status = isOk ? "OK" : "ERR_TEMP_01";
-                ProductLabel label1 = isOk ? ProductLabel.OK : ProductLabel.ERR_TIME_01;
+                ProductLabel label1 = isOk ? ProductLabel.OK : ProductLabel.ERR_TIME;
 
                 Standard standard = Standard.builder()
                         .meltTemperature(melt)
