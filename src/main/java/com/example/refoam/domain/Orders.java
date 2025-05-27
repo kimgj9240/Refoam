@@ -30,6 +30,7 @@ public class Orders {
     private int orderQuantity;
 
     private LocalDateTime orderDate;
+
     @Setter
     private boolean statisticsIntervalCheck;
     @Setter

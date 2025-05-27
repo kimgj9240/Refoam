@@ -44,11 +44,11 @@ public class ProcessService {
             double clampPeak = productStandardValue.getRandomValue(ProductStandardValue.MIN_CLAMPING_FORCE_PEAK, ProductStandardValue.MAX_CLAMPING_FORCE_PEAK);
             double trqPeak = productStandardValue.getRandomValue(ProductStandardValue.MIN_TORQUE_PEAK, ProductStandardValue.MAX_TORQUE_PEAK);
             double trqMean = productStandardValue.getRandomValue(ProductStandardValue.MIN_TORQUE_MEAN, ProductStandardValue.MAX_TORQUE_MEAN);
-            double backpress = productStandardValue.getRandomValue(ProductStandardValue.MIN_BACK_PRESSURE_PEAK, ProductStandardValue.MAX_BACK_PRESSURE_PEAK);
+            double backPress = productStandardValue.getRandomValue(ProductStandardValue.MIN_BACK_PRESSURE_PEAK, ProductStandardValue.MAX_BACK_PRESSURE_PEAK);
             double shot = productStandardValue.getRandomValue(ProductStandardValue.MIN_SHOT_VOLUME, ProductStandardValue.MAX_SHOT_VOLUME);
 
             // 값 측정하여 라벨 평가
-            ProductLabel label = standardEvaluator.evaluate(screw, injpress, mold, fill);
+            ProductLabel label = standardEvaluator.evaluate(injpress, mold, fill, cycle,plast);
 
             // standard 생성
             Standard standard = Standard.builder()
@@ -61,7 +61,7 @@ public class ProcessService {
                     .clampingForcePeak(clampPeak)
                     .torquePeak(trqPeak)
                     .torqueMean(trqMean)
-                    .backPressurePeak(backpress)
+                    .backPressurePeak(backPress)
                     .injPressurePeak(injpress)
                     .screwPosEndHold(screw)
                     .shotVolume(shot)
