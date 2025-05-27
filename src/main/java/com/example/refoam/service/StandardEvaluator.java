@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class StandardEvaluator {
-    public ProductLabel evaluate(double screw, double injpress, double mold, double fill, double cycle, double trqMean,double backPress,double plast) {
+    public ProductLabel evaluate(double injpress, double mold, double fill, double cycle,double plast) {
         // 특정 값에 따른 라벨 부여
         if ((fill == 7.228) && (injpress >= 912.541) && (plast >= 3.45 && mold <= 81.281  && cycle <= 75.174)) return ProductLabel.ERR_TEMP;
 

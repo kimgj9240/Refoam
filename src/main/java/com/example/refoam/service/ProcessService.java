@@ -46,7 +46,7 @@ public class ProcessService {
             double shot = productStandardValue.getRandomValue(ProductStandardValue.MIN_SHOT_VOLUME, ProductStandardValue.MAX_SHOT_VOLUME);
 
             // 값 측정하여 라벨 평가
-            ProductLabel label = standardEvaluator.evaluate(screw, injpress, mold, fill, cycle, trqMean, backPress, plast);
+            ProductLabel label = standardEvaluator.evaluate(injpress, mold, fill, cycle,plast);
 
             // standard 생성
             Standard standard = Standard.builder()
