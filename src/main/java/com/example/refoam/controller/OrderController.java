@@ -18,9 +18,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -42,6 +44,42 @@ public class OrderController {
         if(loginMember == null) {
             return "redirect:/login";
         }
+
+        Map<MaterialName, Long> rawMap = materialService.getMaterialQuantities();
+
+        // 재고 차트 순서 고정 (새로고침시 순서 바뀌는 거 방지)
+        Map<MaterialName, Long> materialMap = rawMap.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (a,b) -> a,
+                        LinkedHashMap::new
+                ));
+
+        List<String> materialLabels = materialMap.keySet().stream()
+                .map(Enum::name)
+                .toList();
+
+        List<Long> materialData = materialMap.values().stream().toList();
+
+        // 원자재 그래프 막대 색 지정
+        Map<MaterialName, String> colorMap = Map.of(
+                MaterialName.EVA, "rgba(217,240,240, 1)",
+                MaterialName.CARBON_BLACK, "rgba(202,202,202, 1)",
+                MaterialName.TITANIUM_DIOXIDE, "rgba(255,255,255, 1)",
+                MaterialName.ULTRAMARINE_BLUE, "rgba(213,234,249, 1)",
+                MaterialName.IRON_OXIDE_RED, "rgba(253,207,223, 1)"
+        );
+
+
+        List<String> materialColors = materialMap.keySet().stream()
+                .map(colorMap::get)
+                .toList();
+
+        model.addAttribute("materialLabels", materialLabels);
+        model.addAttribute("materialData", materialData);
+        model.addAttribute("materialColors", materialColors);
         model.addAttribute("orderForm",new OrderForm());
         return "order/createOrderForm";
     }

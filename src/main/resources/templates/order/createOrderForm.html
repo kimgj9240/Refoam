@@ -1,8 +1,7 @@
 <html layout:decorate="~{layout}" lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="container mb-5" layout:fragment="content">
     <div class="row">
-        <div class="col-md-2"></div>
-        <form role="form" th:object="${orderForm}" method="post" class="py-2 col-md-8">
+        <form role="form" th:object="${orderForm}" method="post" class="py-2 col-md-6">
             <h2 class="py-4">제품 생산</h2>
             <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors()}">
                 <div th:each="err : ${#fields.allErrors()}" th:text="${err}"></div>
@@ -16,13 +15,66 @@
             </div>
             <div class="mb-2">
                 <label class="form-label fw-bold" th:for="*{orderQuantity}">수량</label>
-                <input class="form-control" th:field="*{orderQuantity}">
+                <input class="form-control" type="number" th:field="*{orderQuantity}">
             </div>
             <div class="text-end">
                 <button type="submit" class="btn btn-primary btn-sm">생산 등록</button>
             </div>
         </form>
-        <div class="col-md-2"> <img src="/images/logo_aside.svg"> </div>
+        <div class="col-md-6">
+            <h2 class="py-4">재고 현황</h2>
+            <canvas id="materialChart" height="150"></canvas>
+        </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script th:inline="javascript">
+        const materialLabels = /*[[${materialLabels}]]*/ [];
+        const materialData = /*[[${materialData}]]*/ [];
+        const materialColors = /*[[${materialColors}]]*/ [];
+
+
+        const ctx2 = document.getElementById('materialChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: ['EVA','WHITE','BLACK','BLUE','RED'],
+                datasets: [{
+                    label: '원재료별 수량',
+                    data: materialData,
+                    backgroundColor: materialColors,
+                    borderColor: [
+                        'rgb(113,237,237)',
+                        'rgb(147,147,147)',
+                        'rgb(28,28,28)',
+                        'rgb(32,121,255)',
+                        'rgb(255,70,136)',
+                        'rgb(113,237,237)'
+                    ],
+                    borderWidth: 1.5
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'transparent',
+                        },
+                        ticks: { stepSize : 100 }
+                    },
+                    x: {
+                        title: {
+                            display: true, text: '원재료'
+                        },
+                        beginAtZero: true,
+                        grid: {
+                            color: 'transparent',
+                        }
+                    }
+                },
+            }
+        });
+    </script>
 </div>
 </html>
