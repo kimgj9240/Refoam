@@ -29,6 +29,9 @@ public class Employee {
     private String email;
 
     @Setter
+    private boolean sendMail;
+
+    @Setter
     @Enumerated(EnumType.STRING)
     private PositionName position;
 
@@ -37,6 +40,8 @@ public class Employee {
 
     @OneToMany(mappedBy = "employee")
     private List<Material> materials = new ArrayList<>();
+
+
 
 
 }

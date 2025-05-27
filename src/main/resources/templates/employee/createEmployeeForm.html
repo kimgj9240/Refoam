@@ -1,4 +1,4 @@
-<html layout:decorate="~{layout}"  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html layout:decorate="~{layout}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="container mb-5" layout:fragment="content">
     <div class="row">
         <div class="col-md-2"></div>
@@ -23,19 +23,33 @@
                 <label class="form-label fw-bold" th:for="*{position}">직위</label>
                 <select class="form-select" th:field="*{position}">
                     <option value="">직위를 선택하세요</option>
-                    <option th:each="positionName : ${T(com.example.refoam.domain.PositionName).values()}" th:text="${positionName}" th:value="${positionName}"></option>
+                    <option th:each="positionName : ${T(com.example.refoam.domain.PositionName).values()}"
+                            th:text="${positionName}" th:value="${positionName}"></option>
                 </select>
             </div>
             <div class="mb-3">
                 <label class="form-label fw-bold" th:for="*{email}">연락처</label>
                 <input type="text" class="form-control" th:field="*{email}" placeholder="test@email.com">
             </div>
+            <div class="mb-3">
+                <p class="form-label fw-bold"> 메일 알림 체크</p>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" th:field="*{sendMail}" id="inlineRadio1"
+                            th:checked="${sendMail == True}" value="yes">
+                    <label class="form-check-label" th:for="*{sendMail}" >사용</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" th:field="*{sendMail}" id="inlineRadio2"
+                           th:checked="${sendMail == False}" value="no" >
+                    <label class="form-check-label" th:for="*{sendMail}">미사용</label>
+                </div>
+            </div>
             <div class="text-end">
                 <a th:href="@{/employee/list}" class="btn btn-dark me-3">리스트</a>
                 <button type="submit" class="btn btn-refoam px-3">등 록</button>
             </div>
         </form>
-    <div class="col-md-2"></div>
+        <div class="col-md-2"></div>
 
 
     </div>
