@@ -4,6 +4,10 @@
     <div class="row mb-5">
         <div class="col-md-4">
             <canvas id="todayErrorChart" width="400" height="300"></canvas>
+            <h4 class="mt-4">📋 AI 에러 리포트</h4>
+            <div class="alert alert-secondary" th:text="${errorSummary}">
+                AI 분석 리포트 로딩 중...
+            </div>
         </div>
         <div class="col-md-8">
             <canvas id="weeklyLineChart" width="600" height="300"></canvas>
