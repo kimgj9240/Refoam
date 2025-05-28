@@ -1,9 +1,8 @@
 package com.example.refoam.service;
 
-import com.example.refoam.domain.Orders;
+import com.example.refoam.domain.*;
 import com.example.refoam.domain.Process;
-import com.example.refoam.domain.ProductLabel;
-import com.example.refoam.domain.Standard;
+import com.example.refoam.repository.AlertLogRepository;
 import com.example.refoam.repository.ProcessRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +19,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProcessService {
     private final ProcessRepository processRepository;
+    private final AlertLogRepository alertLogRepository;
     private final OrderService orderService;
     private final StandardService standardService;
     private final StandardEvaluator standardEvaluator;
@@ -29,7 +29,7 @@ public class ProcessService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 주문이 존재하지 않습니다."));
 
         ProductStandardValue productStandardValue = new ProductStandardValue();
-
+        int errorCount = 0;
         // 조회한 주문 번호의 주문 수량
         for (int i = 0; i < order.getOrderQuantity(); i++) {
             // 랜덤값 생성
@@ -50,6 +50,9 @@ public class ProcessService {
             // 값 측정하여 라벨 평가
             ProductLabel label = standardEvaluator.evaluate(injpress, mold, fill, cycle,plast);
 
+            if (label != ProductLabel.OK) {
+                errorCount++;
+            }
             // standard 생성
             Standard standard = Standard.builder()
                     .meltTemperature(melt)
@@ -88,6 +91,23 @@ public class ProcessService {
         }
         order.setOrderState("공정완료");
         orderService.save(order);
+
+        // 에러율 30% 이상일 경우 알림 생성
+        double errorRate = (double) errorCount / order.getOrderQuantity();
+        if (errorRate >= 0.3) {
+            boolean alreadyAlerted = alertLogRepository.existsByOrderAndCheckedFalse(order);
+            if (!alreadyAlerted) {
+                AlertLog alert = AlertLog.builder()
+                        .order(order)
+                        .employee(order.getEmployee())
+                        .message("다량의 에러 발생 (에러율: " + String.format("%.1f%%", errorRate * 100) + ")")
+                        .checked(false)
+                        .createdDate(LocalDateTime.now())
+                        .build();
+                alertLogRepository.save(alert);
+                log.info("알림 생성: 주문 ID={}, 에러율={}", order.getId(), errorRate);
+            }
+        }
     }
 
     public List<Process> findProcesses(){

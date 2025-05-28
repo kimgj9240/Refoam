@@ -62,12 +62,22 @@ ul.navbar-nav {
 }
 
 .badge-size{
-    min-width: 2rem;        /* 최소 너비 */
+    min-width: 1.5rem;        /* 최소 너비 */
     /* 높이 */
-    padding: 0;               /* 기본 패딩 제거 */
+    font-size: 0.75rem;
+    padding: 4px 6px;
     display: flex;            /* 가운데 정렬용 */
     align-items: center;
     justify-content: center;
+}
+
+.alert-dropdown {
+    max-height: 400px; /* 원하는 높이로 조절 */
+    overflow-y: auto;
+}
+
+#alertDropdown.dropdown-toggle::after {
+    display: none !important;
 }
 
 
