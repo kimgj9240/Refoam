@@ -32,14 +32,13 @@
         const materialData = /*[[${materialData}]]*/ [];
         const materialColors = /*[[${materialColors}]]*/ [];
 
-
         const ctx2 = document.getElementById('materialChart').getContext('2d');
         new Chart(ctx2, {
             type: 'bar',
             data: {
-                labels: ['EVA','WHITE','BLACK','BLUE','RED'],
+                labels: ['EVA','TITANIUM','MARINE_BLUE','CARBON_BLACK','IRON_OXIDE_RED'],
                 datasets: [{
-                    label: '원재료별 수량',
+                    label: materialLabels,
                     data: materialData,
                     backgroundColor: materialColors,
                     borderColor: [
@@ -51,10 +50,19 @@
                         'rgb(113,237,237)'
                     ],
                     borderWidth: 1.5
-                }]
+                }
+                ]
             },
             options: {
-                responsive: true,
+                responsive: true,plugins: {
+                    title: {
+                        display: true,
+                        text: '원재료별 수량'
+                    },
+                    legend: {
+                        position: 'top',
+                    }
+                },
                 scales: {
                     y: {
                         beginAtZero: true,

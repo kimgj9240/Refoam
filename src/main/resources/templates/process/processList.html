@@ -28,7 +28,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="process : ${processes.content}">
+            <tr th:each="process : ${processes}">
                 <td th:text="${process.id}" class="text-center">1</td>
                 <td th:text="${process.order.productName}">EVA</td>
                 <td th:text="${process.standard.moldTemperature}"></td>
@@ -37,6 +37,7 @@
                 <td th:text="${process.standard.screwPosEndHold}">50</td>
                 <td th:text="${#temporals.format(process.processDate,'yy-MM-dd HH:mm')}">2000-00-00 00:00</td>
                 <td th:text="${process.standard.productLabel.name()}"></td>
+                <td th:text="${proces}"> </td>
                 <td class="text-center">
                     <!--                    <a href="#" th:href="@{/process/{id}/list(id=${process.id})}" class="btn btn-refoam btn-sm" role="button">품질검수</a>   th:onclick="|location.href='@{/quality/{id}/check(id=${process.standard.id})}'|"-->
                     <!-- Button trigger modal -->

@@ -55,4 +55,6 @@ public class Standard {
     // standard <-> process 간 양방향 연결 ( 1 : 1 )
     @OneToOne(mappedBy = "standard" , cascade = CascadeType.ALL)
     private Process process;
+
+
 }

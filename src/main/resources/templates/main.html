@@ -1,106 +1,7 @@
 <html layout:decorate="~{layout}" lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="container mb-5" layout:fragment="content">
     <h2 class="py-4">공정 건수</h2>
-    <!-- 그래프를 감싸는 div를 생성하여 크기를 제어합니다. -->
-<!--    <div class="form-check form-check-inline ms-4">-->
-<!--        <input type="checkbox" id="dataset1Checkbox" checked>-->
-<!--        <label for="dataset1Checkbox">공정 총 건수</label>-->
-<!--        <input type="checkbox" id="dataset2Checkbox" checked>-->
-<!--        <label for="dataset2Checkbox">공정 완제품 건수</label>-->
-<!--        <input type="checkbox" id="dataset3Checkbox" checked>-->
-<!--        <label for="dataset3Checkbox">공정 에러 건수</label>-->
-<!--    </div>-->
 
-<!--    &lt;!&ndash; 그래프를 감싸는 div를 생성하여 크기를 제어합니다. &ndash;&gt;-->
-<!--    <div style=" width: 600px; height: 400px;">-->
-<!--        &lt;!&ndash; 그래프가 그려질 캔버스 요소를 생성합니다. &ndash;&gt;-->
-<!--        <canvas id="myChart" width="600" height="400"></canvas>-->
-<!--    </div>-->
-
-<!--    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
-<!--    <script th:inline="javascript">-->
-<!--        // 모델 바인딩-->
-<!--        var labels       = /*[[${dateLabels}]]*/ [];-->
-<!--        var totalData    = /*[[${totalCounts}]]*/ [];-->
-<!--        var completeData = /*[[${completeCounts}]]*/ [];-->
-<!--        var errorData    = /*[[${errorCounts}]]*/ [];-->
-
-<!--        console.log("dateLabels:   ", labels);-->
-<!--        console.log("totalCounts:  ", totalData);-->
-<!--        console.log("completeCounts:", completeData);-->
-<!--        console.log("errorCounts:  ", errorData);-->
-
-
-<!--        // 데이터셋 배열-->
-<!--        var datasets = [-->
-<!--            {label: '공정 총 건수', data: totalData, fill: false, tension: 0.1},-->
-<!--            {label: '공정 완제품 건수', data: completeData, fill: false, tension: 0.1},-->
-<!--            {label: '공정 에러 건수', data: errorData, fill: false, tension: 0.1}-->
-<!--        ];-->
-
-<!--        // 차트 초기화-->
-<!--        const ctx = document.getElementById('myChart').getContext('2d');-->
-<!--        var myChart = new Chart(ctx, {-->
-<!--            type: 'line',-->
-<!--            data: {-->
-<!--                labels: labels,-->
-<!--                datasets: datasets-->
-<!--            },-->
-<!--            options: {plugins: {-->
-<!--                    legend: {-->
-<!--                        // 기본 레전드는 보이게 둡니다.-->
-<!--                        onClick: function(e, legendItem, legend) {-->
-<!--                            const index = legendItem.datasetIndex;-->
-<!--                            const chart = legend.chart;-->
-
-<!--                            // Chart.js v3: toggleDataVisibility 쓰면 legend 아이템 스타일도 같이 바뀝니다.-->
-<!--                            chart.toggleDataVisibility(index);-->
-<!--                            chart.update();-->
-
-<!--                            // 체크박스도 동기화-->
-<!--                            const cb = document.getElementById(`dataset${index+1}Checkbox`);-->
-<!--                            if (cb) cb.checked = chart.isDatasetVisible(index);-->
-<!--                        }-->
-<!--                    }-->
-<!--                },-->
-<!--                scales: {-->
-<!--                    x: {title: {display: true, text: '날짜'}},-->
-<!--                    y: {-->
-<!--                        title: {display: true, text: '건수', padding: 2},-->
-<!--                        beginAtZero: true,-->
-<!--                        ticks: {-->
-<!--                            stepSize: 10-->
-<!--                        }-->
-<!--                    }-->
-<!--                }-->
-<!--            }-->
-<!--        });-->
-
-<!--        // 체크박스 토글 기능-->
-<!--        for (let i = 1; i <= datasets.length; i++) {-->
-<!--            let cb = document.getElementById('dataset' + i + 'Checkbox');-->
-<!--            cb.addEventListener('change', function () {-->
-<!--                myChart.data.datasets[i - 1].hidden = !this.checked;-->
-<!--                myChart.update();-->
-<!--            });-->
-<!--        }-->
-
-<!--        // 모든 데이터셋 체크박스에 대한 change 이벤트 리스너를 추가합니다.-->
-<!--        // for (let i = 1; i <= datasets.length; i++) {-->
-<!--        //     // 데이터셋 체크박스의 ID를 동적으로 생성합니다.-->
-<!--        //     let checkboxId = 'dataset' + i + 'Checkbox';-->
-<!--        //     // 해당 ID의 체크박스 요소를 가져옵니다.-->
-<!--        //     let checkbox = document.getElementById(checkboxId);-->
-<!--        //     // 체크박스에 change 이벤트 리스너를 추가합니다.-->
-<!--        //     checkbox.addEventListener('change', function () {-->
-<!--        //         // 체크박스가 변경될 때마다 해당 데이터셋의 숨김 상태를 토글합니다.-->
-<!--        //         myChart.data.datasets[i - 1].hidden = !this.checked;-->
-<!--        //         // 변경된 상태를 적용하기 위해 차트를 업데이트합니다.-->
-<!--        //         myChart.update();-->
-<!--        //     });-->
-<!--        // }-->
-
-    </script>
 
     <h2 class="py-4">에러 건수</h2>
     <h2 class="py-4">재고 건수</h2>
@@ -141,8 +42,60 @@
             }
         });
     </script>
-    <span th:text="${T(com.example.refoam.domain.PositionName).ADMIN}"></span>
-    <span th:if="${loginMember != null}" th:text="${loginMember.position}">포지션</span>
+
+    <div >
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+        <!-- date-fns 어댑터 (Chart.js v3+) -->
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+        <!-- 서버 제공 클라이언트 -->
+        <script src="/socket.io/socket.io.js"></script>
+        <style>
+            canvas { background: #fafafa; border: 1px solid #ddd; }
+        </style>
+        <h2>금형 온도 실시간 모니터링</h2>
+        <canvas id="tempChart" width="800" height="400"></canvas>
+
+        <script>
+            // 1) 소켓 연결 확인용 로그
+            const socket = io('http://localhost:5000', {
+                transports: ['websocket','polling']
+            });
+            socket.on('connect', () => console.log('Socket.IO connected'));
+
+            // 2) 차트 초기화
+            const ctx = document.getElementById('tempChart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: { datasets: [{ label: 'Temperature (℃)', data: [], borderWidth: 2, fill: false }] },
+                options: {
+                    parsing: false,        // {x,y} 구조 사용
+                    animation: false,      // 부드러운 애니메이션 비활성
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: { unit: 'second', tooltipFormat: 'HH:mm:ss' },
+                            title: { display: true, text: 'Time' }
+                        },
+                        y: {
+                            title: { display: true, text: 'Temperature (℃)' },
+                            suggestedMin: 40,
+                            suggestedMax: 70
+                        }
+                    }
+                }
+            });
+
+            // 3) 서버에서 푸시된 데이터 받기
+            socket.on('new_data', msg => {
+                console.log('Received:', msg);
+                chart.data.datasets[0].data.push({ x: msg.time, y: msg.value });
+                if (chart.data.datasets[0].data.length > 50) chart.data.datasets[0].data.shift();
+                chart.update('none');
+            });
+        </script>
+    </div>
+
 
 
 </div>
