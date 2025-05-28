@@ -1,20 +1,23 @@
 <html layout:decorate="~{layout}" lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="container mb-5" layout:fragment="content">
     <div class="row mb-5">
-        <div class="col-md-4">
-            <h2 class="py-4">오늘의 달성률</h2>
-            <h5 class="text-center mt-3">
-                오늘의 목표 수량: <span th:text="${targetQuantity}">0</span>개
-            </h5>
-            <canvas id="achievementRate"></canvas>
-                <div>
-                    <div class="card shadow-sm">
+        <div class="col-lg-4 ">
+            <div class="row">
+                <div class="col-md-6 col-lg-12">
+                    <h2 class="my-4">오늘의 달성률</h2>
+                    <h5 class="text-center mt-3">
+                        오늘의 목표 수량: <span th:text="${targetQuantity}">0</span>개
+                    </h5>
+                    <canvas id="achievementRate"></canvas>
+                </div>
+                <div class="col-md-6 col-lg-12 my-md-5 my-lg-4 ">
+                    <div class="card shadow-sm mb-2">
                         <div class="card-body">
                             <h6 class="text-muted">✅ 달성 수량</h6>
                             <h4 th:text="${okCount} + '개'">0개</h4>
                         </div>
                     </div>
-                    <div class="card shadow-sm">
+                    <div class="card shadow-sm mb-2">
                         <div class="card-body">
                             <h6 class="text-muted">📈 달성률</h6>
                             <h4 th:text="${achievementRate} + '%'">0%</h4>
@@ -28,13 +31,15 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-8">
-                 <h2 class="py-4">생산량 통계</h2>
-                 <canvas id="monitoringChart2" class="mt-3" height="200"></canvas>
-            </div>
         </div>
 
-    <h2 class="py-4">재고 건수</h2>
+        <div class="col-lg-8 my-lg-2">
+            <h2 class="my-4">생산량 통계</h2>
+            <canvas id="monitoringChart2" class="mt-3" height="200"></canvas>
+        </div>
+    </div>
+
+    <h2 class="my-4">재고 건수</h2>
     <canvas id="materialChart" height="100"></canvas>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
@@ -194,7 +199,6 @@
             plugins: [ChartDataLabels]
         });
     </script>
-    <span th:text="${T(com.example.refoam.domain.PositionName).ADMIN}"></span>
-    <span th:if="${loginMember != null}" th:text="${loginMember.position}">포지션</span>
+
 </div>
 </html>

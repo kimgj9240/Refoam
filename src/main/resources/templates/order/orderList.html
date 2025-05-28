@@ -16,7 +16,7 @@
             </thead>
             <tbody>
             <tr th:each="order, index : ${ordersList}">
-                <td th:text="${ordersList.number * ordersList.size + index.count}" class="text-center">1</td>
+                <td th:text="${order.id}" class="text-center">1</td>
                 <td th:text="${order.productName}"></td>
                 <td th:text="${order.orderQuantity}"></td>
                 <td th:text="${#temporals.format(order.orderDate,'yyyy-MM-dd HH:mm')}"></td>
@@ -69,7 +69,7 @@
             <tbody>
             <th:block th:each="order, index : ${ordersList}">
                 <tr>
-                    <td th:text="${ordersList.number * ordersList.size + index.count}" class="ps-3">1</td>
+                    <td th:text="${order.id}" class="ps-3">1</td>
                     <td th:text="${order.productName}"></td>
                     <td th:text="${order.orderQuantity}"></td>
                     <td th:text="${#temporals.format(order.orderDate,'yyyy-MM-dd HH:mm')}"></td>
