@@ -3,14 +3,14 @@
     <div class="row mb-5">
         <div class="col-lg-4 ">
             <div class="row">
-                <div class="col-md-6 col-lg-12">
+                <div class="col-md-7 col-lg-12">
                     <h2 class="my-4">오늘의 달성률</h2>
                     <h5 class="text-center mt-3">
                         오늘의 목표 수량: <span th:text="${targetQuantity}">0</span>개
                     </h5>
                     <canvas id="achievementRate"></canvas>
                 </div>
-                <div class="col-md-6 col-lg-12 my-md-5 my-lg-4 ">
+                <div class="col-md-5 col-lg-12 my-sm-3 my-md-5 my-lg-4 ">
                     <div class="card shadow-sm mb-2">
                         <div class="card-body">
                             <h6 class="text-muted">✅ 달성 수량</h6>
@@ -216,12 +216,14 @@
         <canvas id="tempChart" width="800" height="400"></canvas>
 
         <script>
+            // 불량 위험 온도 기준
+            const HIGH_THRESHOLD = 81.5;
+            const LOW_THRESHOLD  = 80;
+
             // ② 서버 포트 맞춰서 연결
             // transports 우선순위를  소켓은 오류가 잘 나서 polling만 쓰도록 해둠
             const socket = io('http://localhost:5000', {transports: ['polling']});
             socket.on('connect', () => console.log('✅ Socket connected'));
-
-            const THRESHOLD = 81;  // 불량 위험 온도 기준
 
             const ctx = document.getElementById('tempChart').getContext('2d');
             const chart = new Chart(ctx, {
@@ -233,48 +235,35 @@
                         borderWidth: 2,
                         fill: false,
                         pointRadius: 4,
-                        // ② parsed.y 를 사용하고, 없을 땐 기본색(blue) 반환
                         pointBackgroundColor: context => {
                             const y = context.parsed?.y;
-                            if (typeof y !== 'number') {
-                                return 'blue';
-                            }
-                            return y >= THRESHOLD ? 'red' : 'blue';
+                            if (typeof y !== 'number') return 'gray';      // 데이터 없을 땐 회색
+                            if (y >= HIGH_THRESHOLD) return 'red';        // 81.5 이상
+                            if (y <= LOW_THRESHOLD)  return 'green';      // 80 이하
+                            return 'blue';                                // 그 외(80~81.5 사이)
                         },
                         borderColor: 'blue',
-                        // 선 자체도 바꾸고 싶다면 아래 주석 해제
-
+                        // 선 자체도 바꾸고 싶다면
                         segment: {
-                          borderColor: context => {
-                            const y0 = context.p0.parsed.y;
-                            const y1 = context.p1.parsed.y;
-                            const avg = (y0 + y1) / 2;
-                            return avg >= THRESHOLD ? 'red' : 'blue';
-                          }
+                            borderColor: ctx => {
+                                const y0  = ctx.p0.parsed.y;
+                                const y1  = ctx.p1.parsed.y;
+                                const avg = (y0 + y1) / 2;
+                                if (avg >= HIGH_THRESHOLD) return 'red';
+                                if (avg <= LOW_THRESHOLD)  return 'green';
+                                return 'blue';
+                            }
                         }
-
                     }]
                 },
                 options: {
                     parsing: false,
                     scales: {
                         x: { type: 'time', time: { unit: 'second' },title: {display: true, text: '시간'} },
-                        y: { title: {display: true, text: '℃'}, suggestedMin: 79, suggestedMax: 83 }
+                        y: { title: {display: true, text: '℃'}, suggestedMin: 78, suggestedMax: 82.5 }
                     }
                 }
             });
-
-            // const chart = new Chart(ctx, {
-            //     type: 'line',
-            //     data: {datasets: [{label: 'Temp (℃)', data: [], borderWidth: 2, fill: false}]},
-            //     options: {
-            //         parsing: false,
-            //         scales: {
-            //             x: {type: 'time', time: {unit: 'second'}, title: {display: true, text: '시간'}},
-            //             y: {title: {display: true, text: '℃'}, suggestedMin: 40, suggestedMax: 70}
-            //         }
-            //     }
-            // });
 
             socket.on('new_data', msg => {
                 console.log('▶ new_data', msg);
