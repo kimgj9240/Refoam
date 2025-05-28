@@ -124,11 +124,19 @@ public class HomeController {
                 .map(colorMap::get)
                 .toList();
 
-        // 공정 건수 그래프 연습용
 
+        int targetRate = 80;
+        List<ProductionMonitoring> productionMonitorings = monitoringService.productionMonitorings();
+        Map<String, Integer> kpiMap = monitoringService.targetAchievement(500, 800, targetRate);
         model.addAttribute("materialLabels", materialLabels);
         model.addAttribute("materialData", materialData);
         model.addAttribute("materialColors", materialColors);
+        model.addAttribute("productionMonitorings", productionMonitorings);
+        model.addAttribute("achievementRate", kpiMap.get("achievementRate"));
+        model.addAttribute("targetRate", targetRate);
+        model.addAttribute("targetQuantity", kpiMap.get("targetQuantity"));
+        model.addAttribute("targetAchieveQuantity", kpiMap.get("targetAchieveQuantity"));
+        model.addAttribute("okCount", kpiMap.get("okCount"));
         return "main";}
     
     // 로그아웃 후 다른 아이디로 로그인했을 때 404 에러 뜨는거 방지용으로 만듦

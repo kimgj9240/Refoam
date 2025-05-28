@@ -109,6 +109,30 @@ public class MonitoringService {
 
         return result;
     }
+
+
+    public Map<String, Integer> targetAchievement(int minTarget, int maxTarget, int targetRate){
+        Random random = new Random(LocalDate.now().toEpochDay());
+
+        int targetQuantity = random.nextInt(maxTarget - minTarget + 1) + minTarget;
+
+        int targetAchieveQuantity = (int) (targetQuantity * (targetRate / 100.0));
+
+        List<Process> todayProcess = processRepository.findTodayProcesses();
+        int okCount = (int) todayProcess.stream()
+                .filter(p -> "OK".equals(p.getStatus()))
+                .count();
+
+        int achievementRate = targetQuantity > 0 ? (int) ((double) okCount / targetQuantity * 100) : 0;
+
+        Map<String, Integer> result = new HashMap<>();
+        result.put("targetQuantity", targetQuantity);
+        result.put("targetAchieveQuantity", targetAchieveQuantity);
+        result.put("okCount",okCount);
+        result.put("achievementRate", achievementRate);
+        return result;
+
+    }
 }
 
 

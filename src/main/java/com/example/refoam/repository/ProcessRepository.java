@@ -26,6 +26,6 @@ public interface ProcessRepository extends JpaRepository<Process, Long> {
     List<Process> findProcessesInDateRange(@Param("start") LocalDateTime start,
                                            @Param("end") LocalDateTime end);
 
-    @Query("SELECT p FROM Process p WHERE DATE(p.processDate) = CURRENT DATE ")
+    @Query("SELECT p FROM Process p WHERE DATE(p.processDate) = CURRENT_DATE ")
     List<Process> findTodayProcesses();
 }
