@@ -20,7 +20,7 @@ public class QualityCheck {
     private String inputDate;
 
     @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "standard_id")
     private Standard standard;
 

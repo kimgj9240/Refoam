@@ -29,10 +29,10 @@ public class ProcessController {
         Page<Process> paging = processService.getList(orderId, page);
 
 
-        int qualityCheckCount = qualityCheckService.selectQualityCheck(orderId);
+
         model.addAttribute("processes",paging);
 //        model.addAttribute("processes",processes);
-        model.addAttribute("qualityCheckCount",qualityCheckCount);
+        model.addAttribute("qualityCheck",qualityCheckService.selectQualityCheck(orderId));
         model.addAttribute("orderId",orderId);
         model.addAttribute("activeMenu", 3);
 

@@ -78,8 +78,13 @@ public class QualityCheckService {
             }
 
             // 3. 예측 요청 정보와 예측 결과를 DB에 저장
-            //QualityCheck record = findOne(std).orElseThrow(()-> new IllegalArgumentException("해당 제품1111을 찾을 수 없습니다."));
-            QualityCheck record = new QualityCheck();
+            Optional<QualityCheck> qualityCheck = findOneByStandard(std);
+            QualityCheck record;
+            if (qualityCheck.isEmpty()) {
+                record = new QualityCheck(); // 새로 생성
+            } else {
+                record = qualityCheck.get();     // Optional에서 값 추출
+            }
             record.setInputDate(inputJson);  //inputJson (예측 입력값의 JSON 문자열)을 저장
             record.setCheckResult(qualityCheckLabel);  //Flask로부터 받은 예측 결과 값을 저장
             record.setStandard(std);   //검수 요청하는 제품
@@ -88,8 +93,11 @@ public class QualityCheckService {
             qualityCheckRepository.save(record);
         }
     }
-    public int selectQualityCheck(Long orderId){
+    public QualityCheck selectQualityCheck(Long orderId){
         Process selectprocess = processService.findOneProcess(orderId).orElseThrow(()-> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
-        return selectprocess.getStandard().getQualityChecks().size();
+        return selectprocess.getStandard().getQualityCheck();
+    }
+    public Optional<QualityCheck> findOneByStandard(Standard standard){
+        return qualityCheckRepository.findByStandard(standard);
     }
 }

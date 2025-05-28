@@ -49,8 +49,8 @@ public class Standard {
     @Enumerated(EnumType.STRING)
     private ProductLabel productLabel;
 
-    @OneToMany(mappedBy = "standard")
-    private List<QualityCheck> qualityChecks = new ArrayList<>();
+    @OneToOne(mappedBy = "standard" , cascade = CascadeType.ALL)
+    private QualityCheck qualityCheck;
 
     // standard <-> process 간 양방향 연결 ( 1 : 1 )
     @OneToOne(mappedBy = "standard" , cascade = CascadeType.ALL)

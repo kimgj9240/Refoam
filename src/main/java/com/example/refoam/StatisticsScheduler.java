@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+
 
 @Component
 @RequiredArgsConstructor
@@ -61,9 +61,11 @@ public class StatisticsScheduler {
         List<Orders> ordersList = orderRepository.findAllByOrderStateAndStatisticsIntervalCheckAndSmtpCheck("공정완료",true,false);
         for(Orders orders : ordersList){
             int orderQty = orders.getOrderQuantity();
+            if(!orders.getEmployee().isSendMail()) continue;
+
             String email = orders.getEmployee().getEmail();
-            if(errorStatisticsRepository.findMaxErrorCountGroupedByOrderId(orders).equals(0)) continue;
             int errCount =errorStatisticsRepository.findMaxErrorCountGroupedByOrderId(orders);
+            if (errCount == 0) continue;
             orderMonitorService.errorCheck("refoam.test@gmail.com",orderQty,errCount);
             log.info("email send : {}",email + orderQty + errCount);
             //orderMonitorService.errorCheck(email,orderQty,errCount);
