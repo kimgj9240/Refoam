@@ -16,6 +16,10 @@ public class AlertController {
 
     @GetMapping("/read/{id}")
     public String readAndRedirect(@PathVariable Long id, @RequestParam("orderId") Long orderId) {
+        if(orderId.equals(0)){
+            alertService.markAsRead(id);
+            return "redirect:/material/list";
+        }
         alertService.markAsRead(id);
         return String.format("redirect:/process/%d/list", orderId);
     }
