@@ -1,5 +1,6 @@
 package com.example.refoam;
 
+import com.example.refoam.controller.DiscordNotifier;
 import com.example.refoam.domain.*;
 import com.example.refoam.domain.Process;
 import com.example.refoam.repository.AlertLogRepository;
@@ -25,13 +26,14 @@ public class StatisticsScheduler {
     private final ErrorStatisticsRepository errorStatisticsRepository;
     private final ProcessRepository processRepository;
     private final OrderMonitorService orderMonitorService;
+    private final DiscordNotifier discordNotifier;
 
-    @Scheduled(fixedRate = 600000)//interval 5 minutes
+    @Scheduled(fixedRate = 60000)//interval 5 minutes
     public void statistics(){
         log.info("statistics 스케줄러 호출됨 : {}", LocalDateTime.now());
         List<Orders> ordersList = orderRepository.findAllByOrderStateAndStatisticsIntervalCheck("공정완료",false);
         for(Orders orders : ordersList){
-            LocalDateTime interval = LocalDateTime.now().minusMinutes(10);//interval 5 minutes
+            LocalDateTime interval = LocalDateTime.now().minusMinutes(1);//interval 5 minutes
             List<Process> processList = processRepository.findByOrderAndProcessDateInterval(orders, interval);
             if(processList.isEmpty()) continue;
 
@@ -54,17 +56,31 @@ public class StatisticsScheduler {
         }
 
     }
-    @Scheduled(fixedRate = 600000)//interval 5 minutes
+    @Scheduled(fixedRate = 60000)//interval 5 minutes
     public void errCountMonitor(){
         log.info("errCountMonitor 스케줄러 호출됨 : {}", LocalDateTime.now());
+
         List<Orders> ordersList = orderRepository.findAllByOrderStateAndStatisticsIntervalCheckAndSmtpCheck("공정완료",true,false);
+
         for(Orders orders : ordersList){
             int orderQty = orders.getOrderQuantity();
             String email = orders.getEmployee().getEmail();
-            if(errorStatisticsRepository.findMaxErrorCountGroupedByOrderId(orders).equals(0)) continue;
-            int errCount = errorStatisticsRepository.findMaxErrorCountGroupedByOrderId(orders);
-            orderMonitorService.errorCheck("refoam.test@gmail.com",orderQty,errCount);
-            log.info("email send : {}",email + orderQty + errCount);
+            Integer errCount = errorStatisticsRepository.findMaxErrorCountGroupedByOrderId(orders);
+            if (errCount == null || errCount == 0) continue;
+            double errorRate = (double) errCount / orderQty;
+
+            if(errorRate >= 0.3){
+                String message = String.format(
+                        "🚨 [주문 %d] 에러율 %.2f%% (에러 %d건 / 총 %d건)",orders.getId(), errorRate * 100, errCount, orderQty
+                );
+
+                // 이메일 발송
+                orderMonitorService.errorCheck("refoam.test@gmail.com",orderQty,errCount);
+                log.info("email send : {}",email + orderQty + errCount);
+
+                discordNotifier.sendAlert(message);
+            }
+
             //orderMonitorService.errorCheck(email,orderQty,errCount);
             orders.setSmtpCheck(true);
             orderRepository.save(orders);

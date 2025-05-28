@@ -35,6 +35,10 @@ spring:
             required: true
     protocol: smtp
 
+  discord:
+    webhook:
+      url: https://discord.com/api/webhooks/1377189847684481034/PNy7HmUgr900hSQI6_pz-XA-lRqCFqlnxJ71EorTDIvjKw5-Ffh4dIGVZR0J-W58IjzW
+
 logging:
   level:
     org.hibernate.SQL: debug
