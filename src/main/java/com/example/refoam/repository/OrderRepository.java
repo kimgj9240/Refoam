@@ -16,4 +16,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long> {
     //공정 건수 차트용
     List<Orders> findByOrderDateBetween(LocalDateTime start, LocalDateTime end);
 
+    @Query("SELECT o FROM Orders o WHERE DATE(o.orderDate) = CURRENT_DATE AND o.orderState = '배합실패' ")
+    List<Orders> findMixFail();
+
 }

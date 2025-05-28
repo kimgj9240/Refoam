@@ -1,18 +1,25 @@
 <html layout:decorate="~{layout}" lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="container mb-5" layout:fragment="content">
     <h2 class="py-4">에러 모니터링</h2>
+    <div class="row mb-5">
+        <div class="col-md-4">
+            <canvas id="todayErrorChart" width="400" height="300"></canvas>
+        </div>
+        <div class="col-md-8">
+            <canvas id="weeklyLineChart" width="600" height="300"></canvas>
+        </div>
+    </div>
     <canvas id="monitoringChart" width="900" height="400"></canvas>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <script th:inline="javascript">
         const stats = /*[[${productionMonitorings}]]*/ [];
-        console.log(stats);
         const labels = stats.map(s => s.date);
         const ok = stats.map(s => s.okCount);
-        console.log("ok count", ok);
         const err = stats.map(s => s.errCount);
-        console.log("err count", err);
-        const order = stats.map(stat => stat.orderCount);
+        const order = stats.map(s => s.orderCount);
+        const errTemp = stats.map(s => s.errTempCount);
+        const errTime = stats.map(s => s.errTimeCount);
+        const mixFail = stats.map(s => s.mixFailCount || 0);
 
         new Chart(document.getElementById('monitoringChart'), {
             type: 'bar',
@@ -68,7 +75,115 @@
                 }
             }
         });
+        new Chart(document.getElementById('weeklyLineChart'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'OK',
+                        data: ok,
+                        borderColor: 'rgba(0, 255, 0, 0.5)',
+                        borderWidth: 1,
+                        fill: false,
+                        tension: 0.3
+                    },
+                    {
+                        label: 'ERR_TEMP',
+                        data: errTemp,
+                        borderColor: 'rgba(255, 0, 0, 0.5)',
+                        borderWidth: 1,
+                        fill: false,
+                        tension: 0.3
+                    },
+                    {
+                        label: 'ERR_TIME',
+                        data: errTime,
+                        borderColor: 'rgba(0, 0, 255, 0.5)',
+                        borderWidth: 1,
+                        fill: false,
+                        tension: 0.3
+                    },
+                    {
+                        label: '배합실패',
+                        data: mixFail,
+                        borderColor: 'rgba(0, 0, 255, 0.5)',
+                        borderWidth: 1,
+                        fill: false,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '7일 발생한 에러'
+                    },
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: '공정 날짜'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: '건수'
+                        }
+                    }
+                }
+            }
+        });
     </script>
+    <script th:inline="javascript">
+        const todayErrorCounts = /*[[${TodayErrorCounts}]]*/ [];
+        const todayErrorLabels = Object.keys(todayErrorCounts);
+        const todayErrorData = Object.values(todayErrorCounts);
 
+        new Chart(document.getElementById('todayErrorChart'), {
+            type: 'bar',
+            data: {
+                labels: todayErrorLabels,
+                datasets: [{
+                    label: '오늘의 에러 건수',
+                    data: todayErrorData,
+                    backgroundColor: [
+                        'rgba(255, 0, 0, 0.5)',
+                        'rgba(255, 0, 0, 0.5)',
+                        'rgba(255, 0, 0, 0.5)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '오늘 발생한 에러 건수'
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: '건수'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+    </script>
 </div>
 </html>

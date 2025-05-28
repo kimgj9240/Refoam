@@ -2,6 +2,7 @@ package com.example.refoam.service;
 
 import com.example.refoam.domain.Orders;
 import com.example.refoam.domain.Process;
+import com.example.refoam.domain.ProductLabel;
 import com.example.refoam.dto.ProductionMonitoring;
 import com.example.refoam.repository.OrderRepository;
 import com.example.refoam.repository.ProcessRepository;
@@ -11,8 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,13 +55,60 @@ public class MonitoringService {
                             .filter(o -> o.getOrderDate().toLocalDate().equals(date))
                             .mapToInt(Orders::getOrderQuantity)
                             .sum();
+                    // 온도 에러 집계
+                    int errTempCount = (int) processList.stream()
+                            .filter(p -> p.getStandard().getProductLabel() == ProductLabel.ERR_TEMP)
+                            .count();
+                    // 시간 에러 집계
+                    int errTimeCount = (int) processList.stream()
+                            .filter(p -> p.getStandard().getProductLabel() == ProductLabel.ERR_TIME)
+                            .count();
+
+                    // 배합 실패 집계
+                    int mixFailCount = orders.stream()
+                            .filter(o -> o.getOrderDate().toLocalDate().equals(date))
+                            .filter(o -> "배합실패".equals(o.getOrderState()))
+                            .mapToInt(Orders::getOrderQuantity)
+                            .sum();
 
                     // DTO 반환
-                    return new ProductionMonitoring(date, okCount, errCount, orderCount);
+                    return ProductionMonitoring.builder()
+                            .date(date)
+                            .errCount(errCount)
+                            .okCount(okCount)
+                            .orderCount(orderCount)
+                            .errTempCount(errTempCount)
+                            .errTimeCount(errTimeCount)
+                            .mixFailCount(mixFailCount)
+                            .build();
                 })
                 // 날짜 오름차순 정렬
                 .sorted(Comparator.comparing(ProductionMonitoring::getDate))
                 .collect(Collectors.toList());
+    }
 
+    public Map<String, Long> errorCounts() {
+        // 당일 공정 리스트
+        List<Process> processes = processRepository.findTodayProcesses();
+        List<Orders> orders = orderRepository.findMixFail();
+
+        long errTempCount = processes.stream()
+                .filter(p -> p.getStandard().getProductLabel() == ProductLabel.ERR_TEMP)
+                .count();
+
+        long errTempTimeCount = processes.stream()
+                .filter(p -> p.getStandard().getProductLabel() == ProductLabel.ERR_TIME)
+                .count();
+
+        long mixFailCount = orders.size();
+
+        Map<String, Long> result = new LinkedHashMap<>();
+        result.put("배합실패", mixFailCount);
+        result.put("ERR_TEMP", errTempCount);
+        result.put("ERR_TIME", errTempTimeCount);
+
+        return result;
     }
 }
+
+
