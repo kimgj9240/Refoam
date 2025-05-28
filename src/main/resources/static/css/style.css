@@ -36,6 +36,16 @@ body {
     align-items: center;
     justify-content: center;
 }
+/* dropdown size */
+@media (min-width: 768px) {
+    .errorAlert-xs{  display: none;
+    }
+}
+@media (max-width: 767px) {
+    .errorAlert-lg{  display: none;
+    }
+}
+
 
 /* nav 영역 */
 @media (min-width:300px) and (max-width:860px) {

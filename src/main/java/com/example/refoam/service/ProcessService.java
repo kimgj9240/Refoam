@@ -94,7 +94,7 @@ public class ProcessService {
 
         // 에러율 30% 이상일 경우 알림 생성
         double errorRate = (double) errorCount / order.getOrderQuantity();
-        if (errorRate >= 0.3) {
+        if (errorRate >= 0.1) { // 알림 발생 에러율 조건
             boolean alreadyAlerted = alertLogRepository.existsByOrderAndCheckedFalse(order);
             if (!alreadyAlerted) {
                 AlertLog alert = AlertLog.builder()

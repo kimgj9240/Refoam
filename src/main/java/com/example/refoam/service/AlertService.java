@@ -16,13 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional
 public class AlertService {
-
-    private final ErrorStatisticsRepository errorStatisticsRepository;
-    private final OrderService orderService;
     private final AlertLogRepository alertLogRepository;
-
-    private static final double THRESHOLD = 0.3;
-
 
     // 현재 로그인한 사용자의 안 읽은 알림 개수 조회
     public long countUnreadAlerts(Employee employee) {
@@ -35,8 +29,6 @@ public class AlertService {
     public List<AlertLog> getUnreadAlerts(Employee employee) {
         return alertLogRepository.findAllByEmployeeAndCheckedFalse(employee);
     }
-
-
 
     // 알림 읽음 처리
 
