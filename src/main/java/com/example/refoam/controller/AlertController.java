@@ -15,13 +15,21 @@ public class AlertController {
     private final AlertService alertService;
 
     @GetMapping("/read/{id}")
-    public String readAndRedirect(@PathVariable Long id, @RequestParam("orderId") Long orderId) {
-        if(orderId.equals(0)){
-            alertService.markAsRead(id);
-            return "redirect:/material/list";
-        }
+    public String readAndRedirect(
+            @PathVariable Long id,
+            @RequestParam(value = "orderId", required = false) Long orderId,
+            @RequestParam(value = "materialId", required = false) Long materialId
+    ) {
         alertService.markAsRead(id);
-        return String.format("redirect:/process/%d/list", orderId);
+
+        if (orderId != null) {
+            return String.format("redirect:/process/%d/list", orderId);
+        } else if (materialId != null) {
+            return "redirect:/material/list";
+        } else {
+            // orderId도 materialId도 없는 경우: main으로
+            return "redirect:/";
+        }
     }
 
 }

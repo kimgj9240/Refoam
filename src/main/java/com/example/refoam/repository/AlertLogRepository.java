@@ -5,6 +5,7 @@ import com.example.refoam.domain.Employee;
 import com.example.refoam.domain.Material;
 import com.example.refoam.domain.Orders;
 import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,6 +15,7 @@ import java.util.List;
 
 public interface AlertLogRepository extends JpaRepository<AlertLog, Long> {
     // 사용자 기준으로 읽지 않은 알림 전체 조회
+    @EntityGraph(attributePaths = {"material", "order"})
     List<AlertLog> findAllByEmployeeAndCheckedFalse(Employee employee);
 
     // 읽지 않은 알림 개수를 사용자 단위로 카운트

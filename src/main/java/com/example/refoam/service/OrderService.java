@@ -79,7 +79,7 @@ public class OrderService {
                         AlertLog alert = AlertLog.builder()
                                 .material(material)
                                 .employee(material.getEmployee())
-                                .message("원재료 " + material.getMaterialName() + "수량이 100개 이하 입니다.")
+                                .message("재고 수량을 확인하세요. <br> 남은수랑 : "+ (int) (materialQuantity-minQuantity))
                                 .checked(false)
                                 .createdDate(LocalDateTime.now())
                                 .build();
@@ -87,7 +87,6 @@ public class OrderService {
                         log.info("원재료 알림 발생 : {}", material.getMaterialName());
                     }
                 }
-
 
                 materialService.save(material);
 
