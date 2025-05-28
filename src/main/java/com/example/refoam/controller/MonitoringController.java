@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -25,6 +26,9 @@ public class MonitoringController {
 
         List<ProductionMonitoring> productionMonitorings = monitoringService.productionMonitorings();
         model.addAttribute("productionMonitorings", productionMonitorings);
+
+        Map<String, Long> TodayErrorCounts = monitoringService.errorCounts();
+        model.addAttribute("TodayErrorCounts", TodayErrorCounts);
 
         return "monitoring/errorMonitoring";
     }
