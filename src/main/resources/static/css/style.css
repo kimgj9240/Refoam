@@ -187,13 +187,13 @@ ul.navbar-nav {
 }
 
 
-
+/* 햄버거 버튼 메뉴 관련 */
 .navbar-toggler{
-    background-color: #4166F5;
+    background-color: #ddf0f6;
 }
 
 .navbar-toggler-icon{
-   filter: invert(100%);
+    filter: invert(29%) sepia(91%) saturate(2127%) hue-rotate(221deg) brightness(101%) contrast(92%);
 }
 
 /* table size 설정 */

@@ -199,6 +199,90 @@
             plugins: [ChartDataLabels]
         });
     </script>
+    <div class="my-4">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+        <!-- date-fns 어댑터 (Chart.js v3+) -->
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+        <!-- 서버 제공 클라이언트 -->
+        <script src="http://localhost:5000/socket.io/socket.io.js"></script>
+        <style>
+            canvas {
+                background: #fafafa;
+                border: 1px solid #ddd;
+            }
+        </style>
+        <h2>금형 온도 실시간 모니터링</h2>
+        <canvas id="tempChart" width="800" height="400"></canvas>
 
+        <script>
+            // ② 서버 포트 맞춰서 연결
+            // transports 우선순위를  소켓은 오류가 잘 나서 polling만 쓰도록 해둠
+            const socket = io('http://localhost:5000', {transports: ['polling']});
+            socket.on('connect', () => console.log('✅ Socket connected'));
+
+            const THRESHOLD = 81;  // 불량 위험 온도 기준
+
+            const ctx = document.getElementById('tempChart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: 'Temp (℃)',
+                        data: [],               // {x, y} 배열
+                        borderWidth: 2,
+                        fill: false,
+                        pointRadius: 4,
+                        // ② parsed.y 를 사용하고, 없을 땐 기본색(blue) 반환
+                        pointBackgroundColor: context => {
+                            const y = context.parsed?.y;
+                            if (typeof y !== 'number') {
+                                return 'blue';
+                            }
+                            return y >= THRESHOLD ? 'red' : 'blue';
+                        },
+                        borderColor: 'blue',
+                        // 선 자체도 바꾸고 싶다면 아래 주석 해제
+
+                        segment: {
+                          borderColor: context => {
+                            const y0 = context.p0.parsed.y;
+                            const y1 = context.p1.parsed.y;
+                            const avg = (y0 + y1) / 2;
+                            return avg >= THRESHOLD ? 'red' : 'blue';
+                          }
+                        }
+
+                    }]
+                },
+                options: {
+                    parsing: false,
+                    scales: {
+                        x: { type: 'time', time: { unit: 'second' },title: {display: true, text: '시간'} },
+                        y: { title: {display: true, text: '℃'}, suggestedMin: 79, suggestedMax: 83 }
+                    }
+                }
+            });
+
+            // const chart = new Chart(ctx, {
+            //     type: 'line',
+            //     data: {datasets: [{label: 'Temp (℃)', data: [], borderWidth: 2, fill: false}]},
+            //     options: {
+            //         parsing: false,
+            //         scales: {
+            //             x: {type: 'time', time: {unit: 'second'}, title: {display: true, text: '시간'}},
+            //             y: {title: {display: true, text: '℃'}, suggestedMin: 40, suggestedMax: 70}
+            //         }
+            //     }
+            // });
+
+            socket.on('new_data', msg => {
+                console.log('▶ new_data', msg);
+                chart.data.datasets[0].data.push({x: msg.time, y: msg.value});
+                if (chart.data.datasets[0].data.length > 50) chart.data.datasets[0].data.shift();
+                chart.update('none');
+            });
+        </script>
+    </div>
 </div>
 </html>
