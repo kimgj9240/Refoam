@@ -126,11 +126,12 @@ public class HomeController {
                 .map(colorMap::get)
                 .toList();
 
+        List<ProductionMonitoring> productionMonitorings = monitoringService.productionMonitorings();
 
         int targetRate = 80;
-        List<ProductionMonitoring> productionMonitorings = monitoringService.productionMonitorings();
         Map<String, Integer> kpiMap = monitoringService.targetAchievement(500, 800, targetRate);
         Map<String, Long> errorCounts = monitoringService.errorCounts();
+
 
         int target = kpiMap.get("targetQuantity");
         int ok = kpiMap.get("okCount");
@@ -163,8 +164,6 @@ public class HomeController {
         );
 
 
-        String aiSummary = openAiService.generateReport(prompt);
-
 
         model.addAttribute("materialLabels", materialLabels);
         model.addAttribute("materialData", materialData);
@@ -175,9 +174,8 @@ public class HomeController {
         model.addAttribute("targetQuantity", kpiMap.get("targetQuantity"));
         model.addAttribute("targetAchieveQuantity", kpiMap.get("targetAchieveQuantity"));
         model.addAttribute("okCount", kpiMap.get("okCount"));
-        model.addAttribute("dashboardSummary", aiSummary);
         return "main";}
-    
+
     // 로그아웃 후 다른 아이디로 로그인했을 때 404 에러 뜨는거 방지용으로 만듦
     @GetMapping("/home")
     public String homeRedirect(Model model) {

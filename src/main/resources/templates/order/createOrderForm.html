@@ -15,7 +15,7 @@
             </div>
             <div class="mb-2">
                 <label class="form-label fw-bold" th:for="*{orderQuantity}">수량</label>
-                <input class="form-control" type="number" th:field="*{orderQuantity}">
+                <input class="form-control" type="number" min="10" step="10" th:field="*{orderQuantity}">
             </div>
             <div class="text-end">
                 <button type="submit" class="btn btn-primary btn-sm">생산 등록</button>
