@@ -55,15 +55,9 @@ public class MaterialService {
 
     //제품 별 필요한 원재료 매핑
     private static final Map<ProductName, List<MaterialName>> PRODUCT_NAME_LIST_MAP = Map.of(
-            ProductName.NORMAL30, List.of(MaterialName.EVA, MaterialName.ULTRAMARINE_BLUE, MaterialName.IRON_OXIDE_RED, MaterialName.TITANIUM_DIOXIDE), // 원통형 30CM 연보라(파+빨+흰)
-            ProductName.NORMAL60, List.of(MaterialName.EVA, MaterialName.ULTRAMARINE_BLUE, MaterialName.TITANIUM_DIOXIDE), // 원통형 60CM 하늘색(파+흰)
-            ProductName.NORMAL90, List.of(MaterialName.EVA, MaterialName. CARBON_BLACK,MaterialName.TITANIUM_DIOXIDE), // 원통형 90CM 회색(검+흰)
-            ProductName.BUMP30, List.of(MaterialName.EVA, MaterialName.CARBON_BLACK),
-            ProductName.BUMP60, List.of(MaterialName.EVA, MaterialName.CARBON_BLACK),
-            ProductName.BUMP90, List.of(MaterialName.EVA, MaterialName.CARBON_BLACK), // 돌기형 30~90CM 검정
-            ProductName.HALF30, List.of(MaterialName.EVA, MaterialName.TITANIUM_DIOXIDE, MaterialName.IRON_OXIDE_RED), // 반원형 30CM 연분홍(빨+흰)
-            ProductName.HALF60, List.of(MaterialName.EVA, MaterialName.TITANIUM_DIOXIDE, MaterialName.ULTRAMARINE_BLUE), // 반원형 60CM 하늘색(파+흰)
-            ProductName.HALF90, List.of(MaterialName.EVA, MaterialName.TITANIUM_DIOXIDE, MaterialName.IRON_OXIDE_RED, MaterialName.ULTRAMARINE_BLUE) // 반원형 90CM 연보라(파+빨+흰)
+            ProductName.NORMAL, List.of(MaterialName.EVA, MaterialName.P_BLUE, MaterialName.P_RED, MaterialName.P_WHITE), // 원통형 연보라(파+빨+흰)\
+            ProductName.BUMP, List.of(MaterialName.EVA, MaterialName.P_BLACK), // 돌기형
+            ProductName.HALF, List.of(MaterialName.EVA, MaterialName.P_WHITE, MaterialName.P_RED) // 반원형 연분홍(빨+흰)
     );
 
     // productName에 필요한 재료의 총합 가져오기
