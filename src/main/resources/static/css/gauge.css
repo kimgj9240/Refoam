@@ -4,22 +4,20 @@
 .color-green  { stop-color: greenyellow; }
 
 /* 레이아웃 */
-.gaugeMain {
-    width: 500px;
-}
 
 .gauge-container {
     display: flex;
     justify-content: space-around;
+    align-items: center;
     padding: 20px;
-    margin-top: 80px;
-    height: 400px;
 }
-
+/* 여기를 300×220으로 늘립니다 */
 .gauge {
     width: 300px;
     height: 220px;
 }
+
+
 
 /* SVG 내부 스타일 (DevExtreme 클래스명 기준) */
 .gauge .dxg-range.dxg-background-range {
