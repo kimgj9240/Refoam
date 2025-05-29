@@ -33,8 +33,15 @@ public class Orders {
 
     @Setter
     private boolean statisticsIntervalCheck;
+    // 메일 발송 체크
     @Setter
+    @Column(nullable = false)
     private boolean smtpCheck;
+
+    // 디스코드 알림 발송 체크
+    @Setter
+    @Column(nullable = false)
+    private boolean discordCheck = false;
 
     // 주문 리스트 공정상태
     @Setter
@@ -46,7 +53,7 @@ public class Orders {
     @Setter
     @OneToMany(mappedBy = "order")
     private List<Process> processList = new ArrayList<>();
-
+    
     // 연관관계 매핑
     @Builder.Default // 기본값이 무시되지 않도록 보장하는 어노테이션
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)

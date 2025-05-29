@@ -13,19 +13,19 @@
                 <div class="col-md-6 col-lg-12 my-md-5 my-lg-4 ">
                     <div class="card shadow-sm mb-2">
                         <div class="card-body">
-                            <h6 class="text-muted">✅ 달성 수량</h6>
+                            <h6>✅ 달성 수량</h6>
                             <h4 th:text="${okCount} + '개'">0개</h4>
                         </div>
                     </div>
                     <div class="card shadow-sm mb-2">
                         <div class="card-body">
-                            <h6 class="text-muted">📈 달성률</h6>
+                            <h6>📈 달성률</h6>
                             <h4 th:text="${achievementRate} + '%'">0%</h4>
                         </div>
                     </div>
                     <div class="card shadow-sm">
                         <div class="card-body">
-                            <h6 class="text-muted">📉 남은 수량</h6>
+                            <h6>📉 남은 수량</h6>
                             <h4 th:text="${targetQuantity - okCount} + '개'">0개</h4>
                         </div>
                     </div>
@@ -46,7 +46,7 @@
         <div id="aiReportToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
                 <strong class="me-auto">📋 AI 리포트</strong>
-                <small class="text-muted">방금 전</small>
+                <small>방금 전</small>
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div class="toast-body">
