@@ -9,6 +9,21 @@
             <canvas id="weeklyLineChart" width="600" height="300"></canvas>
         </div>
     </div>
+    <button id="showToastBtn" class="btn btn-primary position-fixed bottom-0 end-0 m-4" style="z-index: 1100;">
+        📋 리포트 보기
+    </button>
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+        <div id="aiReportToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">📋 AI 리포트</strong>
+                <small class="text-muted">지금</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                <span th:text="${errorSummary}" style="white-space: pre-line; margin-bottom: 0;">리포트 내용을 불러오는 중입니다...</span>
+            </div>
+        </div>
+    </div>
     <canvas id="monitoringChart" width="900" height="400"></canvas>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script th:inline="javascript">
@@ -144,7 +159,7 @@
         });
     </script>
     <script th:inline="javascript">
-        const todayErrorCounts = /*[[${TodayErrorCounts}]]*/ [];
+        const todayErrorCounts = /*[[${todayErrorCounts}]]*/ [];
         const todayErrorLabels = Object.keys(todayErrorCounts);
         const todayErrorData = Object.values(todayErrorCounts);
 
@@ -181,6 +196,16 @@
                         }
                     }
                 }
+            }
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            const btn = document.getElementById('showToastBtn');
+            const toastEl = document.getElementById('aiReportToast');
+            if (btn && toastEl) {
+                const toast = new bootstrap.Toast(toastEl, {delay: 10000});
+                btn.addEventListener('click', () => {
+                    toast.show();
+                });
             }
         });
     </script>

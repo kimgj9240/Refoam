@@ -27,8 +27,14 @@ public class MonitoringController {
         List<ProductionMonitoring> productionMonitorings = monitoringService.productionMonitorings();
         model.addAttribute("productionMonitorings", productionMonitorings);
 
-        Map<String, Long> TodayErrorCounts = monitoringService.errorCounts();
-        model.addAttribute("TodayErrorCounts", TodayErrorCounts);
+        Map<String, Long> todayErrorCounts = monitoringService.errorCounts();
+        model.addAttribute("todayErrorCounts", todayErrorCounts);
+
+        Map<String, Long> errorData = monitoringService.errorCounts();
+        String errorSummary = monitoringService.generateErrorReport();
+
+        model.addAttribute("errorCounts", errorData);
+        model.addAttribute("errorSummary", errorSummary);
 
         return "monitoring/errorMonitoring";
     }

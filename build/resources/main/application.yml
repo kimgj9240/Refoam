@@ -1,6 +1,9 @@
 spring:
   application:
     name: refoam
+  openai:
+    api:
+      key: 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
 
   datasource:
     url: jdbc:mysql://localhost:3306/refoam?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
@@ -10,7 +13,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create  # create / validate / none ? ??
+      ddl-auto: update  # create / validate / none ? ??
     show-sql: true
     properties:
       hibernate:
@@ -34,6 +37,8 @@ spring:
             enable: true
             required: true
     protocol: smtp
+
+
 
 logging:
   level:
