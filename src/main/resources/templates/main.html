@@ -41,18 +41,19 @@
 
     <h2 class="my-4">재고 건수</h2>
     <canvas id="materialChart" height="100"></canvas>
-    <button id="showToastBtn" class="btn btn-primary position-fixed bottom-0 end-0 m-4" style="z-index: 1100;">
+    <button id="showToastBtn" class="btn btn-refoam position-fixed bottom-0 end-0 m-4" style="z-index: 1100;">
         📋 리포트 보기
     </button>
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+    <div class="position-fixed bottom-0 mb-5 end-0 p-3" style="z-index: 1100">
         <div id="aiReportToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
-                <strong class="me-auto">📋 AI 리포트</strong>
+                <strong class="me-auto">📋 AI 리포트 ㅋ</strong>
                 <small class="text-muted">방금 전</small>
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div class="toast-body">
-                <span th:text="${dashboardSummary}" style="white-space: pre-line; margin-bottom: 0;">AI 분석 리포트 불러오는 중...</span>
+                <span th:text="${dashboardSummary}"
+                      style="white-space: pre-line; margin-bottom: 0;">AI 분석 리포트 불러오는 중...</span>
             </div>
         </div>
     </div>
@@ -230,7 +231,8 @@
         <!-- date-fns 어댑터 (Chart.js v3+) -->
         <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
         <!-- 서버 제공 클라이언트 -->
-        <script src="http://localhost:5000/socket.io/socket.io.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+
         <style>
             canvas {
                 background: #fafafa;
@@ -243,7 +245,7 @@
         <script>
             // 불량 위험 온도 기준
             const HIGH_THRESHOLD = 81.5;
-            const LOW_THRESHOLD  = 80;
+            const LOW_THRESHOLD = 80;
 
             // ② 서버 포트 맞춰서 연결
             // transports 우선순위를  소켓은 오류가 잘 나서 polling만 쓰도록 해둠
@@ -264,28 +266,31 @@
                             const y = context.parsed?.y;
                             if (typeof y !== 'number') return 'gray';      // 데이터 없을 땐 회색
                             if (y >= HIGH_THRESHOLD) return 'red';        // 81.5 이상
-                            if (y <= LOW_THRESHOLD)  return 'green';      // 80 이하
+                            if (y <= LOW_THRESHOLD) return 'green';      // 80 이하
                             return 'blue';                                // 그 외(80~81.5 사이)
                         },
                         borderColor: 'blue',
                         // 선 자체도 바꾸고 싶다면
                         segment: {
                             borderColor: ctx => {
-                                const y0  = ctx.p0.parsed.y;
-                                const y1  = ctx.p1.parsed.y;
+                                const y0 = ctx.p0.parsed.y;
+                                const y1 = ctx.p1.parsed.y;
                                 const avg = (y0 + y1) / 2;
                                 if (avg >= HIGH_THRESHOLD) return 'red';
-                                if (avg <= LOW_THRESHOLD)  return 'green';
+                                if (avg <= LOW_THRESHOLD) return 'green';
                                 return 'blue';
                             }
                         }
                     }]
                 },
                 options: {
+                    plugins: {
+                        datalabels: false    // ← 여기서 꺼 줍니다
+                    },
                     parsing: false,
                     scales: {
-                        x: { type: 'time', time: { unit: 'second' },title: {display: true, text: '시간'} },
-                        y: { title: {display: true, text: '℃'}, suggestedMin: 78, suggestedMax: 82.5 }
+                        x: {type: 'time', time: {unit: 'second'}, title: {display: true, text: '시간'}},
+                        y: {title: {display: true, text: '℃'}, suggestedMin: 78, suggestedMax: 82.5}
                     }
                 }
             });
@@ -298,5 +303,6 @@
             });
         </script>
     </div>
+    <div th:replace="~{fragments/gauge :: gauge}" class="my-4"></div>
 </div>
 </html>

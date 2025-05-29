@@ -1,0 +1,105 @@
+<!-- gauge.html -->
+<div th:fragment="gauge">
+    <!-- 1) DevExtreme CSS (테마: dx.light) -->
+    <link
+            rel="stylesheet"
+            href="https://cdn3.devexpress.com/jslib/22.2.6/css/dx.light.css"
+    />
+
+    <!-- 3) 의존 스크립트: jQuery → DevExtreme → (필요시 Bootstrap JS) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn3.devexpress.com/jslib/22.2.6/js/dx.all.js"></script>
+
+    <!-- 4) 마크업 -->
+    <div class="gaugeMain">
+        <button id="random" class="btn btn-refoam mb-3">Random value</button>
+        <h1 class="mb-3">Gauge Chart</h1>
+        <div class="gauge-container">
+            <div class="gauge"></div>
+            <div class="gauge"></div>
+            <div class="gauge"></div>
+        </div>
+    </div>
+
+    <!-- 5) 게이지 생성 스크립트 -->
+    <script>
+        $(function() {
+            class GaugeChart {
+                constructor(element, params) {
+                    this._el           = element;
+                    this._initialValue = params.initialValue;
+                    this._higherValue  = params.higherValue;
+                    this._title        = params.title;
+                    this._subtitle     = params.subtitle;
+                }
+                _buildConfig() {
+                    return {
+                        // ■ 3단계 컬러 밴드
+                        rangeContainer: {
+                            backgroundColor: '#555',
+                            ranges: [
+                                { startValue: 0,    endValue:  780, color: '#297373' }, // Safe
+                                { startValue: 780,  endValue: 1300, color: '#946B49' }, // Warning
+                                { startValue:1300,  endValue: 1560, color: '#ff621f' }  // Danger
+                            ]
+                        },
+                        // ■ 바늘 모양
+                        valueIndicator: {
+                            color: '#fff'
+                        },
+                        // ■ 반원 형태
+                        geometry: {
+                            startAngle: 180,
+                            endAngle:   360
+                        },
+                        // ■ 눈금 설정
+                        scale: {
+                            startValue: 0,
+                            endValue:   this._higherValue,
+                            minorTick:  { visible: false },
+                            tick:       { length: 8 },
+                            label:      { font: { color: '#87959f', size: 9 } }
+                        },
+                        // ■ 제목 / 부제목
+                        title: {
+                            verticalAlignment: 'bottom',
+                            text: this._title,
+                            subtitle: {
+                                text: this._subtitle,
+                                font: { weight: 700, size: 28 }
+                            }
+                        },
+                        // ■ 초기 값
+                        value: this._initialValue
+                    };
+                }
+                init() {
+                    $(this._el).dxCircularGauge(this._buildConfig());
+                }
+            }
+
+            // 페이지 로드 시 각 .gauge마다 인스턴스 생성
+            $(document).ready(function() {
+                $('.gauge').each((i, el) => {
+                    const params = {
+                        initialValue:  780,
+                        higherValue:  1560,
+                        title:        `Temperature ${i+1}`,
+                        subtitle:      '780 ºC'
+                    };
+                    new GaugeChart(el, params).init();
+                });
+
+                // Random 버튼 클릭 시
+                $('#random').click(() => {
+                    $('.gauge').each((i, el) => {
+                        const gauge = $(el).dxCircularGauge('instance');
+                        const val   = Math.round(Math.random() * 1560);
+                        gauge.option('value', val);
+                        gauge.option('title.subtitle.text', `${val} ºC`);
+                    });
+                });
+            });
+        });
+    </script>
+</div>
