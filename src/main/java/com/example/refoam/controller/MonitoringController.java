@@ -34,8 +34,6 @@ public class MonitoringController {
         String errorSummary = monitoringService.generateErrorReport();
 
         model.addAttribute("errorCounts", errorData);
-        model.addAttribute("errorSummary", errorSummary);
-
         return "monitoring/errorMonitoring";
     }
 }

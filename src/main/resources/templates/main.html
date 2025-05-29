@@ -50,7 +50,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div class="toast-body">
-                <span th:text="${dashboardSummary}" style="white-space: pre-line; margin-bottom: 0;">AI 분석 리포트 불러오는 중...</span>
+                <span style="white-space: pre-line; margin-bottom: 0;" id="toastBody">AI 분석 리포트 불러오는 중...</span>
             </div>
         </div>
     </div>
@@ -214,12 +214,26 @@
         document.addEventListener("DOMContentLoaded", function () {
             const btn = document.getElementById('showToastBtn');
             const toastEl = document.getElementById('aiReportToast');
-            if (btn && toastEl) {
-                const toast = new bootstrap.Toast(toastEl, {delay: 10000});
-                btn.addEventListener('click', () => {
-                    toast.show();
-                });
-            }
+            const toastBody = document.getElementById('toastBody');
+
+            // ✅ Bootstrap Toast 인스턴스 생성
+            const toast = new bootstrap.Toast(toastEl, { delay: 10000 });
+
+            btn.addEventListener('click', function () {
+                toastBody.textContent = "AI 리포트를 불러오는 중입니다..."
+                toast.show();
+
+                fetch("/ai-summary")
+                    .then(res => res.text())
+                    .then(text => {
+                        toastBody.textContent = text;
+                        toast.show();
+                    })
+                    .catch(err => {
+                        toastBody.textContent = "❌ 리포트 요청 실패";
+                        toast.show();
+                    });
+            });
         });
     </script>
 </div>
