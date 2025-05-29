@@ -16,23 +16,8 @@
         </div>
     </div>
 
-<!--    금형 온도 파이썬에 적용하기 위한 스크립트-->
-    <!-- 스크립트만 별도의 fragment로 분리 -->
-    <th:block th:fragment="gaugeScript">
-        <script>
-            const socket = io('http://localhost:5000', { transports: ['polling'] });
-            const gauge = $('.gauge').dxCircularGauge('instance');
 
-            socket.on('new_data', msg => {
-                chart.data.datasets[0].data.push({ x: msg.time, y: msg.value });
-                if (chart.data.datasets[0].data.length > 50) chart.data.datasets[0].data.shift();
-                chart.update('none');
 
-                gauge.option('value', msg.value);
-                gauge.option('title.subtitle.text', `${msg.value.toFixed(1)} ºC`);
-            });
-        </script>
-    </th:block>
 
     <!-- 5) 게이지 생성 스크립트 -->
     <script>
@@ -121,6 +106,41 @@
                     });
                 });
 
+            });
+        });
+    </script>
+
+    <!--    금형 온도 파이썬에 적용하기 위한 스크립트-->
+    <script>
+        $(function() {
+            // 1) 게이지 초기화
+            $('.gauge').each((i, el) => {
+                const params = {
+                    initialValue: 78,
+                    higherValue: 82.5,
+                    title: `금형온도 ${i+1}`,
+                    subtitle: '80 ºC'
+                };
+                new GaugeChart(el, params).init();
+            });
+
+            // 2) Random 버튼 (기존)
+            $('#random').click(() => { … });
+
+            // 3) 소켓 연결 & 실시간 업데이트
+            const socket = io('http://localhost:5000', { transports: ['polling'] });
+            socket.on('new_data', msg => {
+                // (가) 차트 업데이트
+                chart.data.datasets[0].data.push({ x: msg.time, y: msg.value });
+                if (chart.data.datasets[0].data.length > 50) chart.data.datasets[0].data.shift();
+                chart.update('none');
+
+                // (나) 게이지 업데이트 (모든 게이지에 적용)
+                $('.gauge').each((i, el) => {
+                    const gauge = $(el).dxCircularGauge('instance');
+                    gauge.option('value', msg.value);
+                    gauge.option('title.subtitle.text', `${msg.value.toFixed(1)} ºC`);
+                });
             });
         });
     </script>
