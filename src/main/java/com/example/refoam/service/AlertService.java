@@ -39,8 +39,4 @@ public class AlertService {
         alert.setChecked(true);
     }
 
-    // 하나라도 30% 초과한 주문이 있는지 여부 확인
-    public boolean isAnyOrderExceeded() {
-        return alertLogRepository.existsByCheckedFalse();
-    }
 }

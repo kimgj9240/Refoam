@@ -1,6 +1,7 @@
 package com.example.refoam.service;
 
 import com.example.refoam.domain.*;
+import com.example.refoam.repository.AlertLogRepository;
 import com.example.refoam.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -19,6 +21,7 @@ import java.util.*;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final MaterialService materialService;
+    private final AlertLogRepository alertLogRepository;
 
     // 주문 생성
     @Transactional
@@ -65,7 +68,26 @@ public class OrderService {
                 //남은 재고에서 minQuantity를 빼고 다시 남은 재고의 값 수정
                 material.setMaterialQuantity((int) (materialQuantity-minQuantity));
 
+
                 log.info("차감된 원재료 : {}, 차감량 {}, 남은 주문 필요량 {}",materialName,minQuantity, requiredOrderQuantity);
+
+                //(int) (materialQuantity-minQuantity) 값이 100이하면 알람 발생
+
+                if ((int) (materialQuantity-minQuantity) <= 100) { // 알림 발생 에러율 조건
+                    boolean alreadyAlerted = alertLogRepository.existsByMaterialAndCheckedFalse(material);
+                    if (!alreadyAlerted) {
+                        AlertLog alert = AlertLog.builder()
+                                .material(material)
+                                .employee(material.getEmployee())
+                                .message("재고 수량을 확인하세요. <br> 남은수랑 : "+ (int) (materialQuantity-minQuantity))
+                                .checked(false)
+                                .createdDate(LocalDateTime.now())
+                                .build();
+                        alertLogRepository.save(alert);
+                        log.info("원재료 알림 발생 : {}", material.getMaterialName());
+                    }
+                }
+
                 materialService.save(material);
 
                 //어떤 Material에서 얼마나 차감했는지 기록

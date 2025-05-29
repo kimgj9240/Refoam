@@ -111,7 +111,6 @@ public class ProcessService {
     }
 
     public List<Process> findProcesses(){
-
         return processRepository.findAll();
     }
 
@@ -128,8 +127,6 @@ public class ProcessService {
     // 페이지네이션 구현용 메서드
     public Page<Process> getList(Long orderId, int page){
         PageRequest pageable = PageRequest.of(page, 12);
-
-
         return this.processRepository.findAllByOrder_Id(orderId,pageable);
     }
 

@@ -128,6 +128,7 @@
 
                 const listRes = await fetch('/api/alerts/unread');
                 const alerts = await listRes.json();
+
                 const dropdown = document.querySelector('#alert-dropdown');
                 const dropdown2 = document.querySelector('#alert-dropdown-xs');
                 dropdown.innerHTML = '';
@@ -138,11 +139,24 @@
                     dropdown2.innerHTML = `<li><span class="dropdown-item">읽지 않은 알림이 없습니다.</span></li>`;
                 } else {
                     alerts.forEach(alert => {
+                        const orderId = alert.orderId;
+                        const materialName = alert.materialName ?? '이름 없음'; // fallback 처리
+
+                        const label = orderId != null
+                            ? `<strong>[주문 ${orderId}]</strong>`
+                            : `<strong>[원재료 ${materialName}]</strong>`;
+
+                        const href = orderId != null
+                            ? `/alert/read/${alert.id}?orderId=${orderId}`
+                            : `/alert/read/${alert.id}?materialId=${alert.materialId}`;
+
                         const item = document.createElement('li');
-                        item.innerHTML = `<a class="dropdown-item border-bottom alert-item py-2"
-                        href="/alert/read/${alert.id}?orderId=${alert.orderId}">
-                        <div><strong>[주문 ${alert.orderId}]</strong></div>
-                        <div>${alert.message}</div></a>`;
+                        item.innerHTML = `
+                            <a class="dropdown-item border-bottom alert-item py-2" href="${href}">
+                                <div>${label}</div>
+                                <div>${alert.message}</div>
+                            </a>
+                        `;
                         dropdown.appendChild(item);
                         dropdown2.appendChild(item.cloneNode(true));
                     });

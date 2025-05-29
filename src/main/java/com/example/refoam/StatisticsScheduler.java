@@ -60,6 +60,7 @@ public class StatisticsScheduler {
         List<Orders> ordersList = orderRepository.findAllByOrderStateAndStatisticsIntervalCheckAndSmtpCheck("공정완료",true,false);
         for(Orders orders : ordersList){
             int orderQty = orders.getOrderQuantity();
+            if (!orders.getEmployee().isSendMail()) continue;  //메일알림 미사용시 발송안함
             String email = orders.getEmployee().getEmail();
             if(errorStatisticsRepository.findMaxErrorCountGroupedByOrderId(orders).equals(0)) continue;
             int errCount = errorStatisticsRepository.findMaxErrorCountGroupedByOrderId(orders);
