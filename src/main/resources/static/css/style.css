@@ -215,11 +215,11 @@ ul.navbar-nav {
 }
 
 /* table size 설정 */
-@media (max-width: 768px) {
+@media (max-width: 999px) {
     .table-lg{  display: none;
     }
 }
-@media (min-width: 768px) {
+@media (min-width: 999px) {
     .table-md{  display: none;
     }
 }
