@@ -33,6 +33,7 @@ public class Orders {
 
     @Setter
     private boolean statisticsIntervalCheck;
+
     @Setter
     private boolean smtpCheck;
 
