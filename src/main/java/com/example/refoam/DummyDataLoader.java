@@ -53,10 +53,10 @@ public class DummyDataLoader implements CommandLineRunner {
 
         List<MaterialName> materialNameList = List.of(
                 MaterialName.EVA,
-                MaterialName.TITANIUM_DIOXIDE,
-                MaterialName.ULTRAMARINE_BLUE,
-                MaterialName.CARBON_BLACK,
-                MaterialName.IRON_OXIDE_RED
+                MaterialName.P_WHITE,
+                MaterialName.P_BLUE,
+                MaterialName.P_BLACK,
+                MaterialName.P_RED
         );
 
 //        for (int i = 1; i <= 50; i++) {
@@ -81,15 +81,9 @@ public class DummyDataLoader implements CommandLineRunner {
 
         materials.forEach(materialService::save);
         List<ProductName> productNameList = List.of(
-                ProductName.NORMAL30,
-                ProductName.NORMAL60,
-                ProductName.NORMAL90,
-                ProductName.BUMP30,
-                ProductName.BUMP60,
-                ProductName.BUMP90,
-                ProductName.HALF30,
-                ProductName.HALF60,
-                ProductName.HALF90
+                ProductName.NORMAL,
+                ProductName.BUMP,
+                ProductName.HALF
         );
 //        List<Orders> orders = productNameList.stream().map(
 //                productName -> Orders.builder()
@@ -170,7 +164,7 @@ public class DummyDataLoader implements CommandLineRunner {
             LocalDateTime baseDate = LocalDate.now().minusDays(d).atTime(10, 0);
 
             Orders orders1 = Orders.builder()
-                    .productName(ProductName.NORMAL30)
+                    .productName(ProductName.NORMAL)
                     .orderQuantity(10)
                     .orderDate(baseDate)
                     .orderState("공정완료")

@@ -66,10 +66,10 @@ public class OrderController {
         // 원자재 그래프 막대 색 지정
         Map<MaterialName, String> colorMap = Map.of(
                 MaterialName.EVA, "rgba(217,240,240, 1)",
-                MaterialName.CARBON_BLACK, "rgba(202,202,202, 1)",
-                MaterialName.TITANIUM_DIOXIDE, "rgba(255,255,255, 1)",
-                MaterialName.ULTRAMARINE_BLUE, "rgba(213,234,249, 1)",
-                MaterialName.IRON_OXIDE_RED, "rgba(253,207,223, 1)"
+                MaterialName.P_BLACK, "rgba(202,202,202, 1)",
+                MaterialName.P_WHITE, "rgba(255,255,255, 1)",
+                MaterialName.P_BLUE, "rgba(213,234,249, 1)",
+                MaterialName.P_RED, "rgba(253,207,223, 1)"
         );
 
 
