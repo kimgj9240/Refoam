@@ -54,11 +54,11 @@
                     <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${order.id}" class="btn btn-delete btn-sm disabled" th:if="${order.orderState != '준비 중'}"> 주문 취소</button>
                 </td>
                 <td>
-                    <span th:id="'progress-text-a-' + ${order.id}">[[${order.completedCount}]] / [[${order.orderQuantity}]]</span>
+                    <span th:id="'progress-text-a-' + ${order.id}">[[${order.completedCount}]] / [[${order.orderQuantity}]] </span>
                     <span th:id="'status-light-a-' + ${order.id}" class="status-light" th:classappend="
                         ${order.completedCount} == 0 ? '' :
-                        (${order.completedCount} == ${order.orderQuantity} ? 'green-light' :
-                        (${order.completedCount} >= ${order.orderQuantity * 0.7} ? 'yellow-light' : 'red-light'))"></span>
+                        (${order.errorRate} < 0.1 ? 'green-light' :
+                        (${order.errorRate} < 0.3 ? 'yellow-light' : 'red-light'))"></span>
                 </td>
             </tr>
             </tbody>
@@ -126,8 +126,8 @@
                         <span th:id="'progress-text-b-' + ${order.id}">[[${order.completedCount}]] / [[${order.orderQuantity}]]</span>
                         <span th:id="'status-light-b-' + ${order.id}" class="status-light" th:classappend="
                         ${order.completedCount} == 0 ? '' :
-                        (${order.completedCount} == ${order.orderQuantity} ? 'green-light' :
-                        (${order.completedCount} >= ${order.orderQuantity * 0.7} ? 'yellow-light' : 'red-light'))"></span>
+                        (${order.errorRate} < 0.1 ? 'green-light' :
+                        (${order.errorRate} < 0.3 ? 'yellow-light' : 'red-light'))"></span>
                     </td>
                 </tr>
             </th:block>
@@ -222,7 +222,7 @@
                         // 상태등 색상 처리
                         if (indicator) {
                             indicator.className = "status-light";
-                            if (errorRate <= 0.0) {
+                            if (errorRate <= 0.1) {
                                 indicator.classList.add("green-light");
                             } else if (errorRate <= 0.3) {
                                 indicator.classList.add("yellow-light");
