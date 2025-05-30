@@ -1,9 +1,8 @@
 package com.example.refoam.service;
 
-import com.example.refoam.domain.Material;
-import com.example.refoam.domain.MaterialName;
-import com.example.refoam.domain.ProductName;
+import com.example.refoam.domain.*;
 import com.example.refoam.dto.MaterialChart;
+import com.example.refoam.repository.AlertLogRepository;
 import com.example.refoam.repository.MaterialRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -14,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class MaterialService {
     private final MaterialRepository materialRepository;
+    private final AlertLogRepository alertLogRepository;
 
     @Transactional
     public void save(Material material){
@@ -88,6 +89,58 @@ public class MaterialService {
 
         //모든 원재료가 주문량을 충족하는지 확인
         return requiredMaterialStock.entrySet().stream().allMatch(entry -> materialQuantities.getOrDefault(entry.getKey(), 0L) >= orderQuantity);
+    }
+
+    @Transactional
+    public void deductMaterialsForOrder(Orders order) {
+        ProductName productName = order.getProductName();
+        int orderQuantity = order.getOrderQuantity();
+        Map<MaterialName, Long> requiredMaterials = getRequiredMaterialStock(productName);
+
+        for (Map.Entry<MaterialName, Long> entry : requiredMaterials.entrySet()) {
+            MaterialName materialName = entry.getKey();
+            long requiredOrderQuantity = orderQuantity;
+
+            List<Material> materials = findMaterialName(materialName);
+            if (materials.isEmpty()) throw new IllegalStateException("재료 없음");
+
+            for (Material material : materials) {
+                if (requiredOrderQuantity <= 0) break;
+
+                long currentQuantity = material.getMaterialQuantity();
+                long deductQuantity = Math.min(currentQuantity, requiredOrderQuantity);
+                material.setMaterialQuantity((int) (currentQuantity - deductQuantity));
+
+                // Alert: 재고 100 이하 시 알림
+                if (currentQuantity - deductQuantity <= 100) {
+                    boolean alerted = alertLogRepository.existsByMaterialAndCheckedFalse(material);
+                    if (!alerted) {
+                        AlertLog alert = AlertLog.builder()
+                                .material(material)
+                                .employee(material.getEmployee())
+                                .message("재고 수량을 확인하세요. <br> 남은수랑 : "+ (currentQuantity-deductQuantity))
+                                .checked(false)
+                                .createdDate(LocalDateTime.now())
+                                .build();
+                        alertLogRepository.save(alert);
+                    }
+                }
+
+                save(material); // 재고 저장
+
+                // OrderMaterial 기록
+                OrderMaterial orderMaterial = new OrderMaterial();
+                orderMaterial.setMaterial(material);
+                orderMaterial.setDeductedQuantity((int) deductQuantity);
+                order.addOrderMaterial(orderMaterial);
+
+                requiredOrderQuantity -= deductQuantity;
+            }
+
+            if (requiredOrderQuantity > 0) {
+                throw new IllegalStateException(materialName + " 재료 부족");
+            }
+        }
     }
 
     // 페이징 구현용

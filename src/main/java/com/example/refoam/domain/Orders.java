@@ -32,14 +32,24 @@ public class Orders {
     private LocalDateTime orderDate;
 
     @Setter
-    private boolean statisticsIntervalCheck;
-
-    @Setter
-    private boolean smtpCheck;
+    private int completedCount; // 진행된 공정 수
 
     // 주문 리스트 공정상태
     @Setter
     private String orderState; // 준비 중, 배합완료, 배합실패, 공정완료, 진행 중
+
+    @Setter
+    private boolean statisticsIntervalCheck;
+    // 메일 발송 체크
+
+    @Setter
+    @Column(nullable = false)
+    private boolean smtpCheck;
+
+    // 디스코드 알림 발송 체크
+    @Setter
+    @Column(nullable = false)
+    private boolean discordCheck = false;
 
     @OneToMany(mappedBy = "order")
     private List<ErrorStatistics> errorStateList = new ArrayList<>();

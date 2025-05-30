@@ -21,6 +21,9 @@ public class Process {
     private Long id;
 
     @Setter
+    private String lotNumber;
+
+    @Setter
     private String status;
 
     @Setter

@@ -298,3 +298,25 @@ input::placeholder {
 a {
     text-decoration: none;
 }
+
+/* 공정 완료 표시 */
+.status-light {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    margin-left: 6px;
+    background-color: #ccc;
+}
+
+.green-light {
+    background-color: #4CAF50;
+}
+
+.yellow-light {
+    background-color: #FFC107;
+}
+
+.red-light {
+    background-color: #F44336;
+}

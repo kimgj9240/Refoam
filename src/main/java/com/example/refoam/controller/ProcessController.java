@@ -28,8 +28,6 @@ public class ProcessController {
 
         Page<Process> paging = processService.getList(orderId, page);
 
-
-
         model.addAttribute("processes",paging);
 //        model.addAttribute("processes",processes);
         model.addAttribute("qualityCheck",qualityCheckService.selectQualityCheck(orderId));
