@@ -28,12 +28,12 @@ public class StatisticsScheduler {
     private final OrderMonitorService orderMonitorService;
     private final DiscordNotifier discordNotifier;
 
-    @Scheduled(fixedRate = 60000)//interval 5 minutes
+    @Scheduled(fixedRate = 120000)//interval 1 minutes
     public void statistics(){
         log.info("statistics 스케줄러 호출됨 : {}", LocalDateTime.now());
         List<Orders> ordersList = orderRepository.findAllByOrderStateAndStatisticsIntervalCheck("공정완료",false);
         for(Orders orders : ordersList){
-            LocalDateTime interval = LocalDateTime.now().minusMinutes(1);//interval 5 minutes
+            LocalDateTime interval = LocalDateTime.now().minusMinutes(2);//interval 5 minutes
             List<Process> processList = processRepository.findByOrderAndProcessDateInterval(orders, interval);
             if(processList.isEmpty()) continue;
 
@@ -56,35 +56,40 @@ public class StatisticsScheduler {
         }
 
     }
-    @Scheduled(fixedRate = 60000)//interval 5 minutes
+    @Scheduled(fixedRate = 120000)//interval 5 minutes
     public void errCountMonitor(){
         log.info("errCountMonitor 스케줄러 호출됨 : {}", LocalDateTime.now());
 
         List<Orders> ordersList = orderRepository.findAllByOrderStateAndStatisticsIntervalCheckAndSmtpCheck("공정완료",true,false);
 
-        for(Orders orders : ordersList){
+        for (Orders orders : ordersList) {
             int orderQty = orders.getOrderQuantity();
             String productName = String.valueOf(orders.getProductName());
             String email = orders.getEmployee().getEmail();
+
             Integer errCount = errorStatisticsRepository.findMaxErrorCountGroupedByOrderId(orders);
-
             if (errCount == null || errCount == 0) continue;
-            double errorRate = (double) errCount / orderQty;
 
-            if(errorRate >= 0.1){
+            double errorRate = (double) errCount / orderQty;
+            if (errorRate < 0.1) continue; // 기준 이하일 경우 continue
+
+            // 디스코드 전송 조건 및 처리
+            if (!orders.isDiscordCheck()) {
                 String message = String.format(
-                        "🚨 [주문 %d] %s 제품 공정 중 에러율 %.2f%% (에러 %d건 / 총 %d건)",orders.getId(),productName, errorRate * 100, errCount, orderQty
+                        "🚨 [주문 %d] %s 제품 공정 중 에러율 %.2f%% (에러 %d건 / 총 %d건)",
+                        orders.getId(), productName, errorRate * 100, errCount, orderQty
                 );
                 discordNotifier.sendAlert(message);
+                orders.setDiscordCheck(true); // 전송 여부 저장
 
-                // 이메일 발송
-                if (orders.getEmployee().isSendMail()) continue; // 메일 사용 여부 체크
-                orderMonitorService.errorCheck("refoam.test@gmail.com",orderQty,errCount);
-                log.info("email send : {}",email + orderQty + errCount);
+            }
+            orderRepository.save(orders);
+            // 메일 발송 조건 및 처리
+            if (orders.getEmployee().isSendMail()) {
+                orderMonitorService.errorCheck(email, orderQty, errCount);
+                log.info("email send : {}", email + orderQty + errCount);
                 orders.setSmtpCheck(true);
             }
-
-            //orderMonitorService.errorCheck(email,orderQty,errCount);
             orderRepository.save(orders);
         }
     }

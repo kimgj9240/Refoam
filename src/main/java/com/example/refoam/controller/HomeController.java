@@ -120,6 +120,8 @@ public class HomeController {
                 MaterialName.P_BLUE, "rgba(54, 92, 235, 1)",
                 MaterialName.P_RED, "rgba(180, 60, 60, 1)"
         );
+
+
         List<String> materialColors = materialMap.keySet().stream()
                 .map(colorMap::get)
                 .toList();
@@ -174,7 +176,7 @@ public class HomeController {
         model.addAttribute("targetAchieveQuantity", kpiMap.get("targetAchieveQuantity"));
         model.addAttribute("okCount", kpiMap.get("okCount"));
         return "main";}
-
+    
     // 로그아웃 후 다른 아이디로 로그인했을 때 404 에러 뜨는거 방지용으로 만듦
     @GetMapping("/home")
     public String homeRedirect(Model model) {

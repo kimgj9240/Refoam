@@ -91,6 +91,12 @@ public class OrderController {
         Map<MaterialName, Long> requiredMaterialStock = materialService.getRequiredMaterialStock(orderForm.getProductName());
         log.info("productName에 따른 수량 {}", requiredMaterialStock);
 
+        // 주문 수량이 10 이상, 10단위인지 확인
+        if (orderForm.getOrderQuantity() < 10 || orderForm.getOrderQuantity() % 10 != 0) {
+            bindingResult.rejectValue("orderQuantity", "invalidQuantity", "주문 수량은 10개 이상이며, 10단위로만 가능합니다.");
+            return "order/createOrderForm";
+        }
+
         if(bindingResult.hasErrors()){
             return "order/createOrderForm";
         }
@@ -115,13 +121,26 @@ public class OrderController {
     }
 
     @PostMapping("/{id}/first-process")
-    public String mixOrder(@PathVariable("id") Long id,@RequestParam(value = "page", defaultValue = "0") int page) {
+    public String mixOrder(@PathVariable("id") Long id, @RequestParam(value = "page", defaultValue = "0") int page) {
         Orders order = orderService.findOneOrder(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 주문은 존재하지 않습니다."));
 
-        // 95% 확률로 '배합완료', 20% 확률로 '배합실패'
+        int orderQuantity = order.getOrderQuantity();
+        ProductName productName = order.getProductName();
+
+        // 재고 차감
+        try {
+            materialService.deductMaterialsForOrder(order); // 이 메서드는 OrderMaterial 기록 포함
+        } catch (IllegalStateException e) {
+            // 재고 부족 시 에러 처리
+            return "redirect:/order/list?page=" + page + "&error=notEnoughStock";
+        }
+
+        // 95% 배합 완료 : 5% 배합 실패
         String state = Math.random() < 0.95 ? "배합완료" : "배합실패";
         order.setOrderState(state);
+
+        // 저장
         orderService.save(order);
 
         return "redirect:/order/list?page=" + page;
@@ -131,7 +150,10 @@ public class OrderController {
     public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page){
 //        List<Orders> ordersList = orderService.findOrders();
         Page<Orders> paging = this.orderService.getList(page);
-
+        paging.forEach(order -> System.out.println("order=" + order.getProductName() + ", emp=" + order.getEmployee().getUsername()));
+        paging.forEach(order -> {
+            if (order.getEmployee() != null) order.getEmployee().getUsername(); // 강제 초기화
+        });
 //        model.addAttribute("ordersList", ordersList);
         model.addAttribute("ordersList", paging);
         model.addAttribute("activeMenu", 3);

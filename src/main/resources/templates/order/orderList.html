@@ -12,6 +12,7 @@
                 <th>담당직원</th>
                 <th>공정상태</th>
                 <th class="text-center"> #</th>
+                <th></th>
             </tr>
             </thead>
             <tbody>
@@ -47,6 +48,10 @@
 
                     <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${order.id}" class="btn btn-delete btn-sm disabled" th:if="${order.orderState != '준비 중'}"> 주문 취소</button>
                 </td>
+                <td>
+                    <span th:id="'progress-text-a-' + ${order.id}">0 / [[${order.orderQuantity}]]</span>
+                    <span th:id="'status-light-a-' + ${order.id}" class="status-light"></span>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -63,7 +68,8 @@
             <tr>
                 <th>담당직원</th>
                 <th>공정상태</th>
-                <th colspan="2">#</th>
+                <th>#</th>
+                <th></th>
             </tr>
             </thead>
             <tbody>
@@ -101,6 +107,10 @@
                         <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${order.id}" class="btn btn-delete btn-sm " th:if="${order.orderState == '준비 중'}"> 주문 취소</button>
 
                         <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${order.id}" class="btn btn-delete btn-sm disabled" th:if="${order.orderState != '준비 중'}"> 주문 취소</button>
+                    </td>
+                    <td>
+                        <span th:id="'progress-text-b-' + ${order.id}">0 / [[${order.orderQuantity}]]</span>
+                        <span th:id="'status-light-b-' + ${order.id}" class="status-light"></span>
                     </td>
                 </tr>
             </th:block>
@@ -149,6 +159,60 @@
             </li>
         </ul>
     </nav>
+
+</div>
+<div layout:fragment="scripts">
+    <!-- WebSocket 관련 라이브러리 -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+    <script th:inline="javascript">
+        let stompClient = null;
+
+        function connectWebSocket() {
+            const socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+
+            stompClient.connect({}, function () {
+                console.log("웹소켓 연결됨");
+
+                // 서버에서 메시지 수신
+                stompClient.subscribe('/topic/process', function (message) {
+                    console.log("받은 메시지:", message.body);
+
+                    const data = JSON.parse(message.body);
+                    const orderId = data.orderId;
+                    const completed = data.completedCount;
+                    const total = data.totalCount;
+                    const errorRate = data.errorRate;
+
+                    // 두 테이블 버전에 대해 모두 처리
+                    ["a", "b"].forEach(prefix => {
+                        const text = document.querySelector(`#progress-text-${prefix}-${orderId}`);
+                        const indicator = document.querySelector(`#status-light-${prefix}-${orderId}`);
+
+                        if (text) {
+                            text.textContent = `${completed} / ${total}`;
+                        }
+
+                        if (indicator) {
+                            indicator.className = "status-light"; // 기존 색상 제거
+                            if (errorRate <= 0.0) {
+                                indicator.classList.add("green-light");
+                            } else if (errorRate <= 0.1) {
+                                indicator.classList.add("yellow-light");
+                            } else {
+                                indicator.classList.add("red-light");
+                            }
+                        }
+                    });
+                });
+            });
+        }
+
+        window.addEventListener("DOMContentLoaded", connectWebSocket);
+    </script>
+</div>
 
 </div>
 </html>
