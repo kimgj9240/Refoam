@@ -1,11 +1,4 @@
-<!-- gauge.html -->
-<div th:fragment="gauge">
-
-    <!-- 3) 의존 스크립트: jQuery → DevExtreme → (필요시 Bootstrap JS) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn3.devexpress.com/jslib/22.2.6/js/dx.all.js"></script>
-
-    <!-- 4) 마크업 -->
+<div th:fragment="gauge" class="container">
     <div>
         <button id="random" class="btn btn-refoam mb-3">Random value</button>
         <h1 class="mb-3">실시간 금형 온도</h1>
@@ -16,132 +9,93 @@
         </div>
     </div>
 
-
+    <!-- 1) jQuery, DevExtreme, Socket.io -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn3.devexpress.com/jslib/22.2.6/js/dx.all.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
 
 
     <!-- 5) 게이지 생성 스크립트 -->
     <script>
         $(function() {
+            // 1) GaugeChart 클래스
             class GaugeChart {
-                constructor(element, params) {
-                    this._el           = element;
-                    this._initialValue = params.initialValue;
-                    this._higherValue  = params.higherValue;
-                    this._title        = params.title;
-                    this._subtitle     = params.subtitle;
+                constructor(el, { initialValue, higherValue, title, subtitle }) {
+                    this._el           = el;
+                    this._initialValue = initialValue;
+                    this._higherValue  = higherValue;
+                    this._title        = title;
+                    this._subtitle     = subtitle;
                 }
                 _buildConfig() {
                     return {
-                        // ■ 3단계 컬러 밴드
                         rangeContainer: {
-                            backgroundColor: '#555',
+                            backgroundColor: '#ffffff',
+                            width: 30,
                             ranges: [
-                                { startValue: 78,    endValue:  79.5, color: '#ff8228' }, // danger2
-                                { startValue: 79.5,    endValue:  81, color: '#4166f5' }, // Safe
-                                { startValue: 81,  endValue: 82, color: '#a0748f' }, // Warning
-                                { startValue: 82,  endValue: 82.5, color: '#ff8228' }  // Danger
+                                { startValue: 78.0, endValue: 79.5, color: '#ff8228' },
+                                { startValue: 79.5, endValue: 81.1, color: '#4166f5' },
+                                { startValue: 81.0, endValue: 82.0, color: '#ffc228' },
+                                { startValue: 82.0, endValue: 82.5, color: '#ff8228' }
                             ]
                         },
-                        // ■ 바늘 모양
-                        valueIndicator: {
-                            color: '#000'
-                        },
-                        // ■ 반원 형태
-                        geometry: {
-                            startAngle: 180,
-                            endAngle:   355
-                        },
-                        // ■ 눈금 설정
+                        valueIndicator: { color: '#000' },
+                        geometry: { startAngle: 180, endAngle: 360 },
                         scale: {
-                            startValue: 78,
+                            startValue: 78.0,
                             endValue:   this._higherValue,
-                            minorTick:  { visible: false },
-                            tick:       { length: 1 },
-                            label:      { font: { color: '#87959f', size: 12 } }
+                            orientation: 'outside',
+                            tick:        { visible: true, length: 20, width: 1, color: '#101010' },
+                            minorTick:   { visible: true, length: 5, width: 1, color: '#000' },
+                            label:       { font: { color: '#4c5156', size: 12 } }
                         },
-                        // ■ 제목 / 부제목
                         title: {
                             verticalAlignment: 'bottom',
                             text: this._title,
                             subtitle: {
                                 text: this._subtitle,
-                                font: { weight: 700, size: 28 }
+                                font: { weight: 600, size: 24 }
                             }
                         },
-                        // ■ 초기 값
                         value: this._initialValue
                     };
                 }
                 init() {
-                    $(this._el).dxCircularGauge(this._buildConfig());
+                    // 인스턴스를 this._gauge에 저장
+                    this._gauge = $(this._el)
+                        .dxCircularGauge(this._buildConfig())
+                        .dxCircularGauge('instance');
+                    return this;
                 }
             }
 
-            // 페이지 로드 시 각 .gauge마다 인스턴스 생성
-            $(document).ready(function() {
-                $('.gauge').each((i, el) => {
-                    const params = {
-                        initialValue:  78,
-                        higherValue:  82.5,
-                        title:        `금형온도 ${i+1}`,
-                        subtitle:      '80 ºC'
-                    };
-                    new GaugeChart(el, params).init();
-                });
-
-                // Random 버튼 클릭 시
-                $('#random').click(() => {
-                    const min = 78;
-                    const max = 82.5;
-
-                    $('.gauge').each((i, el) => {
-                        const gauge = $(el).dxCircularGauge('instance');
-                        // 0~1 사이 랜덤 * (max-min) + min → 78~82.5 범위
-                        let val = Math.random() * (max - min) + min;
-                        // 소수 첫째 자리로 반올림
-                        val = Math.round(val * 10) / 10;
-
-                        gauge.option('value', val);
-                        gauge.option('title.subtitle.text', `${val} ºC`);
-                    });
-                });
-
-            });
-        });
-    </script>
-
-    <!--    금형 온도 파이썬에 적용하기 위한 스크립트-->
-    <script>
-        $(function() {
-            // 1) 게이지 초기화
+            // 2) 게이지 인스턴스 생성
+            const gaugeInstances = [];
             $('.gauge').each((i, el) => {
-                const params = {
-                    initialValue: 78,
+                const letter = String.fromCharCode(65 + i); // 'A', 'B', 'C',...
+                const gc = new GaugeChart(el, {
+                    initialValue: 78.0,
                     higherValue: 82.5,
-                    title: `금형온도 ${i+1}`,
-                    subtitle: '80 ºC'
-                };
-                new GaugeChart(el, params).init();
+                    title:        '78.0 ºC',           // 초기 숫자
+                    subtitle:     `금형온도 ${letter}` // A, B, C
+                }).init();
+                gaugeInstances.push(gc._gauge);
             });
 
             // // 2) Random 버튼 (기존)
             $('#random').click(() => {  });
 
-            // 3) 소켓 연결 & 실시간 업데이트
+            // 4) Socket.IO 연결 & 5초마다 new_data 받기
             const socket = io('http://localhost:5000', { transports: ['polling'] });
+            socket.on('connect', () => console.log('Gauge socket connected'));
             socket.on('new_data', msg => {
-                // (가) 차트 업데이트
-                chart.data.datasets[0].data.push({ x: msg.time, y: msg.value });
-                if (chart.data.datasets[0].data.length > 50) chart.data.datasets[0].data.shift();
-                chart.update('none');
-
-                // (나) 게이지 업데이트 (모든 게이지에 적용)
-                $('.gauge').each((i, el) => {
-                    const gauge = $(el).dxCircularGauge('instance');
-                    gauge.option('value', msg.value);
-                    gauge.option('title.subtitle.text', `${msg.value.toFixed(1)} ºC`);
+                gaugeInstances.forEach((g, i) => {
+                    const v = msg.values[i];                // i=0 → A, 1 → B, 2 → C
+                    g.option('value', v);
+                    g.option('title.text', `${v.toFixed(1)} ºC`);
                 });
             });
+
         });
     </script>
 </div>

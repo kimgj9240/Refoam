@@ -307,10 +307,23 @@
                 }
             });
 
+            // 계기판 차트 쓰기 전 코드 값이 하나일 때
+            // socket.on('new_data', msg => {
+            //     console.log('▶ new_data', msg);
+            //     chart.data.datasets[0].data.push({x: msg.time, y: msg.value});
+            //     if (chart.data.datasets[0].data.length > 50) chart.data.datasets[0].data.shift();
+            //     chart.update('none');
+            // });
+
             socket.on('new_data', msg => {
                 console.log('▶ new_data', msg);
-                chart.data.datasets[0].data.push({x: msg.time, y: msg.value});
-                if (chart.data.datasets[0].data.length > 50) chart.data.datasets[0].data.shift();
+                // msg.value 대신 msg.values[0] 을 사용
+                const v = Array.isArray(msg.values) ? msg.values[0] : msg.value;
+
+                chart.data.datasets[0].data.push({ x: msg.time, y: v });
+                if (chart.data.datasets[0].data.length > 50) {
+                    chart.data.datasets[0].data.shift();
+                }
                 chart.update('none');
             });
         </script>
