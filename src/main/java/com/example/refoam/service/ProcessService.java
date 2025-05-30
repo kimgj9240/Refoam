@@ -13,8 +13,11 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +34,7 @@ public class ProcessService {
     private final SimpMessagingTemplate messagingTemplate;
     private final TaskScheduler taskScheduler;
 
+    @Transactional
     public void startMainProcess(Long orderId) {
         Orders order = orderService.findOneOrder(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 주문이 존재하지 않습니다."));
@@ -41,19 +45,34 @@ public class ProcessService {
 
         if (order.getOrderState().equals("배합완료")) {
             order.setOrderState("진행 중");
+            order.setCompletedCount(0);
             orderService.save(order);
         }
-
+        messagingTemplate.convertAndSend(
+                "/topic/process",
+                new ProcessProgressForm(order.getId(), 0, order.getOrderQuantity(), 0.0, order.getOrderState())
+        );
         long baseTime = System.currentTimeMillis();
         for (int i = 0; i < order.getOrderQuantity(); i++) {
-            int delay = i * 6000; // 5초 간격
+            final int index = i;
+            int delay = i * 5000; // 5초 간격 (20초)
 
             taskScheduler.schedule(() -> {
                 Orders o = orderService.findOneOrder(orderId).orElseThrow();
                 if (o.getCompletedCount() >= o.getOrderQuantity()) return;
+                log.info("orderId={}, index={}, 시작됨", orderId, index);
+                // 로트넘버 생성
+                int sequenceNumber = index % 10 + 1;
+                int lotNumberIndex = index / 10 + 1;
+                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd"); // 현재 날짜를 YYYYMMDD 형식으로 변환
+                String currentDate = LocalDateTime.now().format(dateTimeFormatter);
+                String lot = String.format("%02d",lotNumberIndex);
+                String sequence = String.format("%03d",sequenceNumber);
 
+                String lotNumber = o.getProductName().name() + "_" + o.getId() + "_"
+                        + lot + "_" + sequence + "_" + currentDate;
 
-                ProductStandardValue productStandardValue = new ProductStandardValue();
+                ProductStandardValue  productStandardValue = new ProductStandardValue();
 
                 // 공정 1건 생성
                 double melt = productStandardValue.getRandomValue(ProductStandardValue.MIN_MELT_TEMPERATURE, ProductStandardValue.MAX_MELT_TEMPERATURE);
@@ -92,6 +111,7 @@ public class ProcessService {
 
                 Process process = Process.builder()
                         .order(o)
+                        .lotNumber(lotNumber)
                         .standard(standard)
                         .status((label == ProductLabel.OK) ? "OK" : label.name())
                         .processDate(LocalDateTime.now())
@@ -102,15 +122,14 @@ public class ProcessService {
 
                 // 누적 완료 수 증가
                 o.setCompletedCount(o.getCompletedCount() + 1);
-
+                log.info("카운트 {}", o.getCompletedCount());
                 long errorCount = processRepository.countByOrderAndStatusNot(o, "OK");
-                double errorRate = (double) errorCount / o.getOrderQuantity();
+                double errorRate = Math.round((double) errorCount / o.getOrderQuantity() * 100.0) / 100.0;
 
                 // 공정 종료 조건
                 if (o.getCompletedCount() >= o.getOrderQuantity()) {
                     o.setOrderState("공정완료");
-
-                    if (errorRate >= 0.1 && !alertLogRepository.existsByOrderAndCheckedFalse(o)) {
+                    if (errorRate >= 0.3 && !alertLogRepository.existsByOrderAndCheckedFalse(o)) {
                         AlertLog alert = AlertLog.builder()
                                 .order(o)
                                 .employee(o.getEmployee())
@@ -121,17 +140,21 @@ public class ProcessService {
                         alertLogRepository.save(alert);
                     }
                 }
-                orderService.save(o);
 
+                orderService.save(o);
+                log.info("완료 수: {}, 전체 수: {}", o.getCompletedCount(), o.getOrderQuantity());
+                log.info("공정 예약됨: index = {}", index);
+                log.info("전송 준비: orderId={}, completed={}", o.getId(), o.getCompletedCount());
                 // WebSocket 전송
                 int completedCount = o.getCompletedCount();
                 int totalCount = o.getOrderQuantity();
+                String status = o.getOrderState();
                 log.info("웹소켓 전송: orderId={}, completed={}, total={}, errorRate={}",
                         o.getId(), completedCount, totalCount, errorRate);
 
                 messagingTemplate.convertAndSend(
                         "/topic/process",
-                        new ProcessProgressForm(o.getId(), completedCount, totalCount, errorRate)
+                        new ProcessProgressForm(o.getId(), completedCount, totalCount, errorRate, status)
                 );
             }, new Date(baseTime + delay));
         }
@@ -146,9 +169,6 @@ public class ProcessService {
     }
 
     public List<Process> findAllOrder(Long orderId){
-        // 규격내 랜덤값 생성
-//        ProductStandardValue productStandardValue = new ProductStandardValue();
-//        log.info("랜덤값 : {}", productStandardValue.getRandomValue(ProductStandardConst.MIN_MELT_TEMPERATURE, ProductStandardConst.MAX_MELT_TEMPERATURE));
         return processRepository.findAllByOrder_Id(orderId);
     }
     // 페이지네이션 구현용 메서드

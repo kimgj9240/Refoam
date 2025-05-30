@@ -129,10 +129,10 @@ public class MaterialService {
                 save(material); // 재고 저장
 
                 // OrderMaterial 기록
-                /* OrderMaterial orderMaterial = new OrderMaterial();
+                OrderMaterial orderMaterial = new OrderMaterial();
                 orderMaterial.setMaterial(material);
                 orderMaterial.setDeductedQuantity((int) deductQuantity);
-                order.addOrderMaterial(orderMaterial); */
+                order.addOrderMaterial(orderMaterial);
 
                 requiredOrderQuantity -= deductQuantity;
             }

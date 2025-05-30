@@ -12,11 +12,5 @@ public class ProcessProgressForm {
     private int completedCount;
     private int totalCount;
     private double errorRate;
-
-    public String getStatusClass() {
-        if (completedCount == 0) return "";
-        if (errorRate <= 0.0) return "green-light";
-        if (errorRate <= 0.1) return "yellow-light";
-        return "red-light";
-    }
+    private String status;
 }

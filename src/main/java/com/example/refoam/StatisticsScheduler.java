@@ -28,12 +28,12 @@ public class StatisticsScheduler {
     private final OrderMonitorService orderMonitorService;
     private final DiscordNotifier discordNotifier;
 
-    @Scheduled(fixedRate = 120000)//interval 1 minutes
+    @Scheduled(fixedRate = 300000)//interval 1 minutes
     public void statistics(){
         log.info("statistics 스케줄러 호출됨 : {}", LocalDateTime.now());
         List<Orders> ordersList = orderRepository.findAllByOrderStateAndStatisticsIntervalCheck("공정완료",false);
         for(Orders orders : ordersList){
-            LocalDateTime interval = LocalDateTime.now().minusMinutes(2);//interval 5 minutes
+            LocalDateTime interval = LocalDateTime.now().minusMinutes(5);//interval 5 minutes
             List<Process> processList = processRepository.findByOrderAndProcessDateInterval(orders, interval);
             if(processList.isEmpty()) continue;
 
@@ -56,7 +56,7 @@ public class StatisticsScheduler {
         }
 
     }
-    @Scheduled(fixedRate = 120000)//interval 5 minutes
+    @Scheduled(fixedRate = 300000)//interval 5 minutes
     public void errCountMonitor(){
         log.info("errCountMonitor 스케줄러 호출됨 : {}", LocalDateTime.now());
 
@@ -71,7 +71,7 @@ public class StatisticsScheduler {
             if (errCount == null || errCount == 0) continue;
 
             double errorRate = (double) errCount / orderQty;
-            if (errorRate < 0.1) continue; // 기준 이하일 경우 continue
+            if (errorRate < 0.3) continue; // 기준 이하일 경우 continue
 
             // 디스코드 전송 조건 및 처리
             if (!orders.isDiscordCheck()) {

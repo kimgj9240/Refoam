@@ -106,6 +106,7 @@ public class OrderController {
             bindingResult.reject("notEnoughMaterial","재고가 부족합니다.");
             return "order/createOrderForm";
         }
+
         //processRepository.findAllByOrder_Id()
         Orders order = Orders.builder()
                 .productName(orderForm.getProductName())
@@ -115,7 +116,7 @@ public class OrderController {
                 .orderState("준비 중")
                 .build();
 
-        orderService.save(order);
+        orderService.newOrder(order);
 
         return "redirect:/order/list";
     }
@@ -124,17 +125,6 @@ public class OrderController {
     public String mixOrder(@PathVariable("id") Long id, @RequestParam(value = "page", defaultValue = "0") int page) {
         Orders order = orderService.findOneOrder(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 주문은 존재하지 않습니다."));
-
-        int orderQuantity = order.getOrderQuantity();
-        ProductName productName = order.getProductName();
-
-        // 재고 차감
-        try {
-            materialService.deductMaterialsForOrder(order); // 이 메서드는 OrderMaterial 기록 포함
-        } catch (IllegalStateException e) {
-            // 재고 부족 시 에러 처리
-            return "redirect:/order/list?page=" + page + "&error=notEnoughStock";
-        }
 
         // 95% 배합 완료 : 5% 배합 실패
         String state = Math.random() < 0.95 ? "배합완료" : "배합실패";
