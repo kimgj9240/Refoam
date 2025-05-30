@@ -13,7 +13,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create  # create / validate / none ? ??
+      ddl-auto: update  # create / validate / none ? ??
     show-sql: true
     properties:
       hibernate:
