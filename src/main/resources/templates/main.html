@@ -254,16 +254,19 @@
         <div class="container pe-0 ps-0">
             <div class="row justify-content-between gx-4 gy-4">
                 <div class="col-12 col-lg-4 ">
+                    <h5> 금형 온도 A</h5>
                     <div class="chart-wrapper">
                         <canvas id="chartA"></canvas>
                     </div>
                 </div>
                 <div class="col-12 col-lg-4">
+                    <h5> 금형 온도 B</h5>
                     <div class="chart-wrapper">
                         <canvas id="chartB"></canvas>
                     </div>
                 </div>
                 <div class="col-12 col-lg-4 ">
+                    <h5> 금형 온도 C</h5>
                     <div class="chart-wrapper">
                         <canvas id="chartC"></canvas>
                     </div>
@@ -287,15 +290,20 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 parsing: false,
+
                 scales: {
                     x: {
                         type: 'time',
                         time: { unit: 'second' },
                         title: { display: true, text: '시간' },
+                        // ★ 틱을 한 스텝 안쪽으로 오프셋
+                        bounds: 'data',     // 데이터의 첫/마지막 타임스탬프에 그리드 맞춤
+                        offset: false,      // 틱 좌표를 1:1 매칭
                         ticks: {
-                            autoSkip: true,      // 빽빽하면 자동으로 생략
-                            maxTicksLimit: 10    // 최대 10개까지만 표시
-                        }
+                            source: 'data',   // 틱을 데이터 타임스탬프 위치에만 생성
+                            autoSkip: true,   // 많으면 자동 생략
+                            maxTicksLimit: 8 // 최대 10개
+                        },
                     },
                     y: {
                         suggestedMin: 78,
@@ -308,7 +316,7 @@
                     decimation: {
                         enabled:   true,       // 활성화
                         algorithm: 'lttb',     // 추세 보존에 좋은 LTTB
-                        samples:   10          // 화면에 표시할 최대 포인트 개수
+                        samples:   8          // 화면에 표시할 최대 포인트 개수
                     }
                 }
             };
@@ -316,8 +324,6 @@
             // 3) 차트 3개 생성 (A, B, C)
             const letters = ['A','B','C'];
             const colors  = ['red','orange','blue'];
-            const MAX_POINTS = 10;
-
 
             const charts  = letters.map((L, i) => {
                 const ctx = document.getElementById(`chart${L}`).getContext('2d');
@@ -329,16 +335,9 @@
                             data: [],
                             borderWidth: 1,
                             fill: false,
-
                             borderColor: colors[i],
                             pointStyle: 'rectRot',
-                            pointRadius: context => {
-                                const total = context.dataset.data.length;
-                                // 표시하고 싶은 최대 점 개수(10) 기준으로 간격 계산
-                                const step  = Math.max(Math.floor(total / MAX_POINTS), 1);
-                                // 인덱스가 step의 배수일 때만 점 표시
-                                return (context.dataIndex % step === 0) ? 4 : 0;
-                            },
+                            pointRadius:  4,
                             // ● 점 색상: 임계값 로직
                             pointBackgroundColor: ctx => {
                                 const y = ctx.parsed?.y;
@@ -372,14 +371,22 @@
             //     chart.update('none');
             // });
 
+            // 금형온도 차트에 보이는 점 개수를 10개까지 하려고 만듦
+            const MAX_STEPS = 8;
+
             // 4) Socket.IO 로 3개 동시 업데이트
             socket.on('new_data', msg => {
                 // msg.values = [valA, valB, valC]
                 msg.values.forEach((v, i) => {
                     const ds = charts[i].data.datasets[0];
-                    ds.data.push({ x: msg.time, y: v });
-                    if (ds.data.length > 50) ds.data.shift();
+                    // 1) 새 데이터 포인트 추가
+                    ds.data.push({ x: msg.time, y: msg.values[i] });
+                    // 2) 10포인트 초과하면 맨 앞에서 하나 삭제
+                    if (ds.data.length > MAX_STEPS) {
+                        ds.data.shift();
+                    }
                 });
+                // 3) 모두 업데이트
                 charts.forEach(c => c.update('none'));
             });
         </script>
