@@ -144,6 +144,7 @@ public class OrderController {
         paging.forEach(order -> {
             if (order.getEmployee() != null) order.getEmployee().getUsername(); // 강제 초기화
         });
+        paging.forEach(order -> processRepository.countByOrderAndStatusNot(order,"OK"));
 //        model.addAttribute("ordersList", ordersList);
         model.addAttribute("ordersList", paging);
         model.addAttribute("activeMenu", 3);

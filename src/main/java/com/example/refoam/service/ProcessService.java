@@ -11,11 +11,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -26,6 +24,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class ProcessService {
+
     private final ProcessRepository processRepository;
     private final AlertLogRepository alertLogRepository;
     private final OrderService orderService;
@@ -45,13 +44,8 @@ public class ProcessService {
 
         if (order.getOrderState().equals("배합완료")) {
             order.setOrderState("진행 중");
-            order.setCompletedCount(0);
             orderService.save(order);
         }
-        messagingTemplate.convertAndSend(
-                "/topic/process",
-                new ProcessProgressForm(order.getId(), 0, order.getOrderQuantity(), 0.0, order.getOrderState())
-        );
         long baseTime = System.currentTimeMillis();
         for (int i = 0; i < order.getOrderQuantity(); i++) {
             final int index = i;
@@ -125,9 +119,10 @@ public class ProcessService {
                 log.info("카운트 {}", o.getCompletedCount());
                 long errorCount = processRepository.countByOrderAndStatusNot(o, "OK");
                 double errorRate = Math.round((double) errorCount / o.getOrderQuantity() * 100.0) / 100.0;
-
+                o.setOrderState("진행 중");
                 // 공정 종료 조건
                 if (o.getCompletedCount() >= o.getOrderQuantity()) {
+                    o.setErrorRate(errorRate);
                     o.setOrderState("공정완료");
                     if (errorRate >= 0.3 && !alertLogRepository.existsByOrderAndCheckedFalse(o)) {
                         AlertLog alert = AlertLog.builder()

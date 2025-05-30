@@ -32,6 +32,9 @@ public class Orders {
     private LocalDateTime orderDate;
 
     @Setter
+    private double errorRate;
+
+    @Setter
     private int completedCount; // 진행된 공정 수
 
     // 주문 리스트 공정상태

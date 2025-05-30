@@ -32,4 +32,6 @@ public interface ProcessRepository extends JpaRepository<Process, Long> {
 
     // 불량 개수 체크
     long countByOrderAndStatusNot(Orders order, String status);
+
+
 }

@@ -2,6 +2,7 @@ package com.example.refoam.controller;
 
 import com.example.refoam.domain.*;
 import com.example.refoam.domain.Process;
+import com.example.refoam.repository.ProcessRepository;
 import com.example.refoam.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,13 +21,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProcessController {
     private final ProcessService processService;
+    private final OrderService orderService;
+    private final ProcessRepository processRepository;
     private final QualityCheckService qualityCheckService;
 
     @GetMapping("/{id}/list")
     public String processList(@PathVariable("id") Long orderId, Model model, @RequestParam(value = "page", defaultValue = "0") int page){
 //        List<Process> processes = processService.findAllOrder(orderId);
-
+        Orders order = orderService.findOneOrder(orderId).orElseThrow();
         Page<Process> paging = processService.getList(orderId, page);
+
+
 
         model.addAttribute("processes",paging);
 //        model.addAttribute("processes",processes);
