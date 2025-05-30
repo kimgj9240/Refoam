@@ -201,6 +201,15 @@ ul.navbar-nav {
 
 }
 
+/* main 차트 관련*/
+.chart-wrapper {
+    height: 300px;   /* 고정 높이만 커스텀으로 지정 */
+}
+.chart-wrapper canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
 
 /* 햄버거 버튼 메뉴 관련 */
 .navbar-toggler{

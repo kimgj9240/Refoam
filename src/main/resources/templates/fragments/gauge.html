@@ -1,7 +1,5 @@
 <div th:fragment="gauge" class="container">
     <div>
-        <button id="random" class="btn btn-refoam mb-3">Random value</button>
-        <h1 class="mb-3">실시간 금형 온도</h1>
         <div class="gauge-container">
             <div class="gauge"></div>
             <div class="gauge"></div>
@@ -82,8 +80,6 @@
                 gaugeInstances.push(gc._gauge);
             });
 
-            // // 2) Random 버튼 (기존)
-            $('#random').click(() => {  });
 
             // 4) Socket.IO 연결 & 5초마다 new_data 받기
             const socket = io('http://localhost:5000', { transports: ['polling'] });

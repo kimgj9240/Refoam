@@ -237,22 +237,40 @@
             });
         });
     </script>
+
     <div class="my-4">
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
         <!-- date-fns 어댑터 (Chart.js v3+) -->
         <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
         <!-- 서버 제공 클라이언트 -->
-        <script src="/socket.io/socket.io.js"></script>
-
         <style>
             canvas {
                 background: #fafafa;
                 border: 1px solid #ddd;
             }
         </style>
-        <h2>금형 온도 실시간 모니터링</h2>
-        <canvas id="tempChart" width="800" height="400"></canvas>
+        <h2 class="mb-4">금형 온도 실시간 모니터링</h2>
+        <div class="container pe-0 ps-0">
+            <div class="row justify-content-between gx-4 gy-4">
+                <div class="col-12 col-lg-4 ">
+                    <div class="chart-wrapper">
+                        <canvas id="chartA"></canvas>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-4">
+                    <div class="chart-wrapper">
+                        <canvas id="chartB"></canvas>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-4 ">
+                    <div class="chart-wrapper">
+                        <canvas id="chartC"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <script>
             // 불량 위험 온도 기준
@@ -264,48 +282,87 @@
             const socket = io('http://localhost:5000', {transports: ['polling']});
             socket.on('connect', () => console.log('✅ Socket connected'));
 
-            const ctx = document.getElementById('tempChart').getContext('2d');
-            const chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    datasets: [{
-                        label: 'Temp (℃)',
-                        data: [],               // {x, y} 배열
-                        borderWidth: 2,
-                        fill: false,
-                        pointRadius: 4,
-                        pointBackgroundColor: context => {
-                            const y = context.parsed?.y;
-                            if (typeof y !== 'number') return 'gray';      // 데이터 없을 땐 회색
-                            if (y >= HIGH_THRESHOLD) return 'red';        // 81.5 이상
-                            if (y <= LOW_THRESHOLD) return 'green';      // 80 이하
-                            return 'blue';                                // 그 외(80~81.5 사이)
-                        },
-                        borderColor: 'blue',
-                        // 선 자체도 바꾸고 싶다면
-                        segment: {
-                            borderColor: ctx => {
-                                const y0 = ctx.p0.parsed.y;
-                                const y1 = ctx.p1.parsed.y;
-                                const avg = (y0 + y1) / 2;
-                                if (avg >= HIGH_THRESHOLD) return 'red';
-                                if (avg <= LOW_THRESHOLD) return 'green';
-                                return 'blue';
-                            }
+            // 2) 공통 옵션
+            const commonOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                parsing: false,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: { unit: 'second' },
+                        title: { display: true, text: '시간' },
+                        ticks: {
+                            autoSkip: true,      // 빽빽하면 자동으로 생략
+                            maxTicksLimit: 10    // 최대 10개까지만 표시
                         }
-                    }]
-                },
-                options: {
-                    plugins: {
-                        datalabels: false    // ← 여기서 꺼 줍니다
                     },
-                    parsing: false,
-                    scales: {
-                        x: {type: 'time', time: {unit: 'second'}, title: {display: true, text: '시간'}},
-                        y: {title: {display: true, text: '℃'}, suggestedMin: 78, suggestedMax: 82.5}
+                    y: {
+                        suggestedMin: 78,
+                        suggestedMax: 82.5,
+                        title: { display: true, text: '℃' }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    decimation: {
+                        enabled:   true,       // 활성화
+                        algorithm: 'lttb',     // 추세 보존에 좋은 LTTB
+                        samples:   10          // 화면에 표시할 최대 포인트 개수
                     }
                 }
+            };
+
+            // 3) 차트 3개 생성 (A, B, C)
+            const letters = ['A','B','C'];
+            const colors  = ['red','orange','blue'];
+            const MAX_POINTS = 10;
+
+
+            const charts  = letters.map((L, i) => {
+                const ctx = document.getElementById(`chart${L}`).getContext('2d');
+                return new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        datasets: [{
+                            label: `금형온도 ${L}`,
+                            data: [],
+                            borderWidth: 1,
+                            fill: false,
+
+                            borderColor: colors[i],
+                            pointStyle: 'rectRot',
+                            pointRadius: context => {
+                                const total = context.dataset.data.length;
+                                // 표시하고 싶은 최대 점 개수(10) 기준으로 간격 계산
+                                const step  = Math.max(Math.floor(total / MAX_POINTS), 1);
+                                // 인덱스가 step의 배수일 때만 점 표시
+                                return (context.dataIndex % step === 0) ? 4 : 0;
+                            },
+                            // ● 점 색상: 임계값 로직
+                            pointBackgroundColor: ctx => {
+                                const y = ctx.parsed?.y;
+                                if (y >= HIGH_THRESHOLD) return 'red';
+                                if (y <= LOW_THRESHOLD ) return 'green';
+                                return 'blue';
+                            },
+                            // ● 선 색상 분할: segment.borderColor 사용
+                            segment: {
+                                borderColor: ctx => {
+                                    const y0 = ctx.p0.parsed.y;
+                                    const y1 = ctx.p1.parsed.y;
+                                    const avg = (y0 + y1) / 2;
+                                    if (avg >= HIGH_THRESHOLD) return 'red';
+                                    if (avg <= LOW_THRESHOLD ) return 'green';
+                                    return 'blue';
+                                }
+                            }
+                        }]
+                    },
+                    options: commonOptions
+                });
             });
+
 
             // 계기판 차트 쓰기 전 코드 값이 하나일 때
             // socket.on('new_data', msg => {
@@ -315,16 +372,15 @@
             //     chart.update('none');
             // });
 
+            // 4) Socket.IO 로 3개 동시 업데이트
             socket.on('new_data', msg => {
-                console.log('▶ new_data', msg);
-                // msg.value 대신 msg.values[0] 을 사용
-                const v = Array.isArray(msg.values) ? msg.values[0] : msg.value;
-
-                chart.data.datasets[0].data.push({ x: msg.time, y: v });
-                if (chart.data.datasets[0].data.length > 50) {
-                    chart.data.datasets[0].data.shift();
-                }
-                chart.update('none');
+                // msg.values = [valA, valB, valC]
+                msg.values.forEach((v, i) => {
+                    const ds = charts[i].data.datasets[0];
+                    ds.data.push({ x: msg.time, y: v });
+                    if (ds.data.length > 50) ds.data.shift();
+                });
+                charts.forEach(c => c.update('none'));
             });
         </script>
     </div>
