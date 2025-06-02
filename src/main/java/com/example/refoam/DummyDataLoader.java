@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
@@ -95,25 +96,6 @@ public class DummyDataLoader implements CommandLineRunner {
 //                        .build()).toList();
 
 
-        Random orderRandom = new Random();
-        int minQuantity = 5;
-        int maxQuantity = 20;
-        AtomicInteger index = new AtomicInteger(0);
-        List<Orders> orders = productNameList.stream().map(productName -> {
-            int daysAgo = index.getAndIncrement() % 9; // 0,1,2,3,4 반복
-            LocalDateTime orderDate = LocalDateTime.now().minusDays(9 - daysAgo);
-
-            int orderQuantity = orderRandom.nextInt(maxQuantity - minQuantity + 1) + minQuantity; // min~max 랜덤
-
-            return Orders.builder()
-                    .productName(ProductName.valueOf(productName.name()))
-                    .orderQuantity(orderQuantity)
-                    .orderDate(orderDate)
-                    .orderState("준비 중")
-                    .employee(employee)
-                    .build();
-        }).toList();
-        orders.forEach(orderService::save);
 
 //        List<Orders> orders = productNameList.stream().map(
 //                productName -> Orders.builder()
@@ -125,52 +107,24 @@ public class DummyDataLoader implements CommandLineRunner {
 //                        .build()).toList();
 //        orders.forEach(orderService::save);
 
-        double[] backPressurePeak = {1145.6,145.6,147,145.6,146.6,146.3,146.6,145.4,146.8,146,146.4,146.6,146.3,146.3,144.9,145.4};
-        double[] closingForce ={886.9,919.409791006952,908.6,879.410870514183,917.1,881.9,887,882.8,895.2,890.4,893.5,896.6,897.4,895.2,891.7,900.5};
-        double[] clampingForcePeak ={904,935.9,902.344823440673,902.033653277801,935.9,897,903.5,900.1,915.3,912.1,917.3,913.6,916,917.3,912.7,918.4};
-        double[] cycleTime ={74.83,74.81,74.81,74.82,74.8,74.8,74.83,74.83,74.89,74.86,75.74,75.77,75.71,75.74,75.71,75.64};
-        double[] meltTemperature ={106.4761843,105.505,105.505,106.47482732,
-                105.515,106.465,106.242,106.46,
-                105.182,104.7,105.443,105.467,
-                105.835,105.784,105.905,123.432
-        };
-        double[] moldTemperature ={80.617,81.362,80.411,81.162,
-                80.659,81.38,81.349,81.547,
-                79.975,78.872,80.666,80.689,
-                81.037,81.027,81.208,81.973};
-        double[] plasticizingTime ={3.16,3.16,4.08,3.16,4.01,3.19,3.18,3.19,6.61,3.4,5.94,5.25,3.43,3.42,3.32,2.98};
-        double[] injPressurePeak ={922.3,930.5,933.1,922.3,903.6,926.3,925.1,926.6,897.9,813.4,829.6,852.9,868.9,864.7,895.7,901.6};
-        double[] screwPosEndHold ={8.82,8.59,8.8,8.85,8.81,8.82,8.88,8.83,8.89,8.45,8.59,8.69,8.68,8.72,8.9,8.94};
-        double[] shotVolume ={18.73,18.73,18.98,18.73,18.76,18.75,18.69,18.74,18.67,19.12,18.98,18.87,18.88,18.84,18.67,18.62
-        };
-        double[] timeToFill ={7.124,6.968,6.864,6.864,
-                6.968,6.968,6.968,6.968,
-                6.292,6.292,6.188,6.292,
-                6.292,6.292,6.292,11.128};
-        double[] torqueMean ={104.3,104.9,106.503495621329,104.9,93,104.7,103.3,103.6,76.5,105.8,81.1,82.6,104.7,105.4,101.7,102.5};
-        double[] torquePeak ={116.9,113.9,120.5,127.3,111.5,119.3,115.4,115.1,94.5,121.1,97.4,101.9,115.4,123.5,115.7,111.5};
-
-        String[] label = {"ERR_TIME_01","ERR_TIME_01","ERR_TIME_01","ERR_TIME_01","OK","OK","OK","OK","OK","OK","OK","OK","ERR_TIME_01","ERR_TIME_01","ERR_TIME_01","ERR_TIME_01"};
-
-
-
-
         // 7일치 더미 데이터 생
         // 랜덤 인스턴스 생성
         Random random = new Random();
-
-
-        for (int d = 6; d >= 0; d--) {
+        for (int d = 6; d > 0; d--) {
             LocalDateTime baseDate = LocalDate.now().minusDays(d).atTime(10, 0);
+            List<Integer> qtyValues = List.of(10, 20, 30);
 
-            Orders orders1 = Orders.builder()
-                    .productName(ProductName.NORMAL)
-                    .orderQuantity(10)
-                    .orderDate(baseDate)
-                    .orderState("공정완료")
-                    .employee(employee)
-                    .build();
-            orderService.save(orders1);
+            for(int j=0;j<3;j++){
+                int randomIndex = ThreadLocalRandom.current().nextInt(productNameList.size());
+
+                Orders orders1 = Orders.builder()
+                        .productName(productNameList.get(randomIndex))
+                        .orderQuantity(qtyValues.get(new Random().nextInt(qtyValues.size())))
+                        .orderDate(baseDate)
+                        .orderState("공정완료")
+                        .employee(employee)
+                        .build();
+                orderService.save(orders1);
 
             ProductStandardValue productStandardValue = new ProductStandardValue();
 
@@ -222,8 +176,23 @@ public class DummyDataLoader implements CommandLineRunner {
 
                 standard.setProcess(process);
                 standardService.save(standard);
+                }
             }
         }
+
+        List<Orders> orders = productNameList.stream().map(productName -> {
+
+            List<Integer> qtyValues = List.of(10, 20, 30);
+
+            return Orders.builder()
+                    .productName(ProductName.valueOf(productName.name()))
+                    .orderQuantity(qtyValues.get(new Random().nextInt(qtyValues.size())))
+                    .orderDate(LocalDateTime.now())
+                    .orderState("준비 중")
+                    .employee(employee)
+                    .build();
+        }).toList();
+        orders.forEach(orderService::save);
     }
 }
 
