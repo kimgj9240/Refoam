@@ -3,6 +3,7 @@ package com.example.refoam.repository;
 import com.example.refoam.domain.Orders;
 import com.example.refoam.domain.Process;
 import com.example.refoam.domain.ProductLabel;
+import com.example.refoam.domain.ProductName;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,8 +31,9 @@ public interface ProcessRepository extends JpaRepository<Process, Long> {
     @Query("SELECT p FROM Process p WHERE DATE(p.processDate) = CURRENT_DATE ")
     List<Process> findTodayProcesses();
 
+    // 특정 제품에 대한 최근 공정 20건
+    List<Process> findTop20ByOrder_ProductNameOrderByProcessDateDesc(ProductName productName);
+
     // 불량 개수 체크
     long countByOrderAndStatusNot(Orders order, String status);
-
-
 }

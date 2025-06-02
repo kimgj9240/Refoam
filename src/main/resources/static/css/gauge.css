@@ -1,0 +1,51 @@
+/* 레이아웃 */
+
+.gauge-container {
+    display: flex;
+    flex-wrap: wrap;            /* 창 좁아지면 줄 바꿈 */
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px;
+}
+.gauge {
+    flex: 0 0 300px;            /* grow:0, shrink:0, basis:300px */
+    width: 300px;               /* 고정 너비 */
+    height: 220px;              /* 고정 높이 */
+}
+/* SVG 내부 스타일 (DevExtreme 클래스명 기준) */
+
+.gauge .dxg-line {
+    transform: scaleX(1.07) scaleY(1.07) translate(-4px,-4px);
+}
+.gauge .dxg-line path:first-child,
+.gauge .dxg-line path:last-child {
+    /*display: none;*/
+
+}
+
+
+.gauge .dxg-elements text:first-child {
+    transform: translate(19px,13px);
+}
+.gauge .dxg-elements text:last-child {
+    transform: translate(-27px,14px);
+}
+
+.gauge .dxg-value-indicator path {
+    transform: scale(1.3) translate(0, -5px);
+    transform-origin: center center;
+
+}
+
+.gauge .dxg-value-indicator .dxg-title text:first-child {
+    text-transform: uppercase;
+    transform: translateY(5px);
+}
+
+.gauge .dxg-value-indicator .dxg-spindle-border:nth-child(4),
+.gauge .dxg-value-indicator .dxg-spindle-hole:nth-child(5) {
+    transform: translate(0,-109px);
+}
+.gauge .dxg-value-indicator .dxg-spindle-hole {
+    fill: #4166f5;
+}

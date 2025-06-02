@@ -21,9 +21,6 @@ body {
     font-optical-sizing: auto;
 }
 
-
-
-
 /* header 영역  */
 /* 로그인 홈 배경이미지 */
 .bg-login {
@@ -62,15 +59,15 @@ body {
 }
 
 @media (max-width:767px) {
-.nav-account {
-    background: #FFF;
-    padding: 10px 5px;
-    border-radius: 5px;
-}
+    .nav-account {
+        background: #FFF;
+        padding: 10px 5px;
+        border-radius: 5px;
+    }
 
-ul.navbar-nav {
-    margin-left: 16px !important;
-}
+    ul.navbar-nav {
+        margin-left: 16px !important;
+    }
 
 }
 
@@ -144,37 +141,37 @@ ul.navbar-nav {
 
 /* 컨텐츠 영역 */
 .btn-refoam {
-  --bs-btn-color: #fff;
-  --bs-btn-bg : #4166F5;
-  --bs-btn-border-color: #4166F5;
-  --bs-btn-hover-color: #fff;
-  --bs-btn-hover-bg: #0b5ed7;
-  --bs-btn-hover-border-color: #0a58ca;
-  --bs-btn-focus-shadow-rgb: 49, 132, 253;
-  --bs-btn-active-color: #fff;
-  --bs-btn-active-bg: #0a58ca;
-  --bs-btn-active-border-color: #0a53be;
-  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  --bs-btn-disabled-color: #fff;
-  --bs-btn-disabled-bg: #4166F5;
-  --bs-btn-disabled-border-color: #4166F5;
+    --bs-btn-color: #fff;
+    --bs-btn-bg : #4166F5;
+    --bs-btn-border-color: #4166F5;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #0b5ed7;
+    --bs-btn-hover-border-color: #0a58ca;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #0a58ca;
+    --bs-btn-active-border-color: #0a53be;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #4166F5;
+    --bs-btn-disabled-border-color: #4166F5;
 }
 
 .btn-delete {
-  --bs-btn-color: #fff;
-  --bs-btn-bg : #FF8228;
-  --bs-btn-border-color: #FF8228;
-  --bs-btn-hover-color: #fff;
-  --bs-btn-hover-bg: #ff6944;
-  --bs-btn-hover-border-color: #ff6944; ;
-  --bs-btn-focus-shadow-rgb: 49, 132, 253;
-  --bs-btn-active-color: #fff;
-  --bs-btn-active-bg: #ff6944;;
-  --bs-btn-active-border-color: #ff6944;;
-  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  --bs-btn-disabled-color: #fff;
-  --bs-btn-disabled-bg: #FF8228;
-  --bs-btn-disabled-border-color: #FF8228;
+    --bs-btn-color: #fff;
+    --bs-btn-bg : #FF8228;
+    --bs-btn-border-color: #FF8228;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #ff6944;
+    --bs-btn-hover-border-color: #ff6944; ;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #ff6944;;
+    --bs-btn-active-border-color: #ff6944;;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #FF8228;
+    --bs-btn-disabled-border-color: #FF8228;
 }
 
 /* 페이지네이션 */
@@ -204,14 +201,23 @@ ul.navbar-nav {
 
 }
 
+/* main 차트 관련*/
+.chart-wrapper {
+    height: 300px;   /* 고정 높이만 커스텀으로 지정 */
+}
+.chart-wrapper canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
 
 
+/* 햄버거 버튼 메뉴 관련 */
 .navbar-toggler{
-    background-color: #4166F5;
+    background-color: #ddf0f6;
 }
 
 .navbar-toggler-icon{
-   filter: invert(100%);
+    filter: invert(29%) sepia(91%) saturate(2127%) hue-rotate(221deg) brightness(101%) contrast(92%);
 }
 
 /* table size 설정 */
@@ -226,23 +232,23 @@ ul.navbar-nav {
 
 /* 테이블 색상 영역 */
 .table {
-   --bs-table-accent-bg:  #ddf0f6 ;
-   --bs-table-color: #000;
+    --bs-table-accent-bg:  #ddf0f6 ;
+    --bs-table-color: #000;
 }
 
 .table-hover > tbody > tr:hover > * {
-  --bs-table-bg-state:  rgba(65, 102, 245,0.2);
+    --bs-table-bg-state:  rgba(65, 102, 245,0.2);
 
 }
 
 .table-striped > tbody > tr:nth-of-type(even) > * {
-  --bs-table-color-type: var(--bs-table-striped-color);
-  --bs-table-bg-type: rgba(221, 240, 246, 0.4);
+    --bs-table-color-type: var(--bs-table-striped-color);
+    --bs-table-bg-type: rgba(221, 240, 246, 0.4);
 }
 
 .table-striped > tbody > tr:nth-of-type(odd) > * {
-  --bs-table-color-type: var(--bs-table-striped-color);
-  --bs-table-bg-type: #fff;
+    --bs-table-color-type: var(--bs-table-striped-color);
+    --bs-table-bg-type: #fff;
 }
 
 /* 공정결과용 테이블 색상만 따로 지정 */
@@ -271,7 +277,7 @@ ul.navbar-nav {
 }
 
 
-    
+
 
 /* 플레이스홀더 색상 오류때메 만듦*/
 input::placeholder {

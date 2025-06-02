@@ -3,14 +3,14 @@
     <div class="row mb-5">
         <div class="col-lg-4 ">
             <div class="row">
-                <div class="col-md-6 col-lg-12">
+                <div class="col-md-7 col-lg-12">
                     <h2 class="my-4">오늘의 달성률</h2>
                     <h5 class="text-center mt-3">
                         오늘의 목표 수량: <span th:text="${targetQuantity}">0</span>개
                     </h5>
                     <canvas id="achievementRate"></canvas>
                 </div>
-                <div class="col-md-6 col-lg-12 my-md-5 my-lg-4 ">
+                <div class="col-md-5 col-lg-12 my-sm-3 my-md-5 my-lg-4 ">
                     <div class="card shadow-sm mb-2">
                         <div class="card-body">
                             <h6 class="text-muted">✅ 달성 수량</h6>
@@ -37,12 +37,13 @@
             <canvas id="monitoringChart2" class="mt-3" height="215"></canvas>
         </div>
     </div>
+
     <h2 class="my-4">재고 건수</h2>
     <canvas id="materialChart" height="100"></canvas>
-    <button id="showToastBtn" class="btn btn-primary position-fixed bottom-0 end-0 m-4" style="z-index: 1100;">
+    <button id="showToastBtn" class="btn btn-refoam position-fixed bottom-0 end-0 m-4" style="z-index: 1100;">
         📋 리포트 보기
     </button>
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+    <div class="position-fixed bottom-0 mb-5 end-0 p-3" style="z-index: 1100">
         <div id="aiReportToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
                 <strong class="me-auto">📋 AI 리포트</strong>
@@ -54,8 +55,45 @@
             </div>
         </div>
     </div>
+    <div class="my-4">
+        <!-- 서버 제공 클라이언트 -->
+        <style>
+            canvas {
+                background: #fafafa;
+                border: 1px solid #ddd;
+            }
+        </style>
+        <h2 class="mb-4">금형 온도 실시간 모니터링</h2>
+        <div class="container pe-0 ps-0">
+            <div class="row justify-content-between gx-4 gy-4">
+                <div class="col-12 col-lg-4 ">
+                    <h5> 금형 온도 A</h5>
+                    <div class="chart-wrapper">
+                        <canvas id="chartA"></canvas>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-4">
+                    <h5> 금형 온도 B</h5>
+                    <div class="chart-wrapper">
+                        <canvas id="chartB"></canvas>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-4 ">
+                    <h5> 금형 온도 C</h5>
+                    <div class="chart-wrapper">
+                        <canvas id="chartC"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:replace="~{fragments/gauge :: gauge}" class="my-4"></div>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
     <script th:inline="javascript">
         const materialLabels = /*[[${materialLabels}]]*/ [];
         const materialData = /*[[${materialData}]]*/ [];
@@ -233,6 +271,112 @@
                         toastBody.textContent = "❌ 리포트 요청 실패";
                         toast.show();
                     });
+            });
+        });
+
+        // 금형 온도 차트 시작
+        const HIGH_THRESHOLD = 81.4;
+        const LOW_THRESHOLD = 80.6;
+        const MAX_POINTS = 50; // 과거 + 실시간 합쳐서 최대 점 개수
+
+        const names = ['NORMAL', 'BUMP', 'HALF'];     // 서버 전송용 토픽 이름
+        const letters = ['A', 'B', 'C'];               // UI 표시용 라벨
+        const colors = ['red', 'orange', 'blue'];      // 선 색상
+
+        const charts = letters.map((letter, i) => {
+            const ctx = document.getElementById(`chart${letter}`).getContext('2d');
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: `금형온도 ${letter}`,
+                        data: [],
+                        borderWidth: 1,
+                        fill: false,
+                        borderColor: colors[i],
+                        pointStyle: 'rectRot',
+                        pointRadius: 4,
+                        pointBackgroundColor: ctx => {
+                            const y = ctx.parsed?.y;
+                            if (y >= HIGH_THRESHOLD) return 'red';
+                            if (y <= LOW_THRESHOLD) return 'green';
+                            return 'blue';
+                        },
+                        segment: {
+                            borderColor: ctx => {
+                                const y0 = ctx.p0.parsed.y;
+                                const y1 = ctx.p1.parsed.y;
+                                const avg = (y0 + y1) / 2;
+                                if (avg >= HIGH_THRESHOLD) return 'red';
+                                if (avg <= LOW_THRESHOLD) return 'green';
+                                return 'blue';
+                            }
+                        }
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    parsing: false,
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'minute',
+                                tooltipFormat: 'HH:mm:ss'
+                            },
+                            title: { display: true, text: '시간' },
+                            bounds: 'data',
+                            offset: false,
+                            ticks: {
+                                source: 'data',
+                                autoSkip: true,
+                                maxTicksLimit: 8
+                            }
+                        },
+                        y: {
+                            suggestedMin: 78,
+                            suggestedMax: 82.5,
+                            title: { display: true, text: '℃' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        decimation: {
+                            enabled: true,
+                            algorithm: 'lttb',
+                            samples: 8
+                        }
+                    }
+                }
+            });
+        });
+        Promise.all(
+            names.map((name, i) =>
+                fetch(`/api/temperature/${name}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        const formatted = Array.isArray(data)
+                            ? data.map(d => ({ x: new Date(d.time), y: d.value }))
+                            : [{ x: new Date(data.time), y: data.value }];
+                        charts[i].data.datasets[0].data = formatted;
+                        charts[i].update();
+                    })
+            )
+        ).then(() => {
+            // 3. WebSocket 연결은 과거 데이터가 모두 로딩된 이후에 시작
+            const stompClient = Stomp.over(new SockJS('/ws'));
+            stompClient.connect({}, () => {
+                names.forEach((name, i) => {
+                    stompClient.subscribe(`/topic/temperature/${name}`, message => {
+                        const y = parseFloat(message.body);
+                        const x = new Date();
+                        const ds = charts[i].data.datasets[0];
+                        ds.data.push({ x, y });
+                        if (ds.data.length > MAX_POINTS) ds.data.shift();
+                        charts[i].update('none');
+                    });
+                });
             });
         });
     </script>

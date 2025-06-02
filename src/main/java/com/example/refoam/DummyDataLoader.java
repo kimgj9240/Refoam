@@ -126,56 +126,56 @@ public class DummyDataLoader implements CommandLineRunner {
                         .build();
                 orderService.save(orders1);
 
-            ProductStandardValue productStandardValue = new ProductStandardValue();
+                ProductStandardValue productStandardValue = new ProductStandardValue();
 
 
-            for (int i = 0; i < 10; i++) {
-                double melt = productStandardValue.getRandomValue(ProductStandardValue.MIN_MELT_TEMPERATURE, ProductStandardValue.MAX_MELT_TEMPERATURE);
-                double mold = productStandardValue.getRandomValue(ProductStandardValue.MIN_MOLD_TEMPERATURE, ProductStandardValue.MAX_MOLD_TEMPERATURE);
-                double screw = productStandardValue.getRandomValue(ProductStandardValue.MIN_SCREW_POS_END_HOLD, ProductStandardValue.MAX_SCREW_POS_END_HOLD);
-                double injpress = productStandardValue.getRandomValue(ProductStandardValue.MIN_INJ_PRESSURE_PEAK, ProductStandardValue.MAX_INJ_PRESSURE_PEAK);
-                double fill = productStandardValue.getRandomFill();
-                double plast = productStandardValue.getRandomValue(ProductStandardValue.MIN_PLASTICIZING_TIME, ProductStandardValue.MAX_PLASTICIZING_TIME);
-                double cycle = productStandardValue.getRandomValue(ProductStandardValue.MIN_CYCLE_TIME, ProductStandardValue.MAX_CYCLE_TIME);
-                double closeForce = productStandardValue.getRandomValue(ProductStandardValue.MIN_CLOSING_FORCE, ProductStandardValue.MAX_CLOSING_FORCE);
-                double clampPeak = productStandardValue.getRandomValue(ProductStandardValue.MIN_CLAMPING_FORCE_PEAK, ProductStandardValue.MAX_CLAMPING_FORCE_PEAK);
-                double trqPeak = productStandardValue.getRandomValue(ProductStandardValue.MIN_TORQUE_PEAK, ProductStandardValue.MAX_TORQUE_PEAK);
-                double trqMean = productStandardValue.getRandomValue(ProductStandardValue.MIN_TORQUE_MEAN, ProductStandardValue.MAX_TORQUE_MEAN);
-                double backPress = productStandardValue.getRandomValue(ProductStandardValue.MIN_BACK_PRESSURE_PEAK, ProductStandardValue.MAX_BACK_PRESSURE_PEAK);
-                double shot = productStandardValue.getRandomValue(ProductStandardValue.MIN_SHOT_VOLUME, ProductStandardValue.MAX_SHOT_VOLUME);
-                // ✅ 확률에 따라 상태 설정 (70% OK / 30% ERR_TEMP_01)
-                boolean isOk = random.nextDouble() < 0.7; // 0.0 ~ 0.999 중 70%는 true
-                String status = isOk ? "OK" : "ERR_TEMP_01";
-                ProductLabel label1 = isOk ? ProductLabel.OK : ProductLabel.ERR_TIME;
+                for (int i = 0; i < 10; i++) {
+                    double melt = productStandardValue.getRandomValue(ProductStandardValue.MIN_MELT_TEMPERATURE, ProductStandardValue.MAX_MELT_TEMPERATURE);
+                    double mold = productStandardValue.getRandomValue(ProductStandardValue.MIN_MOLD_TEMPERATURE, ProductStandardValue.MAX_MOLD_TEMPERATURE);
+                    double screw = productStandardValue.getRandomValue(ProductStandardValue.MIN_SCREW_POS_END_HOLD, ProductStandardValue.MAX_SCREW_POS_END_HOLD);
+                    double injpress = productStandardValue.getRandomValue(ProductStandardValue.MIN_INJ_PRESSURE_PEAK, ProductStandardValue.MAX_INJ_PRESSURE_PEAK);
+                    double fill = productStandardValue.getRandomFill();
+                    double plast = productStandardValue.getRandomValue(ProductStandardValue.MIN_PLASTICIZING_TIME, ProductStandardValue.MAX_PLASTICIZING_TIME);
+                    double cycle = productStandardValue.getRandomValue(ProductStandardValue.MIN_CYCLE_TIME, ProductStandardValue.MAX_CYCLE_TIME);
+                    double closeForce = productStandardValue.getRandomValue(ProductStandardValue.MIN_CLOSING_FORCE, ProductStandardValue.MAX_CLOSING_FORCE);
+                    double clampPeak = productStandardValue.getRandomValue(ProductStandardValue.MIN_CLAMPING_FORCE_PEAK, ProductStandardValue.MAX_CLAMPING_FORCE_PEAK);
+                    double trqPeak = productStandardValue.getRandomValue(ProductStandardValue.MIN_TORQUE_PEAK, ProductStandardValue.MAX_TORQUE_PEAK);
+                    double trqMean = productStandardValue.getRandomValue(ProductStandardValue.MIN_TORQUE_MEAN, ProductStandardValue.MAX_TORQUE_MEAN);
+                    double backPress = productStandardValue.getRandomValue(ProductStandardValue.MIN_BACK_PRESSURE_PEAK, ProductStandardValue.MAX_BACK_PRESSURE_PEAK);
+                    double shot = productStandardValue.getRandomValue(ProductStandardValue.MIN_SHOT_VOLUME, ProductStandardValue.MAX_SHOT_VOLUME);
+                    // ✅ 확률에 따라 상태 설정 (70% OK / 30% ERR_TEMP_01)
+                    boolean isOk = random.nextDouble() < 0.7; // 0.0 ~ 0.999 중 70%는 true
+                    String status = isOk ? "OK" : "ERR_TEMP_01";
+                    ProductLabel label1 = isOk ? ProductLabel.OK : ProductLabel.ERR_TIME;
 
-                Standard standard = Standard.builder()
-                        .meltTemperature(melt)
-                        .moldTemperature(mold)
-                        .timeToFill(fill)
-                        .plasticizingTime(plast)
-                        .cycleTime(cycle)
-                        .closingForce(closeForce)
-                        .clampingForcePeak(clampPeak)
-                        .torquePeak(trqPeak)
-                        .torqueMean(trqMean)
-                        .backPressurePeak(backPress)
-                        .injPressurePeak(injpress)
-                        .screwPosEndHold(screw)
-                        .shotVolume(shot)
-                        .productLabel(label1)
-                        .build();
-                standardService.save(standard);
+                    Standard standard = Standard.builder()
+                            .meltTemperature(melt)
+                            .moldTemperature(mold)
+                            .timeToFill(fill)
+                            .plasticizingTime(plast)
+                            .cycleTime(cycle)
+                            .closingForce(closeForce)
+                            .clampingForcePeak(clampPeak)
+                            .torquePeak(trqPeak)
+                            .torqueMean(trqMean)
+                            .backPressurePeak(backPress)
+                            .injPressurePeak(injpress)
+                            .screwPosEndHold(screw)
+                            .shotVolume(shot)
+                            .productLabel(label1)
+                            .build();
+                    standardService.save(standard);
 
-                Process process = Process.builder()
-                        .status(status)
-                        .order(orders1)
-                        .standard(standard)
-                        .processDate(baseDate.plusMinutes(i))
-                        .build();
-                processRepository.save(process);
+                    Process process = Process.builder()
+                            .status(status)
+                            .order(orders1)
+                            .standard(standard)
+                            .processDate(baseDate.plusMinutes(i))
+                            .build();
+                    processRepository.save(process);
 
-                standard.setProcess(process);
-                standardService.save(standard);
+                    standard.setProcess(process);
+                    standardService.save(standard);
                 }
             }
         }

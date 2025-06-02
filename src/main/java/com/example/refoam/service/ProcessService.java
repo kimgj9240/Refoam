@@ -2,6 +2,7 @@ package com.example.refoam.service;
 
 import com.example.refoam.domain.*;
 import com.example.refoam.domain.Process;
+import com.example.refoam.dto.MoldTempForm;
 import com.example.refoam.dto.ProcessProgressForm;
 import com.example.refoam.repository.AlertLogRepository;
 import com.example.refoam.repository.ProcessRepository;
@@ -11,20 +12,23 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProcessService {
-
     private final ProcessRepository processRepository;
     private final AlertLogRepository alertLogRepository;
     private final OrderService orderService;
@@ -44,8 +48,13 @@ public class ProcessService {
 
         if (order.getOrderState().equals("배합완료")) {
             order.setOrderState("진행 중");
+            order.setCompletedCount(0);
             orderService.save(order);
         }
+        messagingTemplate.convertAndSend(
+                "/topic/process",
+                new ProcessProgressForm(order.getId(), 0, order.getOrderQuantity(), 0.0, order.getOrderState())
+        );
         long baseTime = System.currentTimeMillis();
         for (int i = 0; i < order.getOrderQuantity(); i++) {
             final int index = i;
@@ -151,6 +160,11 @@ public class ProcessService {
                         "/topic/process",
                         new ProcessProgressForm(o.getId(), completedCount, totalCount, errorRate, status)
                 );
+
+                messagingTemplate.convertAndSend(
+                        "/topic/temperature/" + o.getProductName().name(),
+                        mold
+                );
             }, new Date(baseTime + delay));
         }
     }
@@ -166,10 +180,21 @@ public class ProcessService {
     public List<Process> findAllOrder(Long orderId){
         return processRepository.findAllByOrder_Id(orderId);
     }
+
+    public List<MoldTempForm> findRecentMoldTemperatures(String productName) {
+        List<Process> processes = processRepository.findTop20ByOrder_ProductNameOrderByProcessDateDesc(ProductName.valueOf(productName));
+        return processes.stream()
+                .map(p -> new MoldTempForm(p.getProcessDate(), p.getStandard().getMoldTemperature()))
+                .sorted(Comparator.comparing(MoldTempForm::getTime)) // 오래된 순으로 정렬
+                .collect(Collectors.toList());
+    }
+
     // 페이지네이션 구현용 메서드
     public Page<Process> getList(Long orderId, int page){
         PageRequest pageable = PageRequest.of(page, 12);
         return this.processRepository.findAllByOrder_Id(orderId,pageable);
     }
+
+
 
 }
