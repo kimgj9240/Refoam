@@ -1,41 +1,69 @@
 <html layout:decorate="~{layout}" lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="container mb-5" layout:fragment="content">
+    <h2 class="my-4">오늘의 달성률</h2>
     <div class="row mb-5">
-        <div class="col-lg-4 ">
+        <div class="col-12 col-md-6 col-lg-6">
+            <h5 class="text-center mt-3">
+                오늘의 목표 수량: <span th:text="${targetQuantity}">0</span>개
+            </h5>
+            <div class="tassei">
+            <canvas id="achievementRate" ></canvas>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-6 my-sm-3 my-md-5 my-lg-4 ">
             <div class="row">
-                <div class="col-md-7 col-lg-12">
-                    <h2 class="my-4">오늘의 달성률</h2>
-                    <h5 class="text-center mt-3">
-                        오늘의 목표 수량: <span th:text="${targetQuantity}">0</span>개
-                    </h5>
-                    <canvas id="achievementRate"></canvas>
+                <div class="card shadow-sm mb-2 col">
+                    <div class="card-body">
+                        <h6 class="text-muted">✅ 달성 수량</h6>
+                        <h4 th:text="${okCount} + '개'">0개</h4>
+                    </div>
                 </div>
-                <div class="col-md-5 col-lg-12 my-sm-3 my-md-5 my-lg-4 ">
-                    <div class="card shadow-sm mb-2">
-                        <div class="card-body">
-                            <h6 class="text-muted">✅ 달성 수량</h6>
-                            <h4 th:text="${okCount} + '개'">0개</h4>
-                        </div>
+                <div class="card shadow-sm mb-2 col">
+                    <div class="card-body">
+                        <h6 class="text-muted">📈 달성률</h6>
+                        <h4 th:text="${achievementRate} + '%'">0%</h4>
                     </div>
-                    <div class="card shadow-sm mb-2">
-                        <div class="card-body">
-                            <h6 class="text-muted">📈 달성률</h6>
-                            <h4 th:text="${achievementRate} + '%'">0%</h4>
-                        </div>
-                    </div>
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h6 class="text-muted">📉 남은 수량</h6>
-                            <h4 th:text="${targetQuantity - okCount} + '개'">0개</h4>
-                        </div>
+                </div>
+                <div class="card shadow-sm col">
+                    <div class="card-body">
+                        <h6 class="text-muted">📉 남은 수량</h6>
+                        <h4 th:text="${targetQuantity - okCount} + '개'">0개</h4>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-8 my-lg-2">
-            <h2 class="my-4">생산량 통계</h2>
-            <canvas id="monitoringChart2" class="mt-3" height="215"></canvas>
+
+    </div>
+    <div class="my-4">
+        <h2 class="mb-4">금형 온도 실시간 모니터링</h2>
+        <div class="container pe-0 ps-0">
+            <div class="row justify-content-between gx-4 gy-4">
+                <div class="col-12 col-lg-4 ">
+                    <h5> 금형 온도 A</h5>
+                    <div class="chart-wrapper">
+                        <canvas id="chartA"></canvas>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-4">
+                    <h5> 금형 온도 B</h5>
+                    <div class="chart-wrapper">
+                        <canvas id="chartB"></canvas>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-4 ">
+                    <h5> 금형 온도 C</h5>
+                    <div class="chart-wrapper">
+                        <canvas id="chartC"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
+    <div th:replace="~{fragments/gauge :: gauge}" class="my-4"></div>
+    <div class="col-lg-12 my-lg-2">
+        <h2 class="my-4">생산량 통계</h2>
+        <canvas id="monitoringChart2" class="mt-3" height="215"></canvas>
     </div>
 
     <h2 class="my-4">재고 건수</h2>
@@ -57,19 +85,46 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+    <!-- date-fns 어댑터 (Chart.js v3+) -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <!-- 서버 제공 클라이언트 -->
+    <style>
+        canvas {
+            background: #fafafa;
+            border: 1px solid #ddd;
+        }
+    </style>
+
+
+
     <script th:inline="javascript">
+        // function getAspectRatioByBreakpoint() {
+        //     const width = window.innerWidth;
+        //
+        //     // Bootstrap lg 기준: 992px 이상을 "lg 이상"으로 봄
+        //     if (width >= 786) {
+        //         return 3;  // 가로 3, 세로 1 (3:1 비율)
+        //     } else {
+        //         return 4;  // md 이하 → 가로 4, 세로 1 (4:1 비율)
+        //     }
+        // }
+
+
         const materialLabels = /*[[${materialLabels}]]*/ [];
         const materialData = /*[[${materialData}]]*/ [];
         const materialColors = /*[[${materialColors}]]*/ [];
         const stats = /*[[${productionMonitorings}]]*/ [];
-        const rate = /*[[${achievementRate}]]*/ 0;
-        const target = /*[[${targetRate}]]*/ 80;
+        const rate = /*[[${achievementRate}]]*/ 75;
+        const target = /*[[${targetRate}]]*/ 90;
         const isAchieved = rate >= target;
         const barColor = isAchieved ? 'rgba(0, 200, 100, 0.7)' : 'rgba(63, 0, 255, 0.7)';
         const labels = stats.map(s => s.date);
         const ok = stats.map(s => s.okCount);
         const err = stats.map(s => s.errCount);
         const order = stats.map(s => s.orderCount);
+
+
 
 
         const ctx2 = document.getElementById('materialChart').getContext('2d');
@@ -166,6 +221,10 @@
                 }]
             },
             options: {
+                // 가로:세로 비율을 2:1로 고정 (두 칸 가로에 한 칸 세로)
+                // aspectRatio: 3,
+                // maintainAspectRatio가 true여야 aspectRatio가 반영됩니다.
+                maintainAspectRatio: false,
                 indexAxis: 'y',
                 scales: {
                     x: {
@@ -212,13 +271,15 @@
             },
             plugins: [ChartDataLabels]
         });
+
+
         document.addEventListener("DOMContentLoaded", function () {
             const btn = document.getElementById('showToastBtn');
             const toastEl = document.getElementById('aiReportToast');
             const toastBody = document.getElementById('toastBody');
 
             // ✅ Bootstrap Toast 인스턴스 생성
-            const toast = new bootstrap.Toast(toastEl, { delay: 10000 });
+            const toast = new bootstrap.Toast(toastEl, {delay: 10000});
 
             btn.addEventListener('click', function () {
                 toastBody.textContent = "AI 리포트를 불러오는 중입니다..."
@@ -236,161 +297,121 @@
                     });
             });
         });
-    </script>
 
-    <div class="my-4">
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
-        <!-- date-fns 어댑터 (Chart.js v3+) -->
-        <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
-        <!-- 서버 제공 클라이언트 -->
-        <style>
-            canvas {
-                background: #fafafa;
-                border: 1px solid #ddd;
-            }
-        </style>
-        <h2 class="mb-4">금형 온도 실시간 모니터링</h2>
-        <div class="container pe-0 ps-0">
-            <div class="row justify-content-between gx-4 gy-4">
-                <div class="col-12 col-lg-4 ">
-                    <h5> 금형 온도 A</h5>
-                    <div class="chart-wrapper">
-                        <canvas id="chartA"></canvas>
-                    </div>
-                </div>
-                <div class="col-12 col-lg-4">
-                    <h5> 금형 온도 B</h5>
-                    <div class="chart-wrapper">
-                        <canvas id="chartB"></canvas>
-                    </div>
-                </div>
-                <div class="col-12 col-lg-4 ">
-                    <h5> 금형 온도 C</h5>
-                    <div class="chart-wrapper">
-                        <canvas id="chartC"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
+        // 금형온도 차트 시작
+        // 불량 위험 온도 기준
+        const HIGH_THRESHOLD = 81.5;
+        const LOW_THRESHOLD = 80;
 
+        // ② 서버 포트 맞춰서 연결
+        // transports 우선순위를  소켓은 오류가 잘 나서 polling만 쓰도록 해둠
+        const socket = io('http://localhost:5000', {transports: ['polling']});
+        socket.on('connect', () => console.log('✅ Socket connected'));
 
-        <script>
-            // 불량 위험 온도 기준
-            const HIGH_THRESHOLD = 81.5;
-            const LOW_THRESHOLD = 80;
+        // 2) 공통 옵션
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            parsing: false,
 
-            // ② 서버 포트 맞춰서 연결
-            // transports 우선순위를  소켓은 오류가 잘 나서 polling만 쓰도록 해둠
-            const socket = io('http://localhost:5000', {transports: ['polling']});
-            socket.on('connect', () => console.log('✅ Socket connected'));
-
-            // 2) 공통 옵션
-            const commonOptions = {
-                responsive: true,
-                maintainAspectRatio: false,
-                parsing: false,
-
-                scales: {
-                    x: {
-                        type: 'time',
-                        time: { unit: 'second' },
-                        title: { display: true, text: '시간' },
-                        // ★ 틱을 한 스텝 안쪽으로 오프셋
-                        bounds: 'data',     // 데이터의 첫/마지막 타임스탬프에 그리드 맞춤
-                        offset: false,      // 틱 좌표를 1:1 매칭
-                        ticks: {
-                            source: 'data',   // 틱을 데이터 타임스탬프 위치에만 생성
-                            autoSkip: true,   // 많으면 자동 생략
-                            maxTicksLimit: 8 // 최대 10개
-                        },
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {unit: 'second'},
+                    title: {display: true, text: '시간'},
+                    // ★ 틱을 한 스텝 안쪽으로 오프셋
+                    bounds: 'data',     // 데이터의 첫/마지막 타임스탬프에 그리드 맞춤
+                    offset: false,      // 틱 좌표를 1:1 매칭
+                    ticks: {
+                        source: 'data',   // 틱을 데이터 타임스탬프 위치에만 생성
+                        autoSkip: true,   // 많으면 자동 생략
+                        maxTicksLimit: 8 // 최대 10개
                     },
-                    y: {
-                        suggestedMin: 78,
-                        suggestedMax: 82.5,
-                        title: { display: true, text: '℃' }
-                    }
                 },
-                plugins: {
-                    legend: { display: false },
-                    decimation: {
-                        enabled:   true,       // 활성화
-                        algorithm: 'lttb',     // 추세 보존에 좋은 LTTB
-                        samples:   8          // 화면에 표시할 최대 포인트 개수
-                    }
+                y: {
+                    suggestedMin: 78,
+                    suggestedMax: 82.5,
+                    title: {display: true, text: '℃'}
                 }
-            };
+            },
+            plugins: {
+                legend: {display: false},
+                decimation: {
+                    enabled: true,       // 활성화
+                    algorithm: 'lttb',     // 추세 보존에 좋은 LTTB
+                    samples: 8          // 화면에 표시할 최대 포인트 개수
+                }
+            }
+        };
 
-            // 3) 차트 3개 생성 (A, B, C)
-            const letters = ['A','B','C'];
-            const colors  = ['red','orange','blue'];
+        // 3) 차트 3개 생성 (A, B, C)
+        const letters = ['A', 'B', 'C'];
+        const colors = ['red', 'orange', 'blue'];
 
-            const charts  = letters.map((L, i) => {
-                const ctx = document.getElementById(`chart${L}`).getContext('2d');
-                return new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        datasets: [{
-                            label: `금형온도 ${L}`,
-                            data: [],
-                            borderWidth: 1,
-                            fill: false,
-                            borderColor: colors[i],
-                            pointStyle: 'rectRot',
-                            pointRadius:  4,
-                            // ● 점 색상: 임계값 로직
-                            pointBackgroundColor: ctx => {
-                                const y = ctx.parsed?.y;
-                                if (y >= HIGH_THRESHOLD) return 'red';
-                                if (y <= LOW_THRESHOLD ) return 'green';
+        const charts = letters.map((L, i) => {
+            const ctx = document.getElementById(`chart${L}`).getContext('2d');
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        label: `금형온도 ${L}`,
+                        data: [],
+                        borderWidth: 1,
+                        fill: false,
+                        borderColor: colors[i],
+                        pointStyle: 'rectRot',
+                        pointRadius: 4,
+                        // ● 점 색상: 임계값 로직
+                        pointBackgroundColor: ctx => {
+                            const y = ctx.parsed?.y;
+                            if (y >= HIGH_THRESHOLD) return 'red';
+                            if (y <= LOW_THRESHOLD) return 'green';
+                            return 'blue';
+                        },
+                        // ● 선 색상 분할: segment.borderColor 사용
+                        segment: {
+                            borderColor: ctx => {
+                                const y0 = ctx.p0.parsed.y;
+                                const y1 = ctx.p1.parsed.y;
+                                const avg = (y0 + y1) / 2;
+                                if (avg >= HIGH_THRESHOLD) return 'red';
+                                if (avg <= LOW_THRESHOLD) return 'green';
                                 return 'blue';
-                            },
-                            // ● 선 색상 분할: segment.borderColor 사용
-                            segment: {
-                                borderColor: ctx => {
-                                    const y0 = ctx.p0.parsed.y;
-                                    const y1 = ctx.p1.parsed.y;
-                                    const avg = (y0 + y1) / 2;
-                                    if (avg >= HIGH_THRESHOLD) return 'red';
-                                    if (avg <= LOW_THRESHOLD ) return 'green';
-                                    return 'blue';
-                                }
                             }
-                        }]
-                    },
-                    options: commonOptions
-                });
+                        }
+                    }]
+                },
+                options: commonOptions
             });
+        });
 
 
-            // 계기판 차트 쓰기 전 코드 값이 하나일 때
-            // socket.on('new_data', msg => {
-            //     console.log('▶ new_data', msg);
-            //     chart.data.datasets[0].data.push({x: msg.time, y: msg.value});
-            //     if (chart.data.datasets[0].data.length > 50) chart.data.datasets[0].data.shift();
-            //     chart.update('none');
-            // });
+        // 계기판 차트 쓰기 전 코드 값이 하나일 때
+        // socket.on('new_data', msg => {
+        //     console.log('▶ new_data', msg);
+        //     chart.data.datasets[0].data.push({x: msg.time, y: msg.value});
+        //     if (chart.data.datasets[0].data.length > 50) chart.data.datasets[0].data.shift();
+        //     chart.update('none');
+        // });
 
-            // 금형온도 차트에 보이는 점 개수를 10개까지 하려고 만듦
-            const MAX_STEPS = 8;
+        // 금형온도 차트에 보이는 점 개수를 10개까지 하려고 만듦
+        const MAX_STEPS = 8;
 
-            // 4) Socket.IO 로 3개 동시 업데이트
-            socket.on('new_data', msg => {
-                // msg.values = [valA, valB, valC]
-                msg.values.forEach((v, i) => {
-                    const ds = charts[i].data.datasets[0];
-                    // 1) 새 데이터 포인트 추가
-                    ds.data.push({ x: msg.time, y: msg.values[i] });
-                    // 2) 10포인트 초과하면 맨 앞에서 하나 삭제
-                    if (ds.data.length > MAX_STEPS) {
-                        ds.data.shift();
-                    }
-                });
-                // 3) 모두 업데이트
-                charts.forEach(c => c.update('none'));
+        // 4) Socket.IO 로 3개 동시 업데이트
+        socket.on('new_data', msg => {
+            // msg.values = [valA, valB, valC]
+            msg.values.forEach((v, i) => {
+                const ds = charts[i].data.datasets[0];
+                // 1) 새 데이터 포인트 추가
+                ds.data.push({x: msg.time, y: msg.values[i]});
+                // 2) 10포인트 초과하면 맨 앞에서 하나 삭제
+                if (ds.data.length > MAX_STEPS) {
+                    ds.data.shift();
+                }
             });
-        </script>
-    </div>
-    <div th:replace="~{fragments/gauge :: gauge}" class="my-4"></div>
+            // 3) 모두 업데이트
+            charts.forEach(c => c.update('none'));
+        });
+    </script>
 </div>
 </html>

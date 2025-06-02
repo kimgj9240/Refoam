@@ -24,7 +24,7 @@ body {
 /* header 영역  */
 /* 로그인 홈 배경이미지 */
 .bg-login {
-    background-image: linear-gradient(to top,rgba(0, 0, 0, 0.8),rgba(0, 0, 0, 0.2)) , url('/images/refoam_login_bg.jpeg');
+    background-image: linear-gradient(to top,rgba(0, 0, 0, 0.8),rgba(0, 0, 0, 0.2)) , url('../images/refoam_login_bg.jpeg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -276,8 +276,37 @@ ul.navbar-nav {
     color: #000;
 }
 
+/* ai 리포트 크기    */
+@media (min-width: 768px) {
+    .toast {
+        --bs-toast-max-width: 60vh !important ;
+        width: 60vh !important;
+    }
 
-    
+}
+
+.tassei{
+    width: 100%;
+}
+/* lg 이상(992px 이상)일 때: 3:1 비율 */
+@media (min-width: 992px) {
+    .tassei {
+        aspect-ratio: 3 / 1;   /* 가로:세로 = 3:1 */
+    }
+}
+
+/* md 이하(992px 미만)일 때: 4:1 비율 */
+@media (max-width: 991.98px) {
+    .tassei {
+        aspect-ratio: 4 / 1;   /* 가로:세로 = 4:1 */
+    }
+}
+
+.tassei canvas {
+    width: 100% !important;   /* 부모 너비(=100%) 꽉 채우기 */
+    height: 100% !important;  /* 부모 높이도 100% 꽉 채우기 */
+}
+
 
 /* 플레이스홀더 색상 오류때메 만듦*/
 input::placeholder {
@@ -320,3 +349,4 @@ a {
 .red-light {
     background-color: #F44336;
 }
+
