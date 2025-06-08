@@ -36,4 +36,10 @@ public interface ProcessRepository extends JpaRepository<Process, Long> {
 
     // 불량 개수 체크
     long countByOrderAndStatusNot(Orders order, String status);
+
+    long countByOrderAndStatus(Orders order, String status);
+
+    // 제품별 개수 체크
+    long countByOrder_ProductNameAndStatus(ProductName productName, String status);
+    long countByOrder_ProductNameAndStatusNot(ProductName productName, String status);
 }

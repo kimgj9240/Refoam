@@ -88,7 +88,18 @@
         </div>
     </div>
     <div th:replace="~{fragments/gauge :: gauge}" class="my-4"></div>
-
+    <h2 class="py-4">제품별 생산 현황</h2>
+    <div class="row">
+        <div class="col-12 col-lg-4">
+            <canvas id="chart-NORMAL" height="300"></canvas>
+        </div>
+        <div class="col-12 col-lg-4">
+            <canvas id="chart-BUMP" height="300"></canvas>
+        </div>
+        <div class="col-12 col-lg-4">
+            <canvas id="chart-HALF" height="300"></canvas>
+        </div>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
@@ -378,6 +389,80 @@
                     });
                 });
             });
+        });
+
+
+        const chartMap = {};
+        const productStatMap = JSON.parse(localStorage.getItem("productStatMap")) || {};
+
+        const productNames = ['NORMAL', 'BUMP', 'HALF'];
+
+        productNames.forEach(name => {
+            const ctx = document.getElementById(`chart-${name}`).getContext("2d");
+
+            chartMap[name] = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['정상 제품 수', '불량 제품 수'],
+                    datasets: [{
+                        data: [0, 0],
+                        backgroundColor: ['#36A2EB', '#FF6384'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: `${name} 제품 생산 비율`
+                        },
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        });
+
+        function updateChart(productName, okCount, errorCount, timestamp) {
+            const date = new Date(timestamp);
+            const today = new Date();
+
+            // 오늘 날짜만 표시
+            if (
+                date.getFullYear() !== today.getFullYear() ||
+                date.getMonth() !== today.getMonth() ||
+                date.getDate() !== today.getDate()
+            ) return;
+
+            productStatMap[productName] = { okCount, errorCount, timestamp };
+            localStorage.setItem("productStatMap", JSON.stringify(productStatMap));
+
+            if (!chartMap[productName]) return;
+
+            chartMap[productName].data.datasets[0].data = [okCount, errorCount];
+            chartMap[productName].update();
+        }
+        fetch('/api/production/by-product')  // 예시 경로
+            .then(res => res.json())
+            .then(data => {
+                data.forEach(({ productName, okCount, errorCount, timestamp }) => {
+                    updateChart(productName, okCount, errorCount, timestamp);  // localStorage 갱신 포함
+                });
+            });
+        // WebSocket 연결
+        const stomp = Stomp.over(new SockJS("/ws"));
+        stomp.connect({}, () => {
+            stomp.subscribe("/topic/product-count", message => {
+                const { productName, okCount, errorCount, timestamp } = JSON.parse(message.body);
+                updateChart(productName, okCount, errorCount, timestamp);
+            });
+
+            // 페이지 로딩 시 기존 데이터 복원
+            for (const [productName, { okCount, errorCount, timestamp }] of Object.entries(productStatMap)) {
+                updateChart(productName, okCount, errorCount, timestamp);
+            }
         });
     </script>
 </div>

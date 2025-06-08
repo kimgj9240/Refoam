@@ -4,6 +4,7 @@ import com.example.refoam.domain.*;
 import com.example.refoam.domain.Process;
 import com.example.refoam.dto.MoldTempForm;
 import com.example.refoam.dto.ProcessProgressForm;
+import com.example.refoam.dto.ProductChartDataForm;
 import com.example.refoam.repository.AlertLogRepository;
 import com.example.refoam.repository.ProcessRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,17 +13,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -165,6 +160,14 @@ public class ProcessService {
                         "/topic/temperature/" + o.getProductName().name(),
                         mold
                 );
+
+                long okProductCount = processRepository.countByOrder_ProductNameAndStatus(o.getProductName(), "OK");
+                long errProductCount = processRepository.countByOrder_ProductNameAndStatusNot(o.getProductName(), "OK");
+
+                messagingTemplate.convertAndSend(
+                        "/topic/product-count",
+                        new ProductChartDataForm(o.getProductName().name(), okProductCount, errProductCount, LocalDateTime.now())
+                );
             }, new Date(baseTime + delay));
         }
     }
@@ -187,6 +190,31 @@ public class ProcessService {
                 .map(p -> new MoldTempForm(p.getProcessDate(), p.getStandard().getMoldTemperature()))
                 .sorted(Comparator.comparing(MoldTempForm::getTime)) // 오래된 순으로 정렬
                 .collect(Collectors.toList());
+    }
+
+    public List<ProductChartDataForm> getStatsByProduct() {
+        List<Orders> allOrders = orderService.findOrders();
+
+        Map<ProductName, List<Orders>> grouped = allOrders.stream()
+                .collect(Collectors.groupingBy(Orders::getProductName));
+
+        List<ProductChartDataForm> result = new ArrayList<>();
+        for (Map.Entry<ProductName, List<Orders>> entry : grouped.entrySet()) {
+            String productName = entry.getKey().name();
+            List<Orders> orders = entry.getValue();
+
+            long okCount = 0;
+            long errorCount = 0;
+
+            for (Orders order : orders) {
+                okCount += processRepository.countByOrderAndStatus(order, "OK");
+                errorCount += processRepository.countByOrderAndStatusNot(order, "OK");
+            }
+
+            result.add(new ProductChartDataForm(productName, okCount, errorCount, LocalDateTime.now()));
+        }
+
+        return result;
     }
 
     // 페이지네이션 구현용 메서드
