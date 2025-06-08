@@ -307,6 +307,11 @@ body {
     height: 100% !important;  /* 부모 높이도 100% 꽉 채우기 */
 }
 
+canvas {
+    background: #fafafa;
+    border: 1px solid #ddd;
+}
+
 
 /* 플레이스홀더 색상 오류때메 만듦*/
 input::placeholder {
