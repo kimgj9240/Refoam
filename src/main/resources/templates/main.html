@@ -1,68 +1,41 @@
 <html layout:decorate="~{layout}" lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="container mb-5" layout:fragment="content">
+    <h2 class="my-4">오늘의 달성률</h2>
     <div class="row mb-5">
-        <div class="col-lg-4 ">
-            <div class="row">
-                <div class="col-md-7 col-lg-12">
-                    <h2 class="my-4">오늘의 달성률</h2>
-                    <h5 class="text-center mt-3">
-                        오늘의 목표 수량: <span th:text="${targetQuantity}">0</span>개
-                    </h5>
-                    <canvas id="achievementRate"></canvas>
-                </div>
-                <div class="col-md-5 col-lg-12 my-sm-3 my-md-5 my-lg-4 ">
-                    <div class="card shadow-sm mb-2">
-                        <div class="card-body">
-                            <h6 class="text-muted">✅ 달성 수량</h6>
-                            <h4 th:text="${okCount} + '개'">0개</h4>
-                        </div>
-                    </div>
-                    <div class="card shadow-sm mb-2">
-                        <div class="card-body">
-                            <h6 class="text-muted">📈 달성률</h6>
-                            <h4 th:text="${achievementRate} + '%'">0%</h4>
-                        </div>
-                    </div>
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h6 class="text-muted">📉 남은 수량</h6>
-                            <h4 th:text="${targetQuantity - okCount} + '개'">0개</h4>
-                        </div>
-                    </div>
-                </div>
+        <div class="col-12 col-md-6 col-lg-6">
+            <h5 class="text-center mt-3">
+                오늘의 목표 수량: <span th:text="${targetQuantity}">0</span>개
+            </h5>
+            <div class="tassei">
+                <canvas id="achievementRate"></canvas>
             </div>
         </div>
-        <div class="col-lg-8 my-lg-2">
-            <h2 class="my-4">생산량 통계</h2>
-            <canvas id="monitoringChart2" class="mt-3" height="215"></canvas>
-        </div>
-    </div>
 
-    <h2 class="my-4">재고 건수</h2>
-    <canvas id="materialChart" height="100"></canvas>
-    <button id="showToastBtn" class="btn btn-refoam position-fixed bottom-0 end-0 m-4" style="z-index: 1100;">
-        📋 리포트 보기
-    </button>
-    <div class="position-fixed bottom-0 mb-5 end-0 p-3" style="z-index: 1100">
-        <div id="aiReportToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <strong class="me-auto">📋 AI 리포트</strong>
-                <small class="text-muted">방금 전</small>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-            <div class="toast-body">
-                <span style="white-space: pre-line; margin-bottom: 0;" id="toastBody">AI 분석 리포트 불러오는 중...</span>
+        <div class="col-12 col-md-6 col-lg-6 my-sm-3 my-md-5 my-lg-4 ">
+            <div class="row">
+                <div class="card shadow-sm mb-2 col">
+                    <div class="card-body">
+                        <h6 class="text-muted">✅ 달성 수량</h6>
+                        <h4 th:text="${okCount} + '개'">0개</h4>
+                    </div>
+                </div>
+                <div class="card shadow-sm mb-2 col">
+                    <div class="card-body">
+                        <h6 class="text-muted">📈 달성률</h6>
+                        <h4 th:text="${achievementRate} + '%'">0%</h4>
+                    </div>
+                </div>
+                <div class="card shadow-sm col">
+                    <div class="card-body">
+                        <h6 class="text-muted">📉 남은 수량</h6>
+                        <h4 th:text="${targetQuantity - okCount} + '개'">0개</h4>
+                    </div>
+                </div>
             </div>
         </div>
+
     </div>
     <div class="my-4">
-        <!-- 서버 제공 클라이언트 -->
-        <style>
-            canvas {
-                background: #fafafa;
-                border: 1px solid #ddd;
-            }
-        </style>
         <h2 class="mb-4">금형 온도 실시간 모니터링</h2>
         <div class="container pe-0 ps-0">
             <div class="row justify-content-between gx-4 gy-4">
@@ -88,295 +61,329 @@
         </div>
     </div>
     <div th:replace="~{fragments/gauge :: gauge}" class="my-4"></div>
+    <div class="col-lg-12 my-lg-2">
+        <h2 class="my-4">생산량 통계</h2>
+        <canvas id="monitoringChart2" class="mt-3" height="215"></canvas>
+    </div>
 
+    <h2 class="my-4">재고 건수</h2>
+    <canvas id="materialChart" height="100"></canvas>
+    <button id="showToastBtn" class="btn btn-refoam position-fixed bottom-0 end-0 m-4" style="z-index: 1100;">
+        📋 리포트 보기
+    </button>
+    <div class="position-fixed bottom-0 mb-5 end-0 p-3" style="z-index: 1100">
+        <div id="aiReportToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">📋 AI 리포트</strong>
+                <small class="text-muted">방금 전</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                <span style="white-space: pre-line; margin-bottom: 0;" id="toastBody">AI 분석 리포트 불러오는 중...</span>
+            </div>
+        </div>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+    <!-- date-fns 어댑터 (Chart.js v3+) -->
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="https://cdn3.devexpress.com/jslib/22.2.6/js/dx.all.js"></script>
+    <style>
+        canvas {
+            background: #fafafa;
+            border: 1px solid #ddd;
+        }
+    </style>
+    <!-- 2) DevExtreme CSS/JS (게이지 차트용) -->
+    <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/22.2.6/css/dx.light.css">
+
+
     <script th:inline="javascript">
-        const materialLabels = /*[[${materialLabels}]]*/ [];
-        const materialData = /*[[${materialData}]]*/ [];
-        const materialColors = /*[[${materialColors}]]*/ [];
-        const stats = /*[[${productionMonitorings}]]*/ [];
-        const rate = /*[[${achievementRate}]]*/ 0;
-        const target = /*[[${targetRate}]]*/ 80;
-        const isAchieved = rate >= target;
-        const barColor = isAchieved ? 'rgba(0, 200, 100, 0.7)' : 'rgba(63, 0, 255, 0.7)';
-        const labels = stats.map(s => s.date);
-        const ok = stats.map(s => s.okCount);
-        const err = stats.map(s => s.errCount);
-        const order = stats.map(s => s.orderCount);
 
+        <!-- 3) Chart.js (막대그래프 등 다른 차트용) -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 
-        const ctx2 = document.getElementById('materialChart').getContext('2d');
-        new Chart(ctx2, {
-            type: 'bar',
-            data: {
-                labels: materialLabels,
-                datasets: [{
-                    label: '원재료별 수량',
-                    data: materialData,
-                    backgroundColor: materialColors,
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {beginAtZero: true},
-                    x: {title: {display: true, text: '원재료'}}
-                }
-            }
-        });
-        new Chart(document.getElementById('monitoringChart2'), {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: '총 주문 건수',
-                        data: order,
-                        backgroundColor: 'rgba(0, 255, 0, 0.5)',
-                    },
-                    {
-                        label: '완제품 수',
-                        data: ok,
-                        backgroundColor: 'rgba(255, 0, 0, 0.5)',
-                    },
-                    {
-                        label: '불량품 수',
-                        data: err,
-                        backgroundColor: 'rgba(0, 0, 255, 0.5)',
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: '생산량 통계'
-                    },
-                    legend: {
-                        position: 'top',
-                    }
-                },
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: '공정 날짜'
-                        },
-                        ticks: {
-                            autoSkip: true,
-                            maxRotation: 45
-                        }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: '수량'
-                        }
-                    }
-                }
-            }
-        });
-        new Chart(document.getElementById("achievementRate"), {
-            type: 'bar',
-            data: {
-                labels: ['목표 달성률'],
-                datasets: [{
-                    label: '오늘의 달성률',
-                    data: [rate],
-                    backgroundColor: barColor,
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                scales: {
-                    x: {
-                        max: 100,
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function (value) {
-                                return value + '%';
-                            }
-                        },
-                        title: {
-                            display: true,
-                            text: '(목표: ' + target + '%)'
-                        }
-                    },
-                    y: {
-                        grid: {display: false},
-                        ticks: {display: false}
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top',
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                return '현재 달성률 :' + context.raw + '%';
-                            }
-                        }
-                    },
-                    datalabels: {
-                        display: true,
-                        align: 'right',
-                        anchor: 'end',
-                        formatter: function (value) {
-                            return value + '%';
-                        },
-                        color: '#000',
-                        font: {weight: 'bold'}
-                    }
-                }
-            },
-            plugins: [ChartDataLabels]
-        });
+    <!-- 4) Socket.IO 클라이언트 (버전 중복 없이 하나만) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.min.js"></script>
+
+    <!-- 5) 사용자 커스텀 스크립트 -->
+    <script th:inline="javascript">
         document.addEventListener("DOMContentLoaded", function () {
-            const btn = document.getElementById('showToastBtn');
-            const toastEl = document.getElementById('aiReportToast');
-            const toastBody = document.getElementById('toastBody');
+            // ------------------------------
+            // 1) Socket.IO 연결 (Flask-SocketIO 서버 주소)
+            // ------------------------------
+            const socket = io("http://localhost:5000");
 
-            // ✅ Bootstrap Toast 인스턴스 생성
-            const toast = new bootstrap.Toast(toastEl, { delay: 10000 });
+            // ------------------------------
+            // 2) DevExtreme CircularGauge 초기화
+            // ------------------------------
+            const gaugeA = $("#chartA")
+                .dxCircularGauge({
+                    title: { text: "금형 A 온도(℃)" },
+                    rangeContainer: {
+                        backgroundColor: "#E8E8E8",
+                        ranges: [
+                            { startValue: 0, endValue: 60, color: "#A9CCE3" },
+                            { startValue: 60, endValue: 80, color: "#F7DC6F" },
+                            { startValue: 80, endValue: 120, color: "#EC7063" },
+                        ],
+                    },
+                    scale: {
+                        startValue: 0,
+                        endValue: 120,
+                        majorTick: { color: "#000", visible: true, length: 10 },
+                        minorTick: { color: "#000", visible: true, length: 5 },
+                    },
+                    value: 0,
+                })
+                .dxCircularGauge("instance");
 
-            btn.addEventListener('click', function () {
-                toastBody.textContent = "AI 리포트를 불러오는 중입니다..."
-                toast.show();
+            const gaugeB = $("#chartB")
+                .dxCircularGauge({
+                    title: { text: "금형 B 온도(℃)" },
+                    rangeContainer: {
+                        backgroundColor: "#E8E8E8",
+                        ranges: [
+                            { startValue: 0, endValue: 60, color: "#A9CCE3" },
+                            { startValue: 60, endValue: 80, color: "#F7DC6F" },
+                            { startValue: 80, endValue: 120, color: "#EC7063" },
+                        ],
+                    },
+                    scale: {
+                        startValue: 0,
+                        endValue: 120,
+                        majorTick: { color: "#000", visible: true, length: 10 },
+                        minorTick: { color: "#000", visible: true, length: 5 },
+                    },
+                    value: 0,
+                })
+                .dxCircularGauge("instance");
 
-                fetch("/ai-summary")
-                    .then(res => res.text())
-                    .then(text => {
-                        toastBody.textContent = text;
-                        toast.show();
-                    })
-                    .catch(err => {
-                        toastBody.textContent = "❌ 리포트 요청 실패";
-                        toast.show();
-                    });
+            const gaugeC = $("#chartC")
+                .dxCircularGauge({
+                    title: { text: "금형 C 온도(℃)" },
+                    rangeContainer: {
+                        backgroundColor: "#E8E8E8",
+                        ranges: [
+                            { startValue: 0, endValue: 60, color: "#A9CCE3" },
+                            { startValue: 60, endValue: 80, color: "#F7DC6F" },
+                            { startValue: 80, endValue: 120, color: "#EC7063" },
+                        ],
+                    },
+                    scale: {
+                        startValue: 0,
+                        endValue: 120,
+                        majorTick: { color: "#000", visible: true, length: 10 },
+                        minorTick: { color: "#000", visible: true, length: 5 },
+                    },
+                    value: 0,
+                })
+                .dxCircularGauge("instance");
+
+            // ------------------------------
+            // 3) Socket.IO로부터 'new_data' 이벤트 수신 → 게이지 업데이트
+            // ------------------------------
+            socket.on("new_data", function (data) {
+                // data.values는 [tempA, tempB, tempC]
+                const [tempA, tempB, tempC] = data.values;
+                gaugeA.option("value", tempA);
+                gaugeB.option("value", tempB);
+                gaugeC.option("value", tempC);
             });
-        });
 
-        // 금형 온도 차트 시작
-        const HIGH_THRESHOLD = 81.4;
-        const LOW_THRESHOLD = 80.6;
-        const MAX_POINTS = 50; // 과거 + 실시간 합쳐서 최대 점 개수
+            // ------------------------------
+            // 4) 막대그래프(Chart.js) 초기화 예시
+            //    (이전 코드에서 이미 작성된 부분)
+            // ------------------------------
+            const materialLabels = /*[[${materialLabels}]]*/ [];
+            const materialData = /*[[${materialData}]]*/ [];
+            const materialColors = /*[[${materialColors}]]*/ [];
+            const stats = /*[[${productionMonitorings}]]*/ [];
+            const rate = /*[[${achievementRate}]]*/ 75;
+            const target = /*[[${targetRate}]]*/ 90;
+            const isAchieved = rate >= target;
+            const barColor = isAchieved ? "rgba(0, 200, 100, 0.7)" : "rgba(63, 0, 255, 0.7)";
+            const labels = stats.map((s) => s.date);
+            const ok = stats.map((s) => s.okCount);
+            const err = stats.map((s) => s.errCount);
+            const order = stats.map((s) => s.orderCount);
 
-        const names = ['NORMAL', 'BUMP', 'HALF'];     // 서버 전송용 토픽 이름
-        const letters = ['A', 'B', 'C'];               // UI 표시용 라벨
-        const colors = ['red', 'orange', 'blue'];      // 선 색상
-
-        const charts = letters.map((letter, i) => {
-            const ctx = document.getElementById(`chart${letter}`).getContext('2d');
-            return new Chart(ctx, {
-                type: 'line',
+            // materialChart (원재료별 수량)
+            const ctx2 = document.getElementById("materialChart").getContext("2d");
+            new Chart(ctx2, {
+                type: "bar",
                 data: {
-                    datasets: [{
-                        label: `금형온도 ${letter}`,
-                        data: [],
-                        borderWidth: 1,
-                        fill: false,
-                        borderColor: colors[i],
-                        pointStyle: 'rectRot',
-                        pointRadius: 4,
-                        pointBackgroundColor: ctx => {
-                            const y = ctx.parsed?.y;
-                            if (y >= HIGH_THRESHOLD) return 'red';
-                            if (y <= LOW_THRESHOLD) return 'green';
-                            return 'blue';
+                    labels: materialLabels,
+                    datasets: [
+                        {
+                            label: "원재료별 수량",
+                            data: materialData,
+                            backgroundColor: materialColors,
+                            borderColor: [
+                                "rgba(255, 99, 132, 1)",
+                                "rgba(54, 162, 235, 1)",
+                                "rgba(255, 206, 86, 1)",
+                                "rgba(75, 192, 192, 1)",
+                                "rgba(153, 102, 255, 1)",
+                                "rgba(255, 159, 64, 1)",
+                            ],
+                            borderWidth: 1,
                         },
-                        segment: {
-                            borderColor: ctx => {
-                                const y0 = ctx.p0.parsed.y;
-                                const y1 = ctx.p1.parsed.y;
-                                const avg = (y0 + y1) / 2;
-                                if (avg >= HIGH_THRESHOLD) return 'red';
-                                if (avg <= LOW_THRESHOLD) return 'green';
-                                return 'blue';
-                            }
-                        }
-                    }]
+                    ],
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
-                    parsing: false,
+                    scales: {
+                        y: { beginAtZero: true },
+                        x: { title: { display: true, text: "원재료" } },
+                    },
+                },
+            });
+
+            // monitoringChart2 (생산량 통계)
+            new Chart(document.getElementById("monitoringChart2"), {
+                type: "bar",
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: "총 주문 건수",
+                            data: order,
+                            backgroundColor: "rgba(0, 255, 0, 0.5)",
+                        },
+                        {
+                            label: "완제품 수",
+                            data: ok,
+                            backgroundColor: "rgba(255, 0, 0, 0.5)",
+                        },
+                        {
+                            label: "불량품 수",
+                            data: err,
+                            backgroundColor: "rgba(0, 0, 255, 0.5)",
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: "생산량 통계",
+                        },
+                        legend: {
+                            position: "top",
+                        },
+                    },
                     scales: {
                         x: {
-                            type: 'time',
-                            time: {
-                                unit: 'minute',
-                                tooltipFormat: 'HH:mm:ss'
+                            title: {
+                                display: true,
+                                text: "공정 날짜",
                             },
-                            title: { display: true, text: '시간' },
-                            bounds: 'data',
-                            offset: false,
                             ticks: {
-                                source: 'data',
                                 autoSkip: true,
-                                maxTicksLimit: 8
-                            }
+                                maxRotation: 45,
+                            },
                         },
                         y: {
-                            suggestedMin: 78,
-                            suggestedMax: 82.5,
-                            title: { display: true, text: '℃' }
-                        }
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: "수량",
+                            },
+                        },
+                    },
+                },
+            });
+
+            // achievementRate (오늘의 달성률)
+            new Chart(document.getElementById("achievementRate"), {
+                type: "bar",
+                data: {
+                    labels: ["목표 달성률"],
+                    datasets: [
+                        {
+                            label: "오늘의 달성률",
+                            data: [rate],
+                            backgroundColor: barColor,
+                            borderWidth: 0,
+                        },
+                    ],
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    indexAxis: "y",
+                    scales: {
+                        x: {
+                            max: 100,
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) {
+                                    return value + "%";
+                                },
+                            },
+                            title: {
+                                display: true,
+                                text: "(목표: " + target + "%)",
+                            },
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: { display: false },
+                        },
                     },
                     plugins: {
-                        legend: { display: false },
-                        decimation: {
-                            enabled: true,
-                            algorithm: 'lttb',
-                            samples: 8
-                        }
-                    }
-                }
+                        legend: {
+                            display: true,
+                            position: "top",
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return "현재 달성률 :" + context.raw + "%";
+                                },
+                            },
+                        },
+                        datalabels: {
+                            display: true,
+                            align: "right",
+                            anchor: "end",
+                            formatter: function (value) {
+                                return value + "%";
+                            },
+                            color: "#000",
+                            font: { weight: "bold" },
+                        },
+                    },
+                },
+                plugins: [ChartDataLabels],
             });
-        });
-        Promise.all(
-            names.map((name, i) =>
-                fetch(`/api/temperature/${name}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        const formatted = Array.isArray(data)
-                            ? data.map(d => ({ x: new Date(d.time), y: d.value }))
-                            : [{ x: new Date(data.time), y: data.value }];
-                        charts[i].data.datasets[0].data = formatted;
-                        charts[i].update();
+
+            // ------------------------------
+            // 5) AI 리포트용 Toast 버튼 이벤트
+            // ------------------------------
+            const btn = document.getElementById("showToastBtn");
+            const toastEl = document.getElementById("aiReportToast");
+            const toastBody = document.getElementById("toastBody");
+            const toast = new bootstrap.Toast(toastEl, { delay: 10000 });
+
+            btn.addEventListener("click", function () {
+                toastBody.textContent = "AI 리포트를 불러오는 중입니다...";
+                toast.show();
+
+                fetch("/ai-summary")
+                    .then((res) => res.text())
+                    .then((text) => {
+                        toastBody.textContent = text;
+                        toast.show();
                     })
-            )
-        ).then(() => {
-            // 3. WebSocket 연결은 과거 데이터가 모두 로딩된 이후에 시작
-            const stompClient = Stomp.over(new SockJS('/ws'));
-            stompClient.connect({}, () => {
-                names.forEach((name, i) => {
-                    stompClient.subscribe(`/topic/temperature/${name}`, message => {
-                        const y = parseFloat(message.body);
-                        const x = new Date();
-                        const ds = charts[i].data.datasets[0];
-                        ds.data.push({ x, y });
-                        if (ds.data.length > MAX_POINTS) ds.data.shift();
-                        charts[i].update('none');
+                    .catch((err) => {
+                        toastBody.textContent = "❌ 리포트 요청 실패";
+                        toast.show();
                     });
-                });
             });
         });
     </script>
