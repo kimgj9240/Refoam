@@ -125,7 +125,7 @@ public class HomeController {
                 .toList();
 
 
-        List<ProductionMonitoring> productionMonitorings = monitoringService.productionMonitorings();
+        //List<ProductionMonitoring> productionMonitorings = monitoringService.productionMonitorings();
 
         Map<String, Integer> kpiMap = monitoringService.targetAchievement(100, 400);
         Map<String, Long> errorCounts = monitoringService.errorCounts();
@@ -165,7 +165,6 @@ public class HomeController {
         model.addAttribute("materialLabels", materialLabels);
         model.addAttribute("materialData", materialData);
         model.addAttribute("materialColors", materialColors);
-        model.addAttribute("productionMonitorings", productionMonitorings);
         model.addAttribute("achievementRate", kpiMap.get("achievementRate"));
         model.addAttribute("targetRate", 80);
         model.addAttribute("targetQuantity", kpiMap.get("targetQuantity"));//오늘의 달성목표수량 100단위로만 생성되도록

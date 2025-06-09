@@ -11,6 +11,8 @@ import java.time.LocalDate;
 @Builder
 public class ProductionMonitoring {
 
+    private String product;
+
     private LocalDate date;
 
     private int okCount;

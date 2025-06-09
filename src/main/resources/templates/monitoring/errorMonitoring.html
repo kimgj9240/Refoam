@@ -28,7 +28,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script th:inline="javascript">
         //차트용 스크립트 합침
-        const stats = /*[[${productionMonitorings}]]*/ [];
+        const stats = /*[[${allMonitorings}]]*/ [];
         const labels = stats.map(s => s.date);
         const ok = stats.map(s => s.okCount);
         const err = stats.map(s => s.errCount);
@@ -36,61 +36,108 @@
         const errTemp = stats.map(s => s.errTempCount);
         const errTime = stats.map(s => s.errTimeCount);
         const mixFail = stats.map(s => s.mixFailCount || 0);
+        const normalOK = /*[[${normalMonitorings}]]*/ [];
+        const bumpOK = /*[[${bumpMonitorings}]]*/ [];
+        const halfOK = /*[[${halfMonitorings}]]*/ [];
+        const normalOk = normalOK.map(s => s.okCount);
+        const bumpOk = bumpOK.map(s => s.okCount);
+        const halfOk = halfOK.map(s => s.okCount);
 
-        new Chart(document.getElementById('monitoringChart'), {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: '총 주문 건수',
-                        data: order,
-                        backgroundColor: 'rgba(0, 255, 0, 0.5)',
-                    },
-                    {
-                        label: '완제품 수',
-                        data: ok,
-                        backgroundColor: 'rgba(255, 0, 0, 0.5)',
-                    },
-                    {
-                        label: '불량품 수',
-                        data: err,
-                        backgroundColor: 'rgba(0, 0, 255, 0.5)',
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: '생산량 통계'
-                    },
-                    legend: {
-                        position: 'top',
-                    }
-                },
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: '공정 날짜'
+
+        // 생산량 통계 차트
+        const monitoringCtx = document.getElementById("monitoringChart");
+        if (monitoringCtx) {
+            new Chart(monitoringCtx, {
+                type: "bar",
+                data: {
+                    labels: labels,
+                    datasets: [
+                        // 여기부터는 라인 차트 (랜덤값으로 그려놓음 => 필요하면 추가)
+                        {
+                            label: 'NORMAL',
+                            data: normalOk,
+                            type: 'line',
+                            borderColor: 'rgb(154,103,255)',
+                            backgroundColor: 'rgb(156,156,255)',
+                            yAxisID: 'y',
                         },
-                        ticks: {
-                            autoSkip: true,
-                            maxRotation: 45
+                        {
+                            label: 'BUMP',
+                            data: bumpOk,
+                            type: 'line',
+                            borderColor: 'rgb(147,147,147)',
+                            backgroundColor: 'rgb(173,177,190)',
+                            yAxisID: 'y',
+
+                        },
+                        {
+                            label: 'HALF',
+                            data: halfOk,
+                            type: 'line',
+                            borderColor: 'rgb(255,99,132)',
+                            backgroundColor: 'rgb(255,171,189)',
+                            yAxisID: 'y',
+
+                        },//여기까지
+                        {
+                            label: "총 주문 건수",
+                            data: order,
+                            borderColor: '#0051b6',
+                            backgroundColor: "#a7cffd",
+                        },
+                        {
+                            label: "완제품 수",
+                            data: ok,
+                            borderColor: '#369189',
+                            backgroundColor: "#8ef6da",
+                        },
+                        {
+                            label: "불량품 수",
+                            data: err,
+                            borderColor: '#ff5c6c',
+                            backgroundColor: "#ffbab7",
+                        },
+                    ],
+                },
+                options: {
+                    elements: {
+                        bar: {
+                            borderWidth: 2,
                         }
                     },
-                    y: {
-                        beginAtZero: true,
+                    responsive: true,
+                    plugins: {
                         title: {
                             display: true,
-                            text: '수량'
-                        }
-                    }
-                }
-            }
-        });
+                            text: "생산량 통계",
+                        },
+                        legend: {
+                            position: "top",
+                        },
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: "공정 날짜",
+                            },
+                            ticks: {
+                                autoSkip: true,
+                                maxRotation: 45,
+                            },
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: "수량",
+                            },
+                        },
+                    },
+                },
+            });
+        }
+
         new Chart(document.getElementById('weeklyLineChart'), {
             type: 'line',
             data: {
@@ -196,42 +243,6 @@
                 }
             }
         });
-        //차트 모양 도넛형으로 변경 => 화면 크기별 사이즈 조정 필요? (반응형)
-        /*new Chart(document.getElementById('todayErrorChart'), {
-            type: 'bar',
-            data: {
-                labels: todayErrorLabels,
-                datasets: [{
-                    label: '오늘의 에러 건수',
-                    data: todayErrorData,
-                    backgroundColor: [
-                        'rgba(255, 0, 0, 0.5)',
-                        'rgba(255, 0, 0, 0.5)',
-                        'rgba(255, 0, 0, 0.5)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: '오늘 발생한 에러 건수'
-                    }
-                },
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: '건수'
-                        }
-                    }
-                }
-            }
-        });*/
 
         document.addEventListener("DOMContentLoaded", function () {
             const btn = document.getElementById('showErrorToastBtn');
@@ -256,7 +267,6 @@
                     });
             });
         });
-    </script>
     </script>
 </div>
 </html>

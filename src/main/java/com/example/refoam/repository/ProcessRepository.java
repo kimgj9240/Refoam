@@ -22,11 +22,22 @@ public interface ProcessRepository extends JpaRepository<Process, Long> {
     Page<Process> findAllByOrder_Id(Long orderId, Pageable pageable);
 
 
+
+    @Query("SELECT p FROM Process p " +
+            "WHERE p.processDate BETWEEN :start AND :end " +
+            "AND p.order.productName = :productName " +
+            "ORDER BY p.processDate, p.id")
+    List<Process> findProcessesInDateRange(@Param("start") LocalDateTime start,
+                                           @Param("end") LocalDateTime end,
+                                           @Param("productName") ProductName productName);
     @Query("SELECT p FROM Process p " +
             "WHERE p.processDate BETWEEN :start AND :end " +
             "ORDER BY p.processDate, p.id")
     List<Process> findProcessesInDateRange(@Param("start") LocalDateTime start,
-                                           @Param("end") LocalDateTime end);
+                                           @Param("end") LocalDateTime end
+                                           );
+
+
 
     @Query("SELECT p FROM Process p WHERE DATE(p.processDate) = CURRENT_DATE ")
     List<Process> findTodayProcesses();

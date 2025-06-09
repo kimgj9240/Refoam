@@ -3,6 +3,7 @@ package com.example.refoam.service;
 import com.example.refoam.domain.Orders;
 import com.example.refoam.domain.Process;
 import com.example.refoam.domain.ProductLabel;
+import com.example.refoam.domain.ProductName;
 import com.example.refoam.dto.ProductionMonitoring;
 import com.example.refoam.repository.OrderRepository;
 import com.example.refoam.repository.ProcessRepository;
@@ -21,16 +22,56 @@ public class MonitoringService {
 
     private final OrderRepository orderRepository;
     private final ProcessRepository processRepository;
-    private final OpenAiService openAiService;
 
-    public List<ProductionMonitoring> productionMonitorings() {
+    public Map<ProductName, List<ProductionMonitoring>> allProductionMonitoringsWithPadding() {
+        // 1. 기준 날짜 리스트 생성 (ALL)
+        List<ProductionMonitoring> allMonitorings = productionMonitorings("ALL");
+        List<LocalDate> allDates = allMonitorings.stream()
+                .map(ProductionMonitoring::getDate)
+                .distinct()
+                .sorted()
+                .toList();
 
+        // 2. 각 제품별 모니터링 결과 수집
+        Map<ProductName, List<ProductionMonitoring>> result = new HashMap<>();
+        for (ProductName product : List.of(ProductName.NORMAL, ProductName.BUMP, ProductName.HALF)) {
+            List<ProductionMonitoring> rawMonitorings = productionMonitorings(product.name());
+
+            // 날짜 -> 데이터 매핑
+            Map<LocalDate, ProductionMonitoring> dateMap = rawMonitorings.stream()
+                    .collect(Collectors.toMap(ProductionMonitoring::getDate, pm -> pm));
+
+            // 누락된 날짜를 0으로 채워 넣기
+            List<ProductionMonitoring> padded = allDates.stream()
+                    .map(date -> dateMap.getOrDefault(date,
+                            ProductionMonitoring.builder()
+                                    .product(product.name())
+                                    .date(date)
+                                    .errCount(0).okCount(0).orderCount(0)
+                                    .errTempCount(0).errTimeCount(0).mixFailCount(0)
+                                    .build()))
+                    .toList();
+
+            result.put(product, padded);
+        }
+        result.put(null, allMonitorings);
+
+        return result;
+    }
+
+    public List<ProductionMonitoring> productionMonitorings(String productName) {//제품별 카운팅하는거땜에 매게변수 추가
         LocalDate today = LocalDate.now();
         LocalDateTime start = today.minusDays(6).atStartOfDay();
         LocalDateTime end = today.plusDays(1).atStartOfDay();
-
+        List<Process> processes = new ArrayList<>();
         // 전체 공정 조회
-        List<Process> processes = processRepository.findProcessesInDateRange(start, end);
+        if(productName.equals("ALL")){
+            processes = processRepository.findProcessesInDateRange(start, end);
+        }else {
+            processes = processRepository.findProcessesInDateRange(start, end, ProductName.valueOf(productName.toUpperCase()));
+        }
+
+
         List<Orders> orders = orderRepository.findAll();
 
         return processes.stream()
@@ -48,9 +89,12 @@ public class MonitoringService {
                             .filter(p -> p.getStatus().startsWith("ERR"))
                             .count();
                     // OK로 시작하는 라벨 집계
-                    int okCount = (int) processList.stream()
+                    int okCount = (int) Optional.ofNullable(processList)
+                            .orElse(Collections.emptyList())
+                            .stream()
                             .filter(p -> "OK".equals(p.getStatus()))
                             .count();
+
                     // orderId 기준으로 중복 제거한 주문 건수 집계
                     int orderCount = orders.stream()
                             .filter(o -> o.getOrderDate().toLocalDate().equals(date))
@@ -74,6 +118,7 @@ public class MonitoringService {
 
                     // DTO 반환
                     return ProductionMonitoring.builder()
+                            .product(productName)
                             .date(date)
                             .errCount(errCount)
                             .okCount(okCount)
