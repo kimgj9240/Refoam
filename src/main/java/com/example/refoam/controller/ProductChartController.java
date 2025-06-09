@@ -14,7 +14,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/production")
 public class ProductChartController {
-
     private final ProcessService processService;
 
     @GetMapping("/by-product")

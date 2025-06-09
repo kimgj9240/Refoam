@@ -42,10 +42,7 @@ import static java.util.stream.Collectors.groupingBy;
 @RequiredArgsConstructor
 public class HomeController {
     private final LoginService loginService;
-    private final MaterialService materialService;
     private final MonitoringService monitoringService;
-
-
 
     @GetMapping("/")
     public String home(HttpSession session, Model model,
@@ -91,83 +88,12 @@ public class HomeController {
     }
 
     @GetMapping("/main")
-    public String main(Model model, @RequestParam(value = "page", defaultValue = "0") int page){
-        Map<MaterialName, Long> rawMap = materialService.getMaterialQuantities();
-
-        // 재고 차트 순서 고정 (새로고침시 순서 바뀌는 거 방지)
-        Map<MaterialName, Long> materialMap = rawMap.entrySet().stream()
-                .sorted(Map.Entry.comparingByKey())
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (a,b) -> a,
-                        LinkedHashMap::new
-                ));
-
-        List<String> materialLabels = materialMap.keySet().stream()
-                .map(Enum::name)
-                .toList();
-
-        List<Long> materialData = materialMap.values().stream().toList();
-
-        // 원자재 그래프 막대 색 지정
-        Map<MaterialName, String> colorMap = Map.of(
-                MaterialName.EVA, "rgba(217,240,240, 1)",
-                MaterialName.P_BLACK, "rgba(202,202,202, 1)",
-                MaterialName.P_WHITE, "rgba(255,255,255, 1)",
-                MaterialName.P_BLUE, "rgba(213,234,249, 1)",
-                MaterialName.P_RED, "rgba(253,207,223, 1)"
-        );
-
-
-        List<String> materialColors = materialMap.keySet().stream()
-                .map(colorMap::get)
-                .toList();
-
-
-        //List<ProductionMonitoring> productionMonitorings = monitoringService.productionMonitorings();
-
+    public String main(Model model){
         Map<String, Integer> kpiMap = monitoringService.targetAchievement(100, 400);
-        Map<String, Long> errorCounts = monitoringService.errorCounts();
 
-        int target = kpiMap.get("targetQuantity");
-        int ok = kpiMap.get("okCount");
-        int rate = kpiMap.get("achievementRate");
-        long errTemp = errorCounts.getOrDefault("ERR_TEMP", 0L);
-        long errTime = errorCounts.getOrDefault("ERR_TIME", 0L);
-        long mixFail = errorCounts.getOrDefault("배합실패", 0L);
-
-
-        String prompt = String.format(
-                """
-                오늘의 생산 리포트를 작성해줘. 다음 정보를 참고해서 다음 4가지 항목을 포함해줘:
-                1. 전반적인 생산 요약
-                2. 불량 유형별 통계와 원인 분석
-                3. 성과 분석 (목표 대비 달성률)
-                4. 내일을 위한 개선 방향 또는 경고
-            
-                📊 생산 성과:
-                - 목표 수량: %d개
-                - OK 수량: %d개
-                - 달성률: %d%%
-            
-                ⚠️ 에러 통계:
-                - 온도 에러: %d건
-                - 시간 에러: %d건
-                - 배합 실패: %d건
-            
-                관리자에게 보고하는 형식으로 작성해줘. 포맷은 깔끔하고 핵심 위주로, 너무 길지 않게.
-                """, target, ok, rate, errTemp, errTime, mixFail
-        );
-
-
-
-        model.addAttribute("materialLabels", materialLabels);
-        model.addAttribute("materialData", materialData);
-        model.addAttribute("materialColors", materialColors);
         model.addAttribute("achievementRate", kpiMap.get("achievementRate"));
-        model.addAttribute("targetRate", 80);
-        model.addAttribute("targetQuantity", kpiMap.get("targetQuantity"));//오늘의 달성목표수량 100단위로만 생성되도록
+        model.addAttribute("targetRate", 80);//목표달성률 80 고정
+        model.addAttribute("targetQuantity", kpiMap.get("targetQuantity"));//오늘의 달성목표수량 10단위로만 생성되도록
         model.addAttribute("targetAchieveQuantity", kpiMap.get("targetAchieveQuantity"));
         model.addAttribute("okCount", kpiMap.get("okCount"));
         return "main";}
@@ -177,16 +103,5 @@ public class HomeController {
     public String homeRedirect(Model model) {
         model.addAttribute("loginForm", new LoginForm());
         return "home";
-    }
-
-
-
-    @GetMapping("/table")
-    public String table(){
-        return "table";
-    }
-    @GetMapping("/form")
-    public String form(){
-        return "form";
     }
 }

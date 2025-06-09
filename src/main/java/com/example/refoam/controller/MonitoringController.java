@@ -36,7 +36,6 @@ public class MonitoringController {
         model.addAttribute("todayErrorCounts", todayErrorCounts);
 
         Map<String, Long> errorData = monitoringService.errorCounts();
-
         model.addAttribute("errorCounts", errorData);
         return "monitoring/errorMonitoring";
     }

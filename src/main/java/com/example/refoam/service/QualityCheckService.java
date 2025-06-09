@@ -76,7 +76,6 @@ public class QualityCheckService {
             record.setInputDate(inputJson);
             record.setCheckResult(qualityCheckLabel);
             record.setStandard(std);   //검수 요청하는 제품
-
             //4.저장
             qualityCheckRepository.save(record);
         }

@@ -138,14 +138,12 @@ public class OrderController {
 
     @GetMapping("/list")
     public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page){
-//        List<Orders> ordersList = orderService.findOrders();
         Page<Orders> paging = this.orderService.getList(page);
         paging.forEach(order -> System.out.println("order=" + order.getProductName() + ", emp=" + order.getEmployee().getUsername()));
         paging.forEach(order -> {
             if (order.getEmployee() != null) order.getEmployee().getUsername(); // 강제 초기화
         });
         paging.forEach(order -> processRepository.countTodayByOrderAndStatusNot(order,"OK",order.getProductName()));
-//        model.addAttribute("ordersList", ordersList);
         model.addAttribute("ordersList", paging);
         model.addAttribute("activeMenu", 3);
         return "order/orderList";

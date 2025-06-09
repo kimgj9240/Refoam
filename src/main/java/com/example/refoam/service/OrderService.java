@@ -21,6 +21,7 @@ import java.util.*;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final MaterialService materialService;
+    private final AlertLogRepository alertLogRepository;
 
     // 저장 = 배합시작 & 공정시작시 사용
     @Transactional
@@ -77,27 +78,34 @@ public class OrderService {
                 if(requiredOrderQuantity <= 0) break;
 
                 // 남은 재고와 주문 수량을 비교하여 작은 값을 가져온다
-                long materialQuantity = material.getMaterialQuantity(); // 남은 재고 수량 10
-                // 남은 재고에서 - minQuantity를 빼고 다시 남은 재고의 값을 수정한다.
-                long minQuantity = Math.min(materialQuantity, requiredOrderQuantity); // 작은값 10
+                long materialQuantity = material.getMaterialQuantity();
+                long minQuantity = Math.min(materialQuantity, requiredOrderQuantity);
 
                 material.setMaterialQuantity((int) (materialQuantity-minQuantity)); // 10 - 10
-
+                // Alert: 재고 100 이하 시 알림   =>재고 부족 알림 누락된 부분 추가
+                if (materialQuantity - minQuantity <= 100) {
+                    boolean alerted = alertLogRepository.existsByMaterialAndCheckedFalse(material);
+                    if (!alerted) {
+                        AlertLog alert = AlertLog.builder()
+                                .material(material)
+                                .employee(material.getEmployee())
+                                .message("재고 수량을 확인하세요. <br> 남은수랑 : "+ (materialQuantity-minQuantity))
+                                .checked(false)
+                                .createdDate(LocalDateTime.now())
+                                .build();
+                        alertLogRepository.save(alert);
+                    }
+                }
 
                 log.info("차감된 원재료: {}, 차감량 {}, 남은 주문 필요량 {}", materialName, minQuantity, requiredOrderQuantity);
                 materialService.save(material);
-
-                //어떤 Material에서 얼마나 차감했는지 기록
-                // JobOrder <-> JobOrderMaterial 양방향 연관관계 설정
 
                 OrderMaterial jm = new OrderMaterial();
                 jm.setMaterial(material);
                 jm.setDeductedQuantity((int)minQuantity);
                 order.addOrderMaterial(jm);
 
-                // 주문 수량 업데이트
-                // 차감된 만큼 남은 주문 수량 갱신
-                requiredOrderQuantity -= minQuantity; // 0
+                requiredOrderQuantity -= minQuantity;
             }
             if(requiredOrderQuantity > 0){
                 throw new IllegalStateException(materialName + "재료가 부족하여 차감할 수 없습니다.");
@@ -118,9 +126,6 @@ public class OrderService {
         if (!order.getOrderState().equals("준비 중")) {
             throw new IllegalStateException("배합이 시작된 주문은 삭제할 수 없습니다.");
         }
-
-        // 정확히 복구
-//         OrderMaterial 리스트는 주문할 때 기록한 '어떤 재고에서 얼마나 차감했는가'를 담고있다.
         for(OrderMaterial orderMaterial : order.getOrderMaterials()){
             //복구할 Material 꺼내기 - 차감했던 재고를 그대로 다시 가져옴
             Material material = orderMaterial.getMaterial();
@@ -141,13 +146,10 @@ public class OrderService {
         // 최신순으로 보이게
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("id"));
-
         PageRequest pageable = PageRequest.of(page, 12, Sort.by(sorts));
-
         return this.orderRepository.findAll(pageable);
 
     }
-
     public List<Orders> findTodayOrders(){
         return this.orderRepository.findTodayOrders();
     }

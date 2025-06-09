@@ -16,7 +16,6 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class OpenAiService {
-
     private final OpenAiProperties properties;
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -34,7 +33,6 @@ public class OpenAiService {
                         Map.of("role", "user", "content", prompt)
                 )
         );
-
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
         ResponseEntity<Map> response = restTemplate.postForEntity(url, request, Map.class);
 

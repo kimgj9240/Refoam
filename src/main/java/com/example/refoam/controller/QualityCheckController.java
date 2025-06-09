@@ -21,10 +21,8 @@ public class QualityCheckController {
     @GetMapping("/{id}/check")
     public String check(@PathVariable("id") Long orderId){
         qualityCheckService.getQualityCheck(orderId);
-
         return "redirect:/process/{id}/list";
     }
-
     @GetMapping("/modal/{processId}")
     public String getQualityModal(@PathVariable Long processId, Model model) {
         Process process = processService.findOneProcess(processId).orElseThrow(()-> new IllegalArgumentException("해당 공정이 존재하지 않습니다."));

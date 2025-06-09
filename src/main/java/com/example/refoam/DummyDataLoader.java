@@ -38,7 +38,7 @@ public class DummyDataLoader implements CommandLineRunner {
                 .username("관리자")
                 .password("1111")
                 .position(PositionName.ADMIN)
-                .email("test@email.com")
+                .email("refoam.test@gmail.com")
                 .build();
         employeeService.save(employee);
 
@@ -47,7 +47,7 @@ public class DummyDataLoader implements CommandLineRunner {
                 .username("직원")
                 .password("1111")
                 .position(PositionName.STAFF)
-                .email("test2@email.com")
+                .email("refoam.test@gmail.com")
                 .build();
         employeeService.save(employee2);
 

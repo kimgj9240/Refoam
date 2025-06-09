@@ -81,13 +81,9 @@ public class MaterialController {
     }
     @GetMapping("/list")
     public String list(Model model,@RequestParam(value = "page", defaultValue = "0") int page){
-//        List<Material> materialList = materialService.selectAll();
-        // 페이지네이션 구현용
         Page<Material> paging = this.materialService.getList(page);
         model.addAttribute("paging", paging);
-
         model.addAttribute("activeMenu", 2);
-//        model.addAttribute("materialList",materialList);
         return "material/materialList";
     }
     @GetMapping("/{id}/edit")

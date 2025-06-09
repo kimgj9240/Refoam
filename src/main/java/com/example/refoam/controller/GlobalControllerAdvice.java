@@ -2,9 +2,7 @@ package com.example.refoam.controller;
 
 import com.example.refoam.domain.AlertLog;
 import com.example.refoam.domain.Employee;
-import com.example.refoam.dto.ProductionMonitoring;
 import com.example.refoam.repository.AlertLogRepository;
-import com.example.refoam.service.BadgeService;
 import com.example.refoam.service.MonitoringService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +16,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GlobalControllerAdvice {
     private final HttpSession session;
-    private final BadgeService badgeService;
-    private final MonitoringService monitoringService;
     private final AlertLogRepository alertLogRepository;
 
     @ModelAttribute

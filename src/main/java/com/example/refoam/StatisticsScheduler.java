@@ -28,7 +28,7 @@ public class StatisticsScheduler {
     private final OrderMonitorService orderMonitorService;
     private final DiscordNotifier discordNotifier;
 
-    @Scheduled(fixedRate = 300000)//interval 1 minutes
+    @Scheduled(fixedRate = 300000)//interval 5 minutes
     public void statistics(){
         log.info("statistics 스케줄러 호출됨 : {}", LocalDateTime.now());
         List<Orders> ordersList = orderRepository.findAllByOrderStateAndStatisticsIntervalCheck("공정완료",false);

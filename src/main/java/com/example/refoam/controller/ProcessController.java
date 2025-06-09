@@ -21,29 +21,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProcessController {
     private final ProcessService processService;
-    private final OrderService orderService;
-    private final ProcessRepository processRepository;
     private final QualityCheckService qualityCheckService;
 
     @GetMapping("/{id}/list")
     public String processList(@PathVariable("id") Long orderId, Model model, @RequestParam(value = "page", defaultValue = "0") int page){
-//        List<Process> processes = processService.findAllOrder(orderId);
-        Orders order = orderService.findOneOrder(orderId).orElseThrow();
         Page<Process> paging = processService.getList(orderId, page);
-
-
-
         model.addAttribute("processes",paging);
-//        model.addAttribute("processes",processes);
         model.addAttribute("qualityCheck",qualityCheckService.selectQualityCheck(orderId));
         model.addAttribute("orderId",orderId);
         model.addAttribute("activeMenu", 3);
-
         return "process/processList";
     }
 
     @PostMapping("/{id}/list")
-    public String startProcess(@PathVariable("id") Long orderId, Model model, @RequestParam(value = "page", defaultValue = "0") int page) {
+    public String startProcess(@PathVariable("id") Long orderId, @RequestParam(value = "page", defaultValue = "0") int page) {
         processService.startMainProcess(orderId);
         return "redirect:/order/list?page=" + page;
     }
