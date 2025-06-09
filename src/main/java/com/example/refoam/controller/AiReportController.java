@@ -18,7 +18,7 @@ public class AiReportController {
     @GetMapping("/ai-summary")
     public String aiSummary() {
         int targetRate = 80;
-        Map<String, Integer> kpiMap = monitoringService.targetAchievement(500, 800, targetRate);
+        Map<String, Integer> kpiMap = monitoringService.targetAchievement(100, 400);
         Map<String, Long> errorCounts = monitoringService.errorCounts();
 
         int target = kpiMap.get("targetQuantity");

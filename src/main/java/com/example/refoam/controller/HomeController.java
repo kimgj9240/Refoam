@@ -43,10 +43,8 @@ import static java.util.stream.Collectors.groupingBy;
 public class HomeController {
     private final LoginService loginService;
     private final MaterialService materialService;
-    private final OrderRepository orderRepository;
     private final MonitoringService monitoringService;
-    private final QualityCheckRepository qualityCheckRepository;
-    private final OpenAiService openAiService;
+
 
 
     @GetMapping("/")
@@ -129,10 +127,8 @@ public class HomeController {
 
         List<ProductionMonitoring> productionMonitorings = monitoringService.productionMonitorings();
 
-        int targetRate = 80;
-        Map<String, Integer> kpiMap = monitoringService.targetAchievement(500, 800, targetRate);
+        Map<String, Integer> kpiMap = monitoringService.targetAchievement(100, 400);
         Map<String, Long> errorCounts = monitoringService.errorCounts();
-
 
         int target = kpiMap.get("targetQuantity");
         int ok = kpiMap.get("okCount");
@@ -171,8 +167,8 @@ public class HomeController {
         model.addAttribute("materialColors", materialColors);
         model.addAttribute("productionMonitorings", productionMonitorings);
         model.addAttribute("achievementRate", kpiMap.get("achievementRate"));
-        model.addAttribute("targetRate", targetRate);
-        model.addAttribute("targetQuantity", kpiMap.get("targetQuantity"));
+        model.addAttribute("targetRate", 80);
+        model.addAttribute("targetQuantity", kpiMap.get("targetQuantity"));//오늘의 달성목표수량 100단위로만 생성되도록
         model.addAttribute("targetAchieveQuantity", kpiMap.get("targetAchieveQuantity"));
         model.addAttribute("okCount", kpiMap.get("okCount"));
         return "main";}

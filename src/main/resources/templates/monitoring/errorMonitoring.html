@@ -2,11 +2,11 @@
 <div class="container mb-5" layout:fragment="content">
     <h2 class="py-4">에러 모니터링</h2>
     <div class="row mb-5">
-        <div class="col-md-4">
-            <canvas id="todayErrorChart" width="400" height="300"></canvas>
+        <div class="col-md-4 col-lg-4 col-12">
+            <canvas id="todayErrorChart"></canvas>
         </div>
-        <div class="col-md-8">
-            <canvas id="weeklyLineChart" width="600" height="300"></canvas>
+        <div class="col-md-8 col-lg-6 col-12">
+            <canvas id="weeklyLineChart"></canvas>
         </div>
     </div>
     <button id="showErrorToastBtn" class="btn btn-primary position-fixed bottom-0 end-0 m-4" style="z-index: 1100;">
@@ -27,6 +27,7 @@
     <canvas id="monitoringChart" width="900" height="400"></canvas>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script th:inline="javascript">
+        //차트용 스크립트 합침
         const stats = /*[[${productionMonitorings}]]*/ [];
         const labels = stats.map(s => s.date);
         const ok = stats.map(s => s.okCount);
@@ -157,13 +158,46 @@
                 }
             }
         });
-    </script>
-    <script th:inline="javascript">
+
+
         const todayErrorCounts = /*[[${todayErrorCounts}]]*/ [];
         const todayErrorLabels = Object.keys(todayErrorCounts);
         const todayErrorData = Object.values(todayErrorCounts);
 
         new Chart(document.getElementById('todayErrorChart'), {
+            type: 'doughnut',
+            data: {
+                labels: todayErrorLabels,
+                datasets: [{
+                    label: '오늘의 에러 건수',
+                    data: todayErrorData,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(255, 206, 86, 0.6)',
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(153, 102, 255, 0.6)',
+                        'rgba(255, 159, 64, 0.6)'
+                    ],
+                    borderColor: 'white',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '오늘 발생한 에러 건수'
+                    },
+                    legend: {
+                        position: 'right'
+                    }
+                }
+            }
+        });
+        //차트 모양 도넛형으로 변경 => 화면 크기별 사이즈 조정 필요? (반응형)
+        /*new Chart(document.getElementById('todayErrorChart'), {
             type: 'bar',
             data: {
                 labels: todayErrorLabels,
@@ -197,7 +231,8 @@
                     }
                 }
             }
-        });
+        });*/
+
         document.addEventListener("DOMContentLoaded", function () {
             const btn = document.getElementById('showErrorToastBtn');
             const toastEl = document.getElementById('errorToast');

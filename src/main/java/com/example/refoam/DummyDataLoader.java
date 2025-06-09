@@ -26,7 +26,6 @@ public class DummyDataLoader implements CommandLineRunner {
     private final MaterialService materialService;
     private final OrderService orderService;
     private final StandardService standardService;
-    private final ProcessService processService;
     private final ProcessRepository processRepository;
 
 
@@ -60,18 +59,6 @@ public class DummyDataLoader implements CommandLineRunner {
                 MaterialName.P_RED
         );
 
-//        for (int i = 1; i <= 50; i++) {
-//            Employee employee3 = Employee.builder()
-//                    .loginId("test" + i)
-//                    .username("관리자")
-//                    .password("1111")
-//                    .position(PositionName.ADMIN)
-//                    .email("test@email.com")
-//                    .build();
-//            employeeService.save(employee3);
-//        }
-//stream()을 호출하면 데이터를 함수형 방식으로 처리할 수 있도록 도와줌
-        //map()은 스트림의 각 요소를 다른 값으로 변환하는 역할
         List<Material> materials = materialNameList.stream().map(materialName -> Material.builder()
                 .materialName(materialName)
                 .materialQuantity(500)
@@ -86,26 +73,7 @@ public class DummyDataLoader implements CommandLineRunner {
                 ProductName.BUMP,
                 ProductName.HALF
         );
-//        List<Orders> orders = productNameList.stream().map(
-//                productName -> Orders.builder()
-//                        .productName(ProductName.valueOf(productName.name()))
-//                        .orderQuantity(10)
-//                        .orderDate(LocalDateTime.now())
-//                        .orderState("준비 중")
-//                        .employee(employee)
-//                        .build()).toList();
 
-
-
-//        List<Orders> orders = productNameList.stream().map(
-//                productName -> Orders.builder()
-//                        .productName(ProductName.valueOf(productName.name()))
-//                        .orderQuantity(5)
-//                        .orderDate(LocalDateTime.now())
-//                        .orderState("준비 중")
-//                        .employee(employee)
-//                        .build()).toList();
-//        orders.forEach(orderService::save);
 
         // 7일치 더미 데이터 생
         // 랜덤 인스턴스 생성
@@ -116,10 +84,10 @@ public class DummyDataLoader implements CommandLineRunner {
 
             for(int j=0;j<3;j++){
                 int randomIndex = ThreadLocalRandom.current().nextInt(productNameList.size());
-
+                int orderqty = qtyValues.get(new Random().nextInt(qtyValues.size()));//process를 orderQty만큼 생성하드록 수정
                 Orders orders1 = Orders.builder()
                         .productName(productNameList.get(randomIndex))
-                        .orderQuantity(qtyValues.get(new Random().nextInt(qtyValues.size())))
+                        .orderQuantity(orderqty)
                         .orderDate(baseDate)
                         .orderState("공정완료")
                         .employee(employee)
@@ -129,7 +97,7 @@ public class DummyDataLoader implements CommandLineRunner {
                 ProductStandardValue productStandardValue = new ProductStandardValue();
 
 
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < orderqty; i++) {
                     double melt = productStandardValue.getRandomValue(ProductStandardValue.MIN_MELT_TEMPERATURE, ProductStandardValue.MAX_MELT_TEMPERATURE);
                     double mold = productStandardValue.getRandomValue(ProductStandardValue.MIN_MOLD_TEMPERATURE, ProductStandardValue.MAX_MOLD_TEMPERATURE);
                     double screw = productStandardValue.getRandomValue(ProductStandardValue.MIN_SCREW_POS_END_HOLD, ProductStandardValue.MAX_SCREW_POS_END_HOLD);
@@ -147,6 +115,12 @@ public class DummyDataLoader implements CommandLineRunner {
                     boolean isOk = random.nextDouble() < 0.7; // 0.0 ~ 0.999 중 70%는 true
                     String status = isOk ? "OK" : "ERR_TEMP_01";
                     ProductLabel label1 = isOk ? ProductLabel.OK : ProductLabel.ERR_TIME;
+                    if (isOk){
+                        orders1.setCompletedCount(orders1.getCompletedCount() + 1);
+                        orderService.save(orders1);
+
+                    }
+
 
                     Standard standard = Standard.builder()
                             .meltTemperature(melt)
@@ -177,6 +151,7 @@ public class DummyDataLoader implements CommandLineRunner {
                     standard.setProcess(process);
                     standardService.save(standard);
                 }
+
             }
         }
 
