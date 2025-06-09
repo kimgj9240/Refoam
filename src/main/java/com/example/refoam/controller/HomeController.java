@@ -112,11 +112,11 @@ public class HomeController {
 
         // 원자재 그래프 막대 색 지정
         Map<MaterialName, String> colorMap = Map.of(
-                MaterialName.EVA, "rgba(102, 204, 204, 1)",
-                MaterialName.P_BLACK, "rgba(50, 50, 50, 1)",
-                MaterialName.P_WHITE, "rgba(230, 230, 230, 1)",
-                MaterialName.P_BLUE, "rgba(54, 92, 235, 1)",
-                MaterialName.P_RED, "rgba(180, 60, 60, 1)"
+                MaterialName.EVA, "rgba(217,240,240, 1)",
+                MaterialName.P_BLACK, "rgba(202,202,202, 1)",
+                MaterialName.P_WHITE, "rgba(255,255,255, 1)",
+                MaterialName.P_BLUE, "rgba(213,234,249, 1)",
+                MaterialName.P_RED, "rgba(253,207,223, 1)"
         );
 
 

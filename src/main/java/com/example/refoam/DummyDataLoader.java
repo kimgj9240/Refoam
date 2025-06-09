@@ -96,7 +96,7 @@ public class DummyDataLoader implements CommandLineRunner {
 
                 ProductStandardValue productStandardValue = new ProductStandardValue();
 
-
+                double errorCount = 0;
                 for (int i = 0; i < orderqty; i++) {
                     double melt = productStandardValue.getRandomValue(ProductStandardValue.MIN_MELT_TEMPERATURE, ProductStandardValue.MAX_MELT_TEMPERATURE);
                     double mold = productStandardValue.getRandomValue(ProductStandardValue.MIN_MOLD_TEMPERATURE, ProductStandardValue.MAX_MOLD_TEMPERATURE);
@@ -112,14 +112,19 @@ public class DummyDataLoader implements CommandLineRunner {
                     double backPress = productStandardValue.getRandomValue(ProductStandardValue.MIN_BACK_PRESSURE_PEAK, ProductStandardValue.MAX_BACK_PRESSURE_PEAK);
                     double shot = productStandardValue.getRandomValue(ProductStandardValue.MIN_SHOT_VOLUME, ProductStandardValue.MAX_SHOT_VOLUME);
                     // ✅ 확률에 따라 상태 설정 (70% OK / 30% ERR_TEMP_01)
-                    boolean isOk = random.nextDouble() < 0.7; // 0.0 ~ 0.999 중 70%는 true
+                    boolean isOk = random.nextDouble() < 0.85; // 0.0 ~ 0.999 중 70%는 true
                     String status = isOk ? "OK" : "ERR_TEMP_01";
                     ProductLabel label1 = isOk ? ProductLabel.OK : ProductLabel.ERR_TIME;
                     if (isOk){
                         orders1.setCompletedCount(orders1.getCompletedCount() + 1);
                         orderService.save(orders1);
 
+                    }else {
+                        errorCount += 1;
                     }
+                    double errorRate = Math.round((double) errorCount / orderqty * 100.0) / 100.0;
+                    orders1.setErrorRate(errorRate);
+                    orderService.save(orders1);
 
 
                     Standard standard = Standard.builder()
@@ -151,7 +156,6 @@ public class DummyDataLoader implements CommandLineRunner {
                     standard.setProcess(process);
                     standardService.save(standard);
                 }
-
             }
         }
 

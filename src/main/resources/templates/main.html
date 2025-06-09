@@ -47,7 +47,7 @@
         <div class="container pe-0 ps-0">
             <div class="row justify-content-between gx-4 gy-4">
                 <div class="col-12 col-lg-4">
-                    <h5>금형 온도 A</h5>
+                    <h5> NORMAL</h5>
                     <div class="d-flex flex-column align-items-center">
                         <div class="gauge mb-3"></div>
                         <div class="chart-wrapper w-100">
@@ -56,7 +56,7 @@
                     </div>
                 </div>
                 <div class="col-12 col-lg-4">
-                    <h5>금형 온도 B</h5>
+                    <h5> BUMP</h5>
                     <div class="d-flex flex-column align-items-center">
                         <div class="gauge mb-3"></div>
                         <div class="chart-wrapper w-100">
@@ -65,7 +65,7 @@
                     </div>
                 </div>
                 <div class="col-12 col-lg-4">
-                    <h5>금형 온도 C</h5>
+                    <h5>HALF</h5>
                     <div class="d-flex flex-column align-items-center">
                         <div class="gauge mb-3"></div>
                         <div class="chart-wrapper w-100">
@@ -264,14 +264,14 @@
                             data: materialData,
                             backgroundColor: materialColors,
                             borderColor: [
-                                "rgba(255, 99, 132, 1)",
-                                "rgba(54, 162, 235, 1)",
-                                "rgba(255, 206, 86, 1)",
-                                "rgba(75, 192, 192, 1)",
-                                "rgba(153, 102, 255, 1)",
-                                "rgba(255, 159, 64, 1)",
+                                'rgb(113,237,237)',
+                                'rgb(147,147,147)',
+                                'rgb(28,28,28)',
+                                'rgb(32,121,255)',
+                                'rgb(255,70,136)',
+                                'rgb(113,237,237)'
                             ],
-                            borderWidth: 1,
+                            borderWidth: 2,
                         }],
                     },
                     options: {
@@ -292,24 +292,59 @@
                     data: {
                         labels: labels,
                         datasets: [
+                            // 여기부터는 라인 차트 (랜덤값으로 그려놓음 => 필요하면 추가)
+                            {
+                                label: 'NORMAL',
+                                data: [19, 17, 18, 16, 17, 12],
+                                type: 'line',
+                                borderColor: 'rgb(154,103,255)',
+                                backgroundColor: 'rgb(156,156,255)',
+                                yAxisID: 'y',
+                            },
+                            {
+                                label: 'BUMP',
+                                data: [18, 15, 17, 16, 15, 18],
+                                type: 'line',
+                                borderColor: 'rgb(147,147,147)',
+                                backgroundColor: 'rgb(173,177,190)',
+                                yAxisID: 'y',
+
+                            },
+                            {
+                                label: 'HALF',
+                                data: [14, 13, 16, 15, 16, 14],
+                                type: 'line',
+                                borderColor: 'rgb(255,99,132)',
+                                backgroundColor: 'rgb(255,171,189)',
+                                yAxisID: 'y',
+
+                            },//여기까지
                             {
                                 label: "총 주문 건수",
                                 data: order,
-                                backgroundColor: "rgba(0, 255, 0, 0.5)",
+                                borderColor: '#0051b6',
+                                backgroundColor: "#a7cffd",
                             },
                             {
                                 label: "완제품 수",
                                 data: ok,
-                                backgroundColor: "rgba(255, 0, 0, 0.5)",
+                                borderColor: '#369189',
+                                backgroundColor: "#8ef6da",
                             },
                             {
                                 label: "불량품 수",
                                 data: err,
-                                backgroundColor: "rgba(0, 0, 255, 0.5)",
+                                borderColor: '#ff5c6c',
+                                backgroundColor: "#ffbab7",
                             },
                         ],
                     },
                     options: {
+                        elements: {
+                            bar: {
+                                borderWidth: 2,
+                            }
+                        },
                         responsive: true,
                         plugins: {
                             title: {
@@ -395,7 +430,6 @@
                     },
                 });
             }
-
             console.log('기본 차트 초기화 완료');
         }
 
@@ -403,8 +437,11 @@
         function initializeTemperatureCharts() {
             console.log('온도 차트 초기화 시작');
 
+            // double MIN_MOLD_TEMPERATURE = 80.462;
+            // double MAX_MOLD_TEMPERATURE = 81.883;
+
             const HIGH_THRESHOLD = 81.4;
-            const LOW_THRESHOLD = 80.6;
+            const LOW_THRESHOLD = 80.8;
             const MAX_POINTS = 50;
             const names = ['NORMAL', 'BUMP', 'HALF'];
             const letters = ['A', 'B', 'C'];
@@ -423,12 +460,11 @@
                     data: {
                         labels: [],
                         datasets: [{
-                            label: `금형온도 ${letter}`,
+                            label: names[i],
                             data: [],
                             borderWidth: 2,
                             fill: false,
-                            borderColor: colors[i],
-                            backgroundColor: colors[i],
+                            borderColor: 'blue',
                             pointRadius: 3,
                             pointHoverRadius: 5,
                             tension: 0.1,
@@ -439,11 +475,11 @@
                                     if (value >= HIGH_THRESHOLD) return 'red';
                                     if (value <= LOW_THRESHOLD) return 'green';
                                 }
-                                return colors[i];
+                                return 'blue';
                             },
                             borderColor: function(context) {
                                 if (context.type === 'dataset') {
-                                    return colors[i];
+                                    return 'blue';
                                 }
                                 const dataIndex = context.dataIndex;
                                 const value = context.dataset.data[dataIndex];
@@ -451,7 +487,7 @@
                                     if (value >= HIGH_THRESHOLD) return 'red';
                                     if (value <= LOW_THRESHOLD) return 'green';
                                 }
-                                return colors[i];
+                                return 'blue';
                             }
                         }]
                     },
@@ -464,18 +500,9 @@
                                 ticks: { maxTicksLimit: 8 }
                             },
                             y: {
-                                min: 78,
-                                max: 82.5,
+                                min: 80,
+                                max: 82,
                                 title: { display: true, text: '온도 (℃)' },
-                                grid: {
-                                    color: function(context) {
-                                        const value = context.tick.value;
-                                        if (value === HIGH_THRESHOLD || value === LOW_THRESHOLD) {
-                                            return 'rgba(255, 0, 0, 0.3)';
-                                        }
-                                        return 'rgba(0, 0, 0, 0.1)';
-                                    }
-                                }
                             }
                         },
                         plugins: {
@@ -522,7 +549,6 @@
                     });
                 });
 
-                console.log(`온도 차트 ${letter} 생성 완료`);
                 return chart;
             }).filter(chart => chart !== null);
         }
@@ -605,7 +631,6 @@
                     initialValue: 78.0,
                     higherValue: 82.5,
                     title: '78.0 ºC',
-                    subtitle: `금형온도 ${letter}`
                 }).init();
 
                 if (gauge) {
