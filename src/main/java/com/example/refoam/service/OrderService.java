@@ -148,4 +148,8 @@ public class OrderService {
 
     }
 
+    public List<Orders> findTodayOrders(){
+        return this.orderRepository.findTodayOrders();
+    }
+
 }

@@ -22,5 +22,4 @@ public interface OrderRepository extends JpaRepository<Orders, Long> {
     @Query("SELECT  o FROM Orders o WHERE  DATE(o.orderDate) = CURRENT_DATE ")
     List<Orders> findTodayOrders();
 
-    List<Orders> findAllByOrderState(String orderState);
 }

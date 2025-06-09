@@ -82,6 +82,19 @@
         <canvas id="monitoringChart2" class="mt-3" height="215"></canvas>
     </div>
 
+    <h2 class="mb-4">제품별 생산 현황</h2>
+    <div class="row">
+        <div class="col-12 col-lg-4">
+            <canvas class="my-2" id="chart-NORMAL" width="200" height="200"></canvas>
+        </div>
+        <div class="col-12 col-lg-4">
+            <canvas class="my-2" id="chart-BUMP" width="200" height="200"></canvas>
+        </div>
+        <div class="col-12 col-lg-4">
+            <canvas class="my-2" id="chart-HALF" width="200" height="200"></canvas>
+        </div>
+    </div>
+
     <h2 class="my-4">재고 건수</h2>
     <canvas id="materialChart" height="100"></canvas>
     <button id="showToastBtn" class="btn btn-refoam position-fixed bottom-0 end-0 m-4" style="z-index: 1100;">
@@ -227,6 +240,7 @@
                 initializeGauges();
                 initializeWebSocketConnection();
                 initializeToast();
+                initializeProductChart();
             } catch (error) {
                 console.error('초기화 오류:', error);
             }
@@ -722,6 +736,106 @@
                         });
                 });
             }
+        }
+        // 제품별 파이 차트용 전역 변수
+        const chartMap = {};
+        const productStatMap = JSON.parse(localStorage.getItem("productStatMap")) || {};
+        const productNames = ['NORMAL', 'BUMP', 'HALF'];
+
+        function initializeProductChart() {
+            console.log('제품별 파이 차트 초기화 시작');
+
+            // 차트 초기화
+            productNames.forEach(name => {
+                const ctx = document.getElementById(`chart-${name}`);
+                if (!ctx) {
+                    console.warn(`chart-${name} 캔버스를 찾을 수 없습니다.`);
+                    return;
+                }
+
+                chartMap[name] = new Chart(ctx.getContext("2d"), {
+                    type: 'pie',
+                    data: {
+                        labels: ['정상 제품 수', '불량 제품 수'],
+                        datasets: [{
+                            data: [0, 0],
+                            borderColor: ['#0051b6','rgb(255,99,132)'],
+                            backgroundColor: ['#a6cdfb', '#fdb9b6'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: `${name} 제품 생산 비율`
+                            },
+                            legend: {
+                                position: 'bottom'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        return `${context.label}: ${context.parsed}개`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+
+            // 초기 데이터 로딩
+            fetch('/api/production/by-product')
+                .then(res => res.json())
+                .then(data => {
+                    data.forEach(({ productName, okCount, errorCount, timestamp }) => {
+                        updateProductChart(productName, okCount, errorCount, timestamp);
+                    });
+                }).catch(err => {
+                console.error("초기 제품 데이터 불러오기 실패:", err);
+            });
+
+            // WebSocket 연결 및 구독
+            if (typeof Stomp !== 'undefined' && typeof SockJS !== 'undefined') {
+                const stomp = Stomp.over(new SockJS("/ws"));
+                stomp.connect({}, () => {
+                    stomp.subscribe("/topic/product-count", message => {
+                        const { productName, okCount, errorCount, timestamp } = JSON.parse(message.body);
+                        updateProductChart(productName, okCount, errorCount, timestamp);
+                    });
+
+                    // localStorage에 저장된 이전 값 복원
+                    for (const [productName, { okCount, errorCount, timestamp }] of Object.entries(productStatMap)) {
+                        updateProductChart(productName, okCount, errorCount, timestamp);
+                    }
+                });
+            } else {
+                console.warn("WebSocket 라이브러리가 로드되지 않아 제품 차트 WebSocket은 비활성화됩니다.");
+            }
+
+            console.log('제품별 파이 차트 초기화 완료');
+        }
+
+        // 차트 업데이트 함수
+        function updateProductChart(productName, okCount, errorCount, timestamp) {
+            const date = new Date(timestamp);
+            const today = new Date();
+            if (
+                date.getFullYear() !== today.getFullYear() ||
+                date.getMonth() !== today.getMonth() ||
+                date.getDate() !== today.getDate()
+            ) return;
+
+            productStatMap[productName] = { okCount, errorCount, timestamp };
+            localStorage.setItem("productStatMap", JSON.stringify(productStatMap));
+
+            const chart = chartMap[productName];
+            if (!chart) return;
+
+            chart.data.datasets[0].data = [okCount, errorCount];
+            chart.update();
         }
 
         // 연결 상태 체크 함수 (디버깅용)
