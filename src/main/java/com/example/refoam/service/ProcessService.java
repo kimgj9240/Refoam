@@ -4,6 +4,7 @@ import com.example.refoam.domain.*;
 import com.example.refoam.domain.Process;
 import com.example.refoam.dto.MoldTempForm;
 import com.example.refoam.dto.ProcessProgressForm;
+import com.example.refoam.dto.ProductChartDataForm;
 import com.example.refoam.repository.AlertLogRepository;
 import com.example.refoam.repository.ProcessRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -165,19 +163,39 @@ public class ProcessService {
                         "/topic/temperature/" + o.getProductName().name(),
                         mold
                 );
+                List<ProductName> productNameList = List.of(
+                        ProductName.NORMAL,
+                        ProductName.BUMP,
+                        ProductName.HALF
+                );
+                for(ProductName products : productNameList) {
+                    List<Orders> allOrders = orderService.findTodayOrders();
+                    long okProductCount = 0;
+                    long errProductCount = 0;
+                    for (Orders monitoringOrder : allOrders) {
+
+                        okProductCount += processRepository.countTodayByOrderAndStatus(monitoringOrder, "OK", products);
+                        errProductCount += processRepository.countTodayByOrderAndStatusNot(monitoringOrder, "OK", products);
+
+                        messagingTemplate.convertAndSend(
+                                "/topic/product-count",
+                                new ProductChartDataForm(String.valueOf(products), okProductCount, errProductCount, LocalDateTime.now())
+                        );
+                    }
+                }
             }, new Date(baseTime + delay));
         }
     }
 
-    public List<Process> findProcesses(){
+    public List<Process> findProcesses() {
         return processRepository.findAll();
     }
 
-    public Optional<Process> findOneProcess(Long processId){
+    public Optional<Process> findOneProcess(Long processId) {
         return processRepository.findById(processId);
     }
 
-    public List<Process> findAllOrder(Long orderId){
+    public List<Process> findAllOrder(Long orderId) {
         return processRepository.findAllByOrder_Id(orderId);
     }
 
@@ -187,6 +205,31 @@ public class ProcessService {
                 .map(p -> new MoldTempForm(p.getProcessDate(), p.getStandard().getMoldTemperature()))
                 .sorted(Comparator.comparing(MoldTempForm::getTime)) // 오래된 순으로 정렬
                 .collect(Collectors.toList());
+    }
+
+    public List<ProductChartDataForm> getStatsByProduct() {
+        List<Orders> allOrders = orderService.findTodayOrders();
+
+        Map<ProductName, List<Orders>> grouped = allOrders.stream()
+                .collect(Collectors.groupingBy(Orders::getProductName));
+
+        List<ProductChartDataForm> result = new ArrayList<>();
+        for (Map.Entry<ProductName, List<Orders>> entry : grouped.entrySet()) {
+            String productName = entry.getKey().name();
+            List<Orders> orders = entry.getValue();
+
+            long okCount = 0;
+            long errorCount = 0;
+
+            for (Orders order : orders) {
+                okCount += processRepository.countTodayByOrderAndStatus(order, "OK", order.getProductName());
+                errorCount += processRepository.countTodayByOrderAndStatusNot(order, "OK", order.getProductName());
+            }
+
+            result.add(new ProductChartDataForm(productName, okCount, errorCount, LocalDateTime.now()));
+        }
+
+        return result;
     }
 
     // 페이지네이션 구현용 메서드

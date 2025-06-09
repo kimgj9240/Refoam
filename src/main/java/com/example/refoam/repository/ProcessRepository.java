@@ -34,6 +34,13 @@ public interface ProcessRepository extends JpaRepository<Process, Long> {
     // 특정 제품에 대한 최근 공정 20건
     List<Process> findTop20ByOrder_ProductNameOrderByProcessDateDesc(ProductName productName);
 
-    // 불량 개수 체크
+//    // 불량 개수 체크
     long countByOrderAndStatusNot(Orders order, String status);
+
+    @Query("SELECT COUNT(p) FROM Process p WHERE p.order = :order AND p.status = :status AND p.order.productName = :productName AND DATE(p.processDate) = CURRENT_DATE")
+    long countTodayByOrderAndStatus(@Param("order") Orders order, @Param("status") String status, @Param("productName") ProductName productName);
+
+    @Query("SELECT COUNT(p) FROM Process p WHERE p.order = :order AND p.status != :status AND p.order.productName = :productName AND DATE(p.processDate) = CURRENT_DATE")
+    long countTodayByOrderAndStatusNot(@Param("order") Orders order, @Param("status") String status, @Param("productName") ProductName productName);
+
 }

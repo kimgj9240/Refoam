@@ -82,6 +82,19 @@
         <canvas id="monitoringChart2" class="mt-3" height="215"></canvas>
     </div>
 
+    <h2 class="mb-4">제품별 생산 현황</h2>
+    <div class="row">
+        <div class="col-12 col-lg-4">
+            <canvas class="my-2" id="chart-NORMAL" width="200" height="200"></canvas>
+        </div>
+        <div class="col-12 col-lg-4">
+            <canvas class="my-2" id="chart-BUMP" width="200" height="200"></canvas>
+        </div>
+        <div class="col-12 col-lg-4">
+            <canvas class="my-2" id="chart-HALF" width="200" height="200"></canvas>
+        </div>
+    </div>
+
     <h2 class="my-4">재고 건수</h2>
     <canvas id="materialChart" height="100"></canvas>
     <button id="showToastBtn" class="btn btn-refoam position-fixed bottom-0 end-0 m-4" style="z-index: 1100;">
@@ -227,6 +240,7 @@
                 initializeGauges();
                 initializeWebSocketConnection();
                 initializeToast();
+                initializeProductChart();
             } catch (error) {
                 console.error('초기화 오류:', error);
             }
@@ -672,21 +686,36 @@
                             backgroundColor: '#ffffff',
                             width: 30,
                             ranges: [
-                                {startValue: 78.0, endValue: 79.5, color: '#ff8228'},
-                                {startValue: 79.5, endValue: 81.0, color: '#4166f5'},
-                                {startValue: 81.0, endValue: 82.0, color: '#ffc228'},
-                                {startValue: 82.0, endValue: 82.5, color: '#ff8228'}
+                                {startValue: 80, endValue: 80.8, color: '#ff8228'},
+                                {startValue: 80.8, endValue: 81.4, color: '#4166f5'},
+                                {startValue: 81.4, endValue: 81.6, color: '#ffc228'},
+                                {startValue: 81.6, endValue: 82, color: '#ff8228'}
                             ]
                         },
-                        valueIndicator: {color: '#000'},
+                        valueIndicator: {
+                            color: '#000',
+                            // 바늘의 안쪽 끝을 중심에서 -20px 만큼 더 당겨서 길게 보여줍니다.
+                            // 기본값은 0이며, 음수 값을 주면 바늘이 더 길어집니다.
+                            indentFromCenter: -20,      // ◆ 여기를 조절하세요 :contentReference[oaicite:0]{index=0}
+                            // 스케일 라인 바깥으로 얼마나 더 밀어낼지 (선택)
+                            offset: 0,
+                            // 바늘 중앙 스핀들(원)의 지름
+                            spindleSize: 14,
+                            // 중앙 스핀들의 구멍 크기(0으로 설정하면 내부가 꽉 찹니다)
+                            spindleGapSize: 0,
+                            // (필요 시) 다른 형태의 바늘을 사용하고 싶으면 type 지정 가능
+                            // type: 'triangleMarker', length: 30
+                            type: 'triangleNeedle'
+                        },
                         geometry: {startAngle: 200, endAngle: 340},
                         scale: {
-                            startValue: 78.0,
+                            startValue: 80,
                             endValue: this._higherValue,
                             orientation: 'outside',
                             tick: {visible: true, length: 20, width: 1, color: '#000'},
+                            tickInterval: 0.2,
                             minorTick: {visible: true, length: 5, width: 1, color: '#000'},
-                            label: {font: {color: '#4c5156', size: 12}}
+                            label: {font: {color: '#4c5156', size: 12}, indentFromTick: 15}
                         },
                         title: {
                             verticalAlignment: 'bottom',
@@ -726,8 +755,8 @@
             $('.gauge').each((i, el) => {
                 const letter = String.fromCharCode(65 + i); // A, B, C
                 const gauge = new GaugeChart(el, {
-                    initialValue: 78.0,
-                    higherValue: 82.5,
+                    initialValue: 80,
+                    higherValue: 82,
                     title: '준비 중',
                 }).init();
 
@@ -738,62 +767,6 @@
 
             console.log(`게이지 ${gaugeInstances.length}개 초기화 완료`);
         }
-
-        // // WebSocket 연결 (실제 데이터만 받음)
-        // function initializeWebSocketConnection() {
-        //     console.log('WebSocket 연결 시작');
-        //
-        //     if (typeof SockJS === 'undefined' || typeof Stomp === 'undefined') {
-        //         console.error('WebSocket 라이브러리가 로드되지 않았습니다');
-        //         return;
-        //     }
-        //
-        //     try {
-        //         stompClient = Stomp.over(new SockJS('/ws'));
-        //         stompClient.connect({}, function(frame) {
-        //             console.log('WebSocket 연결 성공:', frame);
-        //             isConnected = true;
-        //
-        //             const names = ['NORMAL', 'BUMP', 'HALF'];
-        //             names.forEach((name, i) => {
-        //                 // 온도 라인 차트 구독
-        //                 stompClient.subscribe(`/topic/temperature/${name}`, function(message) {
-        //                     const value = parseFloat(message.body);
-        //                     const timeStr = new Date().toLocaleTimeString();
-        //
-        //                     console.log(`온도 데이터 수신 ${name}:`, value);
-        //
-        //                     // 라인 차트 업데이트
-        //                     if (temperatureCharts[i]) {
-        //                         const chart = temperatureCharts[i];
-        //                         chart.data.labels.push(timeStr);
-        //                         chart.data.datasets[0].data.push(value);
-        //
-        //                         // 최대 포인트 수 제한
-        //                         if (chart.data.labels.length > 50) {
-        //                             chart.data.labels.shift();
-        //                             chart.data.datasets[0].data.shift();
-        //                         }
-        //
-        //                         chart.update('none');
-        //                     }
-        //
-        //                     // 게이지 업데이트
-        //                     if (gaugeInstances[i]) {
-        //                         gaugeInstances[i].update(value);
-        //                     }
-        //                 });
-        //             });
-        //
-        //         }, function(error) {
-        //             console.error('WebSocket 연결 실패:', error);
-        //             isConnected = false;
-        //         });
-        //
-        //     } catch (error) {
-        //         console.error('WebSocket 초기화 오류:', error);
-        //     }
-        // }
 
         // Toast 초기화
         function initializeToast() {
@@ -820,6 +793,107 @@
                         });
                 });
             }
+        }
+
+        // 제품별 파이 차트용 전역 변수
+        const chartMap = {};
+        const productStatMap = JSON.parse(localStorage.getItem("productStatMap")) || {};
+        const productNames = ['NORMAL', 'BUMP', 'HALF'];
+
+        function initializeProductChart() {
+            console.log('제품별 파이 차트 초기화 시작');
+
+            // 차트 초기화
+            productNames.forEach(name => {
+                const ctx = document.getElementById(`chart-${name}`);
+                if (!ctx) {
+                    console.warn(`chart-${name} 캔버스를 찾을 수 없습니다.`);
+                    return;
+                }
+
+                chartMap[name] = new Chart(ctx.getContext("2d"), {
+                    type: 'pie',
+                    data: {
+                        labels: ['정상 제품 수', '불량 제품 수'],
+                        datasets: [{
+                            data: [0, 0],
+                            borderColor: ['#0051b6','rgb(255,99,132)'],
+                            backgroundColor: ['#a6cdfb', '#fdb9b6'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: `${name} 제품 생산 비율`
+                            },
+                            legend: {
+                                position: 'bottom'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        return `${context.label}: ${context.parsed}개`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+
+            // 초기 데이터 로딩
+            fetch('/api/production/by-product')
+                .then(res => res.json())
+                .then(data => {
+                    data.forEach(({ productName, okCount, errorCount, timestamp }) => {
+                        updateProductChart(productName, okCount, errorCount, timestamp);
+                    });
+                }).catch(err => {
+                console.error("초기 제품 데이터 불러오기 실패:", err);
+            });
+
+            // WebSocket 연결 및 구독
+            if (typeof Stomp !== 'undefined' && typeof SockJS !== 'undefined') {
+                const stomp = Stomp.over(new SockJS("/ws"));
+                stomp.connect({}, () => {
+                    stomp.subscribe("/topic/product-count", message => {
+                        const { productName, okCount, errorCount, timestamp } = JSON.parse(message.body);
+                        updateProductChart(productName, okCount, errorCount, timestamp);
+                    });
+
+                    // localStorage에 저장된 이전 값 복원
+                    for (const [productName, { okCount, errorCount, timestamp }] of Object.entries(productStatMap)) {
+                        updateProductChart(productName, okCount, errorCount, timestamp);
+                    }
+                });
+            } else {
+                console.warn("WebSocket 라이브러리가 로드되지 않아 제품 차트 WebSocket은 비활성화됩니다.");
+            }
+
+            console.log('제품별 파이 차트 초기화 완료');
+        }
+
+        // 차트 업데이트 함수
+        function updateProductChart(productName, okCount, errorCount, timestamp) {
+            const date = new Date(timestamp);
+            const today = new Date();
+            if (
+                date.getFullYear() !== today.getFullYear() ||
+                date.getMonth() !== today.getMonth() ||
+                date.getDate() !== today.getDate()
+            ) return;
+
+            productStatMap[productName] = { okCount, errorCount, timestamp };
+            localStorage.setItem("productStatMap", JSON.stringify(productStatMap));
+
+            const chart = chartMap[productName];
+            if (!chart) return;
+
+            chart.data.datasets[0].data = [okCount, errorCount];
+            chart.update();
         }
 
         // 연결 상태 체크 함수 (디버깅용)
