@@ -493,6 +493,34 @@
                         }
                     }
                 });
+                Promise.all(
+                    names.map((name, i) =>
+                        fetch(`/api/temperature/${name}`)
+                            .then(res => res.json())
+                            .then(data => {
+                                const formatted = Array.isArray(data)
+                                    ? data.map(d => ({ x: new Date(d.time), y: d.value }))
+                                    : [{ x: new Date(data.time), y: data.value }];
+                                charts[i].data.datasets[0].data = formatted;
+                                charts[i].update();
+                            })
+                    )
+                ).then(() => {
+                    // 3. WebSocket 연결은 과거 데이터가 모두 로딩된 이후에 시작
+                    const stompClient = Stomp.over(new SockJS('/ws'));
+                    stompClient.connect({}, () => {
+                        names.forEach((name, i) => {
+                            stompClient.subscribe(`/topic/temperature/${name}`, message => {
+                                const y = parseFloat(message.body);
+                                const x = new Date();
+                                const ds = charts[i].data.datasets[0];
+                                ds.data.push({ x, y });
+                                if (ds.data.length > MAX_POINTS) ds.data.shift();
+                                charts[i].update('none');
+                            });
+                        });
+                    });
+                });
 
                 console.log(`온도 차트 ${letter} 생성 완료`);
                 return chart;
