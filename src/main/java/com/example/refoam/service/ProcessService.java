@@ -75,39 +75,11 @@ public class ProcessService {
 
                 ProductStandardValue  productStandardValue = new ProductStandardValue();
 
-                // 공정 1건 생성
-                double melt = productStandardValue.getRandomValue(ProductStandardValue.MIN_MELT_TEMPERATURE, ProductStandardValue.MAX_MELT_TEMPERATURE);
-                double mold = productStandardValue.getRandomValue(ProductStandardValue.MIN_MOLD_TEMPERATURE, ProductStandardValue.MAX_MOLD_TEMPERATURE);
-                double screw = productStandardValue.getRandomValue(ProductStandardValue.MIN_SCREW_POS_END_HOLD, ProductStandardValue.MAX_SCREW_POS_END_HOLD);
-                double injpress = productStandardValue.getRandomValue(ProductStandardValue.MIN_INJ_PRESSURE_PEAK, ProductStandardValue.MAX_INJ_PRESSURE_PEAK);
-                double fill = productStandardValue.getRandomFill();
-                double plast = productStandardValue.getRandomValue(ProductStandardValue.MIN_PLASTICIZING_TIME, ProductStandardValue.MAX_PLASTICIZING_TIME);
-                double cycle = productStandardValue.getRandomValue(ProductStandardValue.MIN_CYCLE_TIME, ProductStandardValue.MAX_CYCLE_TIME);
-                double closeForce = productStandardValue.getRandomValue(ProductStandardValue.MIN_CLOSING_FORCE, ProductStandardValue.MAX_CLOSING_FORCE);
-                double clampPeak = productStandardValue.getRandomValue(ProductStandardValue.MIN_CLAMPING_FORCE_PEAK, ProductStandardValue.MAX_CLAMPING_FORCE_PEAK);
-                double trqPeak = productStandardValue.getRandomValue(ProductStandardValue.MIN_TORQUE_PEAK, ProductStandardValue.MAX_TORQUE_PEAK);
-                double trqMean = productStandardValue.getRandomValue(ProductStandardValue.MIN_TORQUE_MEAN, ProductStandardValue.MAX_TORQUE_MEAN);
-                double backPress = productStandardValue.getRandomValue(ProductStandardValue.MIN_BACK_PRESSURE_PEAK, ProductStandardValue.MAX_BACK_PRESSURE_PEAK);
-                double shot = productStandardValue.getRandomValue(ProductStandardValue.MIN_SHOT_VOLUME, ProductStandardValue.MAX_SHOT_VOLUME);
-
-                ProductLabel label = standardEvaluator.evaluate(injpress, mold, fill, cycle, plast);
-
-                Standard standard = Standard.builder()
-                        .meltTemperature(melt)
-                        .moldTemperature(mold)
-                        .timeToFill(fill)
-                        .plasticizingTime(plast)
-                        .cycleTime(cycle)
-                        .closingForce(closeForce)
-                        .clampingForcePeak(clampPeak)
-                        .torquePeak(trqPeak)
-                        .torqueMean(trqMean)
-                        .backPressurePeak(backPress)
-                        .injPressurePeak(injpress)
-                        .screwPosEndHold(screw)
-                        .shotVolume(shot)
-                        .productLabel(label)
-                        .build();
+                // 공정 1건 생성 => 규격 생성 코드가 너무 길어 메서드로 분리함, createStandard
+                Standard standard = productStandardValue.createStandard();
+                ProductLabel label = standardEvaluator.evaluate(standard.getInjPressurePeak(), standard.getMoldTemperature(), standard.getTimeToFill(),
+                        standard.getCycleTime(), standard.getPlasticizingTime());
+                standard.setProductLabel(label);
                 standardService.save(standard);
 
                 Process process = Process.builder()
@@ -160,8 +132,7 @@ public class ProcessService {
                 );
 
                 messagingTemplate.convertAndSend(
-                        "/topic/temperature/" + o.getProductName().name(),
-                        mold
+                        "/topic/temperature/" + o.getProductName().name(),standard.getMoldTemperature()
                 );
                 List<ProductName> productNameList = List.of(
                         ProductName.NORMAL,
@@ -237,7 +208,4 @@ public class ProcessService {
         PageRequest pageable = PageRequest.of(page, 12);
         return this.processRepository.findAllByOrder_Id(orderId,pageable);
     }
-
-
-
 }
