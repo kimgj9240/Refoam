@@ -1,18 +1,22 @@
 <html layout:decorate="~{layout}" lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="container mb-5" layout:fragment="content">
     <h2 class="py-4">에러 모니터링</h2>
-    <div class="row mb-5">
-        <div class="col-md-4 col-lg-4 col-12">
+    <div class="row g-2  mb-5">
+        <div class="col-md-6 col-lg-4 col-12 ">
+            <div class="tassei-err h-100">
             <canvas id="todayErrorChart"></canvas>
+            </div>
         </div>
-        <div class="col-md-8 col-lg-6 col-12">
+        <div class="col-md-6 col-lg-8 col-12 ">
+            <div class="tassei-err h-100">
             <canvas id="weeklyLineChart"></canvas>
+            </div>
         </div>
     </div>
     <button id="showErrorToastBtn" class="btn btn-primary position-fixed bottom-0 end-0 m-4" style="z-index: 1100;">
         📋 리포트 보기
     </button>
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+    <div class="position-fixed bottom-0 mb-5 end-0 p-3" style="z-index: 1100;">
         <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
                 <strong class="me-auto">📋 AI 리포트</strong>
@@ -132,6 +136,7 @@
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
                     title: {
                         display: true,
@@ -175,9 +180,6 @@
                         'rgba(255, 99, 132, 0.6)',
                         'rgba(54, 162, 235, 0.6)',
                         'rgba(255, 206, 86, 0.6)',
-                        'rgba(75, 192, 192, 0.6)',
-                        'rgba(153, 102, 255, 0.6)',
-                        'rgba(255, 159, 64, 0.6)'
                     ],
                     borderColor: 'white',
                     borderWidth: 2
@@ -185,53 +187,18 @@
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
                     title: {
                         display: true,
                         text: '오늘 발생한 에러 건수'
                     },
                     legend: {
-                        position: 'right'
+                        position: 'top'
                     }
                 }
             }
         });
-        //차트 모양 도넛형으로 변경 => 화면 크기별 사이즈 조정 필요? (반응형)
-        /*new Chart(document.getElementById('todayErrorChart'), {
-            type: 'bar',
-            data: {
-                labels: todayErrorLabels,
-                datasets: [{
-                    label: '오늘의 에러 건수',
-                    data: todayErrorData,
-                    backgroundColor: [
-                        'rgba(255, 0, 0, 0.5)',
-                        'rgba(255, 0, 0, 0.5)',
-                        'rgba(255, 0, 0, 0.5)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: '오늘 발생한 에러 건수'
-                    }
-                },
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: '건수'
-                        }
-                    }
-                }
-            }
-        });*/
 
         document.addEventListener("DOMContentLoaded", function () {
             const btn = document.getElementById('showErrorToastBtn');

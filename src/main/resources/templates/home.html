@@ -1,44 +1,48 @@
 <html layout:decorate="~{layout_login}" lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="bg-login" layout:fragment="content">
     <div class="container">
-    <div class="vh-100 d-flex flex-column justify-content-center align-items-center ">
-        <div class="row w-100">
-            <div class="col-lg-4 col-md-3"></div>
-            <div class="col-lg-4 col-md-6">
-                <form class="border p-4 rounded shadow-sm bg-white" th:object="${loginForm}" method="post" th:action="@{/login}">
-                    <!-- ✅ redirectURL hidden 필드 추가 -->
-<!--                    name="redirectURL": 컨트롤러에서 @RequestParam("redirectURL")로 받을 수 있게 함
-                        th:value="${param.redirectURL}": 현재 요청 URL에 있는 redirectURL 파라미터를 폼으로 넘김-->
-<!--                    리다이렉트시 null 값이 올 경우엔 /main으로 가도록 유도 -->
-                    <input type="hidden" name="redirectURL" th:value="${param.redirectURL != null ? param.redirectURL : '/main'}" />
+        <div class="vh-100 d-flex flex-column justify-content-center align-items-center ">
+            <div class="row w-100">
+                <div class="col-xl-4 col-md-3"></div>
+                <div class="col-xl-4 col-md-6">
+                    <form class="border p-4 rounded shadow-sm bg-white" th:object="${loginForm}" method="post"
+                          th:action="@{/login}">
+                        <!-- ✅ redirectURL hidden 필드 추가 -->
+                        <!--                    name="redirectURL": 컨트롤러에서 @RequestParam("redirectURL")로 받을 수 있게 함
+                                                th:value="${param.redirectURL}": 현재 요청 URL에 있는 redirectURL 파라미터를 폼으로 넘김-->
+                        <!--                    리다이렉트시 null 값이 올 경우엔 /main으로 가도록 유도 -->
+                        <input type="hidden" name="redirectURL"
+                               th:value="${param.redirectURL != null ? param.redirectURL : '/main'}"/>
 
 
-                    <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
-                        <div th:each="err:${#fields.allErrors()}" th:text="${err}"></div>
-                    </div>
-                    <div class="text-center mb-3">
-                        <img src="/images/logo.svg" alt="로고" class="img-fluid w-50" >
-                    </div>
+                        <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
+                            <div th:each="err:${#fields.allErrors()}" th:text="${err}"></div>
+                        </div>
+                        <div class="text-center mb-3">
+                            <img src="/images/logo.svg" alt="로고" class="img-fluid w-50">
+                        </div>
 
-                    <div class="mb-2">
-                        <label class="form-label fw-bold" th:for="loginId">아이디</label>
-                        <input type="text" class="form-control" th:field="*{loginId}" placeholder="아이디를 입력하세요">
+                        <div class="mb-2">
+                            <label class="form-label fw-bold" th:for="loginId">아이디</label>
+                            <input type="text" class="form-control" th:field="*{loginId}" placeholder="아이디를 입력하세요">
 
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold" th:for="password">비밀번호</label>
-                        <input type="password" class="form-control" th:field="*{password}" placeholder="비밀번호를 입력하세요">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold" th:for="password">비밀번호</label>
+                            <input type="password" class="form-control" th:field="*{password}"
+                                   placeholder="비밀번호를 입력하세요">
 
-                    </div>
-                    <div class="mb-3">
-                        <button type="submit" class="w-100 btn btn-refoam btn-lg">로그인</button>
-                    </div>
-                    <p class="text-center text-secondary fs-6">아이디:test, 비밀번호:1111 로 접속하시면<br> 모든 과정을 체험할 수 있습니다.</p>
-                </form>
+                        </div>
+                        <div class="mb-3">
+                            <button type="submit" class="w-100 btn btn-refoam btn-lg">로그인</button>
+                        </div>
+                        <p class="text-center text-secondary fs-6">아이디:test, 비밀번호:1111로 <br> 접속하시면 모든 과정을 체험할 수 있습니다.
+                        </p>
+                    </form>
+                </div>
+                <div class="col-xl-4 col-md-3"></div>
             </div>
-            <div class="col-lg-4 col-md-3"></div>
         </div>
     </div>
-        </div>
 </div>
 </html>

@@ -284,19 +284,31 @@ body {
     }
 
 }
-
-.tassei{
+/* 메인 + 에러모니터링 제일 윗 상단 */
+.tassei .tassei-err{
     width: 100%;
 }
-/* lg 이상(992px 이상)일 때: 3:1 비율 */
-@media (min-width: 992px) {
+
+
+.tassei-err > canvas {
+    height: 400px !important;
+}
+
+/* lg 이상(px 이상)일 때: 3:1 비율 */
+@media (min-width: 768px) {
     .tassei {
         aspect-ratio: 3 / 1;   /* 가로:세로 = 3:1 */
     }
+
 }
 
-/* md 이하(992px 미만)일 때: 4:1 비율 */
-@media (max-width: 991.98px) {
+@media (max-width: 991px) and (min-width: 758px) {
+
+
+}
+
+/* md 이하(px 미만)일 때: 4:1 비율 */
+@media (max-width: 767px) {
     .tassei {
         aspect-ratio: 4 / 1;   /* 가로:세로 = 4:1 */
     }
