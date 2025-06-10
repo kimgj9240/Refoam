@@ -91,58 +91,6 @@ public class MaterialService {
         return requiredMaterialStock.entrySet().stream().allMatch(entry -> materialQuantities.getOrDefault(entry.getKey(), 0L) >= orderQuantity);
     }
 
-    @Transactional
-    public void deductMaterialsForOrder(Orders order) {
-        ProductName productName = order.getProductName();
-        int orderQuantity = order.getOrderQuantity();
-        Map<MaterialName, Long> requiredMaterials = getRequiredMaterialStock(productName);
-
-        for (Map.Entry<MaterialName, Long> entry : requiredMaterials.entrySet()) {
-            MaterialName materialName = entry.getKey();
-            long requiredOrderQuantity = orderQuantity;
-
-            List<Material> materials = findMaterialName(materialName);
-            if (materials.isEmpty()) throw new IllegalStateException("재료 없음");
-
-            for (Material material : materials) {
-                if (requiredOrderQuantity <= 0) break;
-
-                long currentQuantity = material.getMaterialQuantity();
-                long deductQuantity = Math.min(currentQuantity, requiredOrderQuantity);
-                material.setMaterialQuantity((int) (currentQuantity - deductQuantity));
-
-                // Alert: 재고 100 이하 시 알림
-                if (currentQuantity - deductQuantity <= 100) {
-                    boolean alerted = alertLogRepository.existsByMaterialAndCheckedFalse(material);
-                    if (!alerted) {
-                        AlertLog alert = AlertLog.builder()
-                                .material(material)
-                                .employee(material.getEmployee())
-                                .message("재고 수량을 확인하세요. <br> 남은수랑 : "+ (currentQuantity-deductQuantity))
-                                .checked(false)
-                                .createdDate(LocalDateTime.now())
-                                .build();
-                        alertLogRepository.save(alert);
-                    }
-                }
-
-                save(material); // 재고 저장
-
-                // OrderMaterial 기록
-                OrderMaterial orderMaterial = new OrderMaterial();
-                orderMaterial.setMaterial(material);
-                orderMaterial.setDeductedQuantity((int) deductQuantity);
-                order.addOrderMaterial(orderMaterial);
-
-                requiredOrderQuantity -= deductQuantity;
-            }
-
-            if (requiredOrderQuantity > 0) {
-                throw new IllegalStateException(materialName + " 재료 부족");
-            }
-        }
-    }
-
     // 페이징 구현용
     public Page<Material> getList(int page){
         // 최신순으로 보이게하기
@@ -153,7 +101,7 @@ public class MaterialService {
 
         return this.materialRepository.findAll(pageable);
     }
-    public List<MaterialChart> getMaterialChart() {
+    /*public List<MaterialChart> getMaterialChart() {
         List<Material> materials = materialRepository.findAll();
 
         return materials.stream()
@@ -165,5 +113,5 @@ public class MaterialService {
                 .map(entry -> new MaterialChart(entry.getKey(), entry.getValue()))
                 .sorted(Comparator.comparing(MaterialChart::getDate))
                 .toList();
-    }
+    }*/
 }

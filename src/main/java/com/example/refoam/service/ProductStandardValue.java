@@ -1,5 +1,8 @@
 package com.example.refoam.service;
 
+import com.example.refoam.domain.ProductLabel;
+import com.example.refoam.domain.Standard;
+
 import java.util.List;
 import java.util.Random;
 
@@ -56,5 +59,37 @@ public class ProductStandardValue implements ProductStandardConst{
     public double getRandomFill() {
         List<Double> fillValues = List.of(6.864, 6.968, 7.124, 7.228, 10.972);
         return fillValues.get(new Random().nextInt(fillValues.size()));
+    }
+
+    public Standard createStandard(){
+        double melt = getRandomValue(ProductStandardValue.MIN_MELT_TEMPERATURE, ProductStandardValue.MAX_MELT_TEMPERATURE);
+        double mold = getRandomValue(ProductStandardValue.MIN_MOLD_TEMPERATURE, ProductStandardValue.MAX_MOLD_TEMPERATURE);
+        double screw = getRandomValue(ProductStandardValue.MIN_SCREW_POS_END_HOLD, ProductStandardValue.MAX_SCREW_POS_END_HOLD);
+        double injpress = getRandomValue(ProductStandardValue.MIN_INJ_PRESSURE_PEAK, ProductStandardValue.MAX_INJ_PRESSURE_PEAK);
+        double fill = getRandomFill();
+        double plast = getRandomValue(ProductStandardValue.MIN_PLASTICIZING_TIME, ProductStandardValue.MAX_PLASTICIZING_TIME);
+        double cycle = getRandomValue(ProductStandardValue.MIN_CYCLE_TIME, ProductStandardValue.MAX_CYCLE_TIME);
+        double closeForce = getRandomValue(ProductStandardValue.MIN_CLOSING_FORCE, ProductStandardValue.MAX_CLOSING_FORCE);
+        double clampPeak = getRandomValue(ProductStandardValue.MIN_CLAMPING_FORCE_PEAK, ProductStandardValue.MAX_CLAMPING_FORCE_PEAK);
+        double trqPeak = getRandomValue(ProductStandardValue.MIN_TORQUE_PEAK, ProductStandardValue.MAX_TORQUE_PEAK);
+        double trqMean = getRandomValue(ProductStandardValue.MIN_TORQUE_MEAN, ProductStandardValue.MAX_TORQUE_MEAN);
+        double backPress = getRandomValue(ProductStandardValue.MIN_BACK_PRESSURE_PEAK, ProductStandardValue.MAX_BACK_PRESSURE_PEAK);
+        double shot = getRandomValue(ProductStandardValue.MIN_SHOT_VOLUME, ProductStandardValue.MAX_SHOT_VOLUME);
+
+        return Standard.builder()
+                .meltTemperature(melt)
+                .moldTemperature(mold)
+                .timeToFill(fill)
+                .plasticizingTime(plast)
+                .cycleTime(cycle)
+                .closingForce(closeForce)
+                .clampingForcePeak(clampPeak)
+                .torquePeak(trqPeak)
+                .torqueMean(trqMean)
+                .backPressurePeak(backPress)
+                .injPressurePeak(injpress)
+                .screwPosEndHold(screw)
+                .shotVolume(shot)
+                .build();
     }
 }

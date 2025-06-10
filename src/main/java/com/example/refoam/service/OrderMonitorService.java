@@ -13,12 +13,6 @@ public class OrderMonitorService {
     @Transactional
     public void errorCheck(String email,int orderQuantity, int errorCount){
         if(orderQuantity == 0) return;
-
-        // log.info("에러 체크 {}", email);
         emailService.sendErrorAlert(email,orderQuantity,errorCount);
-        //if (errorRate >= 0.4) {
-            //emailService.sendErrorAlert("refoam.test@mail.com",orderQuantity,errorCount);
-
-        //}
     }
 }
