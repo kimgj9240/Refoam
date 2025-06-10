@@ -7,10 +7,10 @@
         <table class="table table-bordered  border-dark table-striped-columns table-processes">
             <tbody>
             <tr>
-                <td>제품번호</td>
-                <td th:text="${process.id}">1</td>
-                <td>제품명</td>
-                <td th:text="${process.order.productName}">NORMAL60</td>
+                <td>lotNumber</td>
+                <td colspan="3" th:text="${process.lotNumber}" class="text-center">1</td>
+<!--                <td>제품명</td>-->
+<!--                <td th:text="${process.order.productName}">NORMAL60</td>-->
             </tr>
             <tr>
                 <td>공정일자</td>

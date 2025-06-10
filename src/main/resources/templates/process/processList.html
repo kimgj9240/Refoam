@@ -1,6 +1,6 @@
 <html layout:decorate="~{layout}" lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="container mb-5" layout:fragment="content">
-    <h2 class="my-4">공정 결과</h2>
+    <h2 class="my-4">공정 결과 (주문번호 : <span th:text="${orderId}"></span>)</h2>
     <div class="mb-3">
         <div class="d-flex">
             <a href="#" th:href="@{/quality/{id}/check(id=${orderId})}" th:disabled="${qualityCheck==null}"
@@ -15,8 +15,8 @@
         <table class="table table-hover table-striped">
             <thead>
             <tr>
-                <th class="text-center">번호</th>
-                <th>제품명</th>
+                <th class="text-center">lotNumber</th>
+
                 <th>금형온도</th>
                 <th>충전시간</th>
                 <th>최고사출압</th>
@@ -29,8 +29,8 @@
             </thead>
             <tbody>
             <tr th:each="process : ${processes}">
-                <td th:text="${process.id}" class="text-center">1</td>
-                <td th:text="${process.order.productName}">EVA</td>
+                <td th:text="${process.lotNumber}" class="text-center">lotNumber</td>
+
                 <td th:text="${process.standard.moldTemperature}"></td>
                 <td th:text="${process.standard.timeToFill}">50</td>
                 <td th:text="${process.standard.injPressurePeak}">50</td>
@@ -54,8 +54,8 @@
         <table class="table table-hover table-striped">
             <thead>
             <tr>
-                <th class="ps-3">번호</th>
-                <th>제품명</th>
+                <th colspan="2" class="ps-3">lotNumber</th>
+                <!--<th>제품명</th>-->
                 <th>금형온도</th>
                 <th>충전시간</th>
                 <th>최고사출압</th>
@@ -71,8 +71,8 @@
             <tbody>
             <th:block th:each="process : ${processes}">
                 <tr>
-                    <td th:text="${process.id}">1</td>
-                    <td th:text="${process.order.productName}">EVA</td>
+                    <td colspan="2" th:text="${process.lotNumber}">lotNumber</td>
+                    <!--<td th:text="${process.order.productName}">EVA</td>-->
                     <td th:text="${process.standard.moldTemperature}">50</td>
                     <td th:text="${process.standard.timeToFill}">50</td>
                     <td th:text="${process.standard.injPressurePeak}">50</td>

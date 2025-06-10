@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -99,6 +100,17 @@ public class DummyDataLoader implements CommandLineRunner {
 
                 double errorCount = 0;
                 for (int i = 0; i < orderqty; i++) {
+                    // 로트넘버 생성
+                    final int index = i;
+                    int sequenceNumber = index % 10 + 1;
+                    int lotNumberIndex = index / 10 + 1;
+                    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd"); // 현재 날짜를 YYYYMMDD 형식으로 변환
+                    String currentDate = baseDate.format(dateTimeFormatter);
+                    String lot = String.format("%02d",lotNumberIndex);
+                    String sequence = String.format("%03d",sequenceNumber);
+
+                    String lotNumber = orders1.getProductName().name() + "_" + orders1.getId() + "_"
+                            + lot + "_" + sequence + "_" + currentDate;
 
                     // 공정 1건 생성  => 라벨을 확률에 따라 임의로 생성하면서 더미데이터의 품질 검증 시 오류가 과다 발생됨. standard 값을 기준으로 라벨 붙이게 수정
                     Standard standard = productStandardValue.createStandard();
@@ -120,6 +132,7 @@ public class DummyDataLoader implements CommandLineRunner {
                     Process process = Process.builder()
                             .status(String.valueOf(label1))
                             .order(orders1)
+                            .lotNumber(lotNumber)
                             .standard(standard)
                             .processDate(baseDate.plusMinutes(i))
                             .build();
