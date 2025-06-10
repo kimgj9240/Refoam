@@ -276,6 +276,12 @@ body {
     color: #000;
 }
 
+/* 모달에서 에러 뜨는 테이블 색상 적용하기 위해 필요함*/
+.table-processes tbody tr td.bg-warning:nth-child(even){
+    background-color: #ffc107 !important;
+}
+
+
 /* ai 리포트 크기    */
 @media (min-width: 768px) {
     .toast {

@@ -1,8 +1,8 @@
-<html layout:decorate="~{layout}" lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html layout:decorate="~{layout}" lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="container mb-5" layout:fragment="content">
     <div class="row">
-        <form role="form" th:object="${orderForm}" method="post" class="py-2 col-md-6">
-            <h2 class="py-4">제품 생산</h2>
+        <form role="form" th:object="${orderForm}" method="post" class="col-md-6">
+            <h2 class="my-4">제품 생산</h2>
             <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors()}">
                 <div th:each="err : ${#fields.allErrors()}" th:text="${err}"></div>
             </div>
@@ -18,11 +18,11 @@
                 <input class="form-control" type="number" min="10" step="10" th:field="*{orderQuantity}">
             </div>
             <div class="text-end">
-                <button type="submit" class="btn btn-primary btn-sm">생산 등록</button>
+                <button type="submit" class="btn btn-refoam">생산 등록</button>
             </div>
         </form>
         <div class="col-md-6">
-            <h2 class="py-4">재고 현황</h2>
+            <h2 class="my-4">재고 현황</h2>
             <canvas id="materialChart" height="150"></canvas>
         </div>
     </div>

@@ -1,14 +1,14 @@
 <div th:fragment="modalContent">
     <div class="modal-header">
         <h1 class="modal-title fs-5" id='exampleModalLabel'>검수 결과</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
     </div>
     <div class="modal-body">
         <table class="table table-bordered  border-dark table-striped-columns table-processes">
             <tbody>
             <tr>
                 <td>lotNumber</td>
-                <td colspan="3" th:text="${process.lotNumber}" class="text-center">1</td>
+                <td class="text-center" colspan="3" th:text="${process.lotNumber}">1</td>
             </tr>
             <tr>
                 <td>공정일자</td>
@@ -20,19 +20,19 @@
             </tr>
             <tr>
                 <td>융용온도</td>
-                <td th:text="${process.standard.meltTemperature}"  >105.49</td>
+                <td th:text="${process.standard.meltTemperature}" th:classappend="${process.standard.productLabel.name() == 'ERR_TEMP'} ? ' bg-warning' : ''">105.49</td>
                 <td>금형온도</td>
-                <td th:text="${process.standard.moldTemperature}">80.5</td>
+                <td th:text="${process.standard.moldTemperature}" th:classappend="${process.standard.productLabel.name() == 'ERR_TEMP'} ? ' bg-warning' : ''">80.5</td>
             </tr>
             <tr>
                 <td>충전시간</td>
-                <td th:text="${process.standard.timeToFill}">6.864</td>
+                <td th:text="${process.standard.timeToFill}" th:classappend="${process.standard.productLabel.name() == 'ERR_TIME'} ? ' bg-warning' : ''">6.864</td>
                 <td>가소화시간</td>
-                <td th:text="${process.standard.plasticizingTime}">3.21</td>
+                <td th:text="${process.standard.plasticizingTime}" th:classappend="${process.standard.productLabel.name() == 'ERR_TIME'} ? ' bg-warning' : ''">3.21</td>
             </tr>
             <tr>
                 <td>사이클시간</td>
-                <td th:text="${process.standard.cycleTime}">74.78</td>
+                <td th:text="${process.standard.cycleTime}" th:classappend="${process.standard.productLabel.name() == 'ERR_TIME'} ? ' bg-warning' : ''">74.78</td>
                 <td>폐쇄 힘</td>
                 <td th:text="${process.standard.closingForce}">901.22</td>
             </tr>
@@ -64,11 +64,13 @@
         </table>
         <div>
             <p>검수결과</p>
-            <span th:text="${process.order.productName.name()}">NORMAL60</span> 제품은 <span th:text="${process.standard.qualityCheck.checkResult}" th:classappend ="${process.standard.qualityCheck.checkResult != process.standard.productLabel.name() ? ' text-bg-warning' : ''}">양품</span>으로 판정되었습니다.
+            <span th:text="${process.order.productName.name()}">NORMAL60</span> 제품은 <span
+                th:classappend="${process.standard.qualityCheck != null and process.standard.productLabel != null and process.standard.qualityCheck.checkResult != process.standard.productLabel.name() ? ' text-bg-warning' : ''}"
+                th:text="${process.standard.qualityCheck.checkResult}">양품</span>으로 판정되었습니다.
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-refoam" data-bs-dismiss="modal">닫기</button>
+        <button class="btn btn-refoam" data-bs-dismiss="modal" type="button">닫기</button>
     </div>
 </div>
 

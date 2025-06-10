@@ -21,7 +21,7 @@
                         <input th:field="*{materialQuantity}" class="form-control">
                     </div>
                     <div class="text-end">
-                        <button th:type="submit" class="btn btn-refoam px-3">입 력</button>
+                        <button th:type="submit" class="btn btn-refoam px-3">&emsp;입&emsp; 력&emsp;</button>
                     </div>
                 </form>
                 <form role="form" th:action="@{/material/orderPredict}" th:method="post" th:object="${predictRequest}" class="py-2 col-lg-6 order-1 order-lg-2 order-md-1 mb-3">
@@ -32,12 +32,12 @@
                     <div class="mb-2">
                         <p>3일 뒤 시점의 발주 수량 예측입니다</p>
                         <label  class="form-label fw-bold">원재료</label>
-                        <div class="d-flex">
+                        <div class="d-flex gap-2">
                             <select class="form-control w-75" id="materialSelect" onchange="syncMaterialName(this.value)" th:field="*{orders[0].materialName2}">
                                 <option value="">원자재를 선택하세요</option>
                                 <option th:each="materialName2 : ${T(com.example.refoam.domain.MaterialName).values()}" th:text="${materialName2}" th:value="${materialName2}"></option>
                             </select>
-                            <button th:type="submit" class="btn btn-refoam px-2 ms-auto">예측하기</button>
+                            <button th:type="submit" class="btn btn-refoam px-2 w-25 ">예측하기</button>
                         </div>
                     </div>
                     <div class="row">
