@@ -9,6 +9,7 @@ import com.example.refoam.repository.OrderRepository;
 import com.example.refoam.repository.ProcessRepository;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.query.Order;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -22,6 +23,7 @@ public class MonitoringService {
 
     private final OrderRepository orderRepository;
     private final ProcessRepository processRepository;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     public Map<ProductName, List<ProductionMonitoring>> allProductionMonitoringsWithPadding() {
         // 1. 기준 날짜 리스트 생성 (ALL)
@@ -157,26 +159,73 @@ public class MonitoringService {
     }
 
 
-    public Map<String, Integer> targetAchievement(int minTarget, int maxTarget){
-        Random random = new Random(LocalDate.now().toEpochDay());
+    private Integer cashedTargetQuantity = null;
+    private LocalDate targetDate = null;
 
-        int targetQuantity  = minTarget + 50 * random.nextInt((maxTarget - minTarget) / 50 + 1);//오늘의 달성목표수량 100단위로만 생성되도록(200~600)
+    public Map<String, Integer> targetAchievement(int minTarget, int maxTarget) {
 
         List<Process> todayProcess = processRepository.findTodayProcesses();
+
+        if (todayProcess.isEmpty()) {
+            System.out.println("공정 미시작 상태: 달성률 전송 생략");
+            return Map.of(
+                    "targetQuantity", 0,
+                    "okCount", 0,
+                    "achievementRate", 0
+            );
+        }
+
+
+        int targetQuantity = getTodayTarget(minTarget, maxTarget);
+
         int okCount = (int) todayProcess.stream()
                 .filter(p -> "OK".equals(p.getStatus()))
                 .count();
 
         int achievementRate = targetQuantity > 0 ? (int) ((double) okCount / targetQuantity * 100) : 0;
 
-        Map<String, Integer> result = new HashMap<>();
-        result.put("targetQuantity", targetQuantity);
-        result.put("okCount",okCount);
-        result.put("achievementRate", achievementRate);
-        return result;
+        return Map.of(
+                "targetQuantity", targetQuantity,
+                "okCount", okCount,
+                "achievementRate", achievementRate
+        );
     }
 
+    public void sendAchievementUpdate() {
+        List<Process> todayProcess = processRepository.findTodayProcesses();
 
+        if (todayProcess.isEmpty()) {
+            System.out.println("공정 없음 - 전송 생략");
+            return;
+        }
+
+        int targetQuantity = getTodayTarget(150,250);
+
+        int okCount = (int) todayProcess.stream()
+                .filter(p -> "OK".equals(p.getStatus()))
+                .count();
+
+        int achievementRate = targetQuantity > 0 ? (int) ((double) okCount / targetQuantity * 100) : 0;
+
+        Map<String, Object> socket = new HashMap<>();
+        socket.put("targetQuantity", targetQuantity); // 목표 수량
+        socket.put("okCount", okCount); // 완제품
+        socket.put("achievementRate", achievementRate); // 달성률
+        simpMessagingTemplate.convertAndSend("/topic/achievement", socket);
+
+    }
+
+    private int getTodayTarget(int minTarget, int maxTarget) {
+        LocalDate today = LocalDate.now();
+
+        if (cashedTargetQuantity == null || targetDate == null || !targetDate.equals(today)) {
+            Random random = new Random(today.toEpochDay());
+            cashedTargetQuantity = minTarget + 50 * random.nextInt((maxTarget - minTarget) / 50 + 1);
+            targetDate = today;
+
+        }
+        return cashedTargetQuantity;
+    }
 }
 
 

@@ -9,8 +9,6 @@
             <tr>
                 <td>lotNumber</td>
                 <td colspan="3" th:text="${process.lotNumber}" class="text-center">1</td>
-<!--                <td>제품명</td>-->
-<!--                <td th:text="${process.order.productName}">NORMAL60</td>-->
             </tr>
             <tr>
                 <td>공정일자</td>
@@ -22,7 +20,7 @@
             </tr>
             <tr>
                 <td>융용온도</td>
-                <td th:text="${process.standard.meltTemperature}">105.49</td>
+                <td th:text="${process.standard.meltTemperature}"  >105.49</td>
                 <td>금형온도</td>
                 <td th:text="${process.standard.moldTemperature}">80.5</td>
             </tr>
@@ -66,7 +64,7 @@
         </table>
         <div>
             <p>검수결과</p>
-            <span th:text="${process.order.productName.name()}">NORMAL60</span> 제품은 <span th:text="${process.standard.qualityCheck.checkResult}">양품</span>으로 판정되었습니다.
+            <span th:text="${process.order.productName.name()}">NORMAL60</span> 제품은 <span th:text="${process.standard.qualityCheck.checkResult}" th:classappend ="${process.standard.qualityCheck.checkResult != process.standard.productLabel.name() ? ' text-bg-warning' : ''}">양품</span>으로 판정되었습니다.
         </div>
     </div>
     <div class="modal-footer">

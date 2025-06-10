@@ -105,7 +105,7 @@ public class DummyDataLoader implements CommandLineRunner {
                     int sequenceNumber = index % 10 + 1;
                     int lotNumberIndex = index / 10 + 1;
                     DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd"); // 현재 날짜를 YYYYMMDD 형식으로 변환
-                    String currentDate = baseDate.format(dateTimeFormatter);
+                    String currentDate = LocalDateTime.now().format(dateTimeFormatter);
                     String lot = String.format("%02d",lotNumberIndex);
                     String sequence = String.format("%03d",sequenceNumber);
 
@@ -115,16 +115,15 @@ public class DummyDataLoader implements CommandLineRunner {
                     // 공정 1건 생성  => 라벨을 확률에 따라 임의로 생성하면서 더미데이터의 품질 검증 시 오류가 과다 발생됨. standard 값을 기준으로 라벨 붙이게 수정
                     Standard standard = productStandardValue.createStandard();
                     ProductLabel label1 = standardEvaluator.evaluate(standard.getInjPressurePeak(), standard.getMoldTemperature(), standard.getTimeToFill(),
-                            standard.getCycleTime(), standard.getPlasticizingTime());
+                            standard.getCycleTime(), standard.getPlasticizingTime(), standard.getBackPressurePeak());
                     standard.setProductLabel(label1);
                     standardService.save(standard);
-                    if (label1.equals(ProductLabel.OK)){
-                        orders1.setCompletedCount(orders1.getCompletedCount() + 1);
-                        orderService.save(orders1);
-
-                    }else {
+                    if (!label1.equals(ProductLabel.OK)){
                         errorCount += 1;
                     }
+                    orders1.setCompletedCount(orders1.getCompletedCount() + 1);
+                    orderService.save(orders1);
+
                     double errorRate = Math.round(errorCount / orderqty * 100.0) / 100.0;
                     orders1.setErrorRate(errorRate);
                     orderService.save(orders1);

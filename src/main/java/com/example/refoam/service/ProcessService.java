@@ -34,6 +34,7 @@ public class ProcessService {
     private final StandardEvaluator standardEvaluator;
     private final SimpMessagingTemplate messagingTemplate;
     private final TaskScheduler taskScheduler;
+    private final MonitoringService monitoringService;
 
     @Transactional
     public void startMainProcess(Long orderId) {
@@ -78,7 +79,7 @@ public class ProcessService {
                 // 공정 1건 생성 => 규격 생성 코드가 너무 길어 메서드로 분리함, createStandard
                 Standard standard = productStandardValue.createStandard();
                 ProductLabel label = standardEvaluator.evaluate(standard.getInjPressurePeak(), standard.getMoldTemperature(), standard.getTimeToFill(),
-                        standard.getCycleTime(), standard.getPlasticizingTime());
+                        standard.getCycleTime(), standard.getPlasticizingTime(),standard.getBackPressurePeak());
                 standard.setProductLabel(label);
                 standardService.save(standard);
 
@@ -90,6 +91,7 @@ public class ProcessService {
                         .processDate(LocalDateTime.now())
                         .build();
                 processRepository.save(process);
+                monitoringService.sendAchievementUpdate();
                 standard.setProcess(process);
                 standardService.save(standard);
 
@@ -134,26 +136,7 @@ public class ProcessService {
                 messagingTemplate.convertAndSend(
                         "/topic/temperature/" + o.getProductName().name(),standard.getMoldTemperature()
                 );
-                List<ProductName> productNameList = List.of(
-                        ProductName.NORMAL,
-                        ProductName.BUMP,
-                        ProductName.HALF
-                );
-                for(ProductName products : productNameList) {
-                    List<Orders> allOrders = orderService.findTodayOrders();
-                    long okProductCount = 0;
-                    long errProductCount = 0;
-                    for (Orders monitoringOrder : allOrders) {
-
-                        okProductCount += processRepository.countTodayByOrderAndStatus(monitoringOrder, "OK", products);
-                        errProductCount += processRepository.countTodayByOrderAndStatusNot(monitoringOrder, "OK", products);
-
-                        messagingTemplate.convertAndSend(
-                                "/topic/product-count",
-                                new ProductChartDataForm(String.valueOf(products), okProductCount, errProductCount, LocalDateTime.now())
-                        );
-                    }
-                }
+                socketHandler();
             }, new Date(baseTime + delay));
         }
     }
@@ -176,6 +159,29 @@ public class ProcessService {
                 .map(p -> new MoldTempForm(p.getProcessDate(), p.getStandard().getMoldTemperature()))
                 .sorted(Comparator.comparing(MoldTempForm::getTime)) // 오래된 순으로 정렬
                 .collect(Collectors.toList());
+    }
+
+    public void socketHandler(){
+        List<ProductName> productNameList = List.of(
+                ProductName.NORMAL,
+                ProductName.BUMP,
+                ProductName.HALF
+        );
+        for(ProductName products : productNameList) {
+            List<Orders> allOrders = orderService.findTodayOrders();
+            long okProductCount = 0;
+            long errProductCount = 0;
+            for (Orders monitoringOrder : allOrders) {
+
+                okProductCount += processRepository.countTodayByOrderAndStatus(monitoringOrder, "OK", products);
+                errProductCount += processRepository.countTodayByOrderAndStatusNot(monitoringOrder, "OK", products);
+
+                messagingTemplate.convertAndSend(
+                        "/topic/product-count",
+                        new ProductChartDataForm(String.valueOf(products), okProductCount, errProductCount, LocalDateTime.now())
+                );
+            }
+        }
     }
 
     public List<ProductChartDataForm> getStatsByProduct() {
