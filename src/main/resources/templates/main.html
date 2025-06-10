@@ -690,63 +690,6 @@
             });
 
             console.log(`게이지 ${gaugeInstances.length}개 초기화 완료`);
-
-        }
-
-        // WebSocket 연결 (실제 데이터만 받음)
-        function initializeWebSocketConnection() {
-            console.log('WebSocket 연결 시작');
-
-            if (typeof SockJS === 'undefined' || typeof Stomp === 'undefined') {
-                console.error('WebSocket 라이브러리가 로드되지 않았습니다');
-                return;
-            }
-
-            try {
-                stompClient = Stomp.over(new SockJS('/ws'));
-                stompClient.connect({}, function(frame) {
-                    console.log('WebSocket 연결 성공:', frame);
-                    isConnected = true;
-
-                    const names = ['NORMAL', 'BUMP', 'HALF'];
-                    names.forEach((name, i) => {
-                        // 온도 라인 차트 구독
-                        stompClient.subscribe(`/topic/temperature/${name}`, function(message) {
-                            const value = parseFloat(message.body);
-                            const timeStr = new Date().toLocaleTimeString();
-
-                            console.log(`온도 데이터 수신 ${name}:`, value);
-
-                            // 라인 차트 업데이트
-                            if (temperatureCharts[i]) {
-                                const chart = temperatureCharts[i];
-                                chart.data.labels.push(timeStr);
-                                chart.data.datasets[0].data.push(value);
-
-                                // 최대 포인트 수 제한
-                                if (chart.data.labels.length > 50) {
-                                    chart.data.labels.shift();
-                                    chart.data.datasets[0].data.shift();
-                                }
-
-                                chart.update('none');
-                            }
-
-                            // 게이지 업데이트
-                            if (gaugeInstances[i]) {
-                                gaugeInstances[i].update(value);
-                            }
-                        });
-                    });
-
-                }, function(error) {
-                    console.error('WebSocket 연결 실패:', error);
-                    isConnected = false;
-                });
-
-            } catch (error) {
-                console.error('WebSocket 초기화 오류:', error);
-            }
         }
 
         // Toast 초기화
@@ -756,7 +699,7 @@
             const toastBody = document.getElementById("toastBody");
 
             if (btn && toastEl && toastBody && typeof bootstrap !== 'undefined') {
-                const toast = new bootstrap.Toast(toastEl, { delay: 10000 });
+                const toast = new bootstrap.Toast(toastEl, {delay: 10000});
 
                 btn.addEventListener("click", function () {
                     toastBody.textContent = "AI 리포트를 불러오는 중입니다...";
@@ -775,6 +718,7 @@
                 });
             }
         }
+
         // 제품별 파이 차트용 전역 변수
         const chartMap = {};
         const productStatMap = JSON.parse(localStorage.getItem("productStatMap")) || {};
