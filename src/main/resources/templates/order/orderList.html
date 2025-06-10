@@ -82,7 +82,7 @@
                 <th>담당직원</th>
             </tr>
             <tr>
-                <th>공정상태</th>
+                <th class="ps-3">공정상태</th>
                 <th colspan="3">공정관리</th>
                 <th>실시간현황</th>
             </tr>
@@ -97,7 +97,7 @@
                     <td th:text="${order.employee.username}"></td>
                 </tr>
                 <tr>
-                    <td th:id="'state-text-b-' + ${order.id}" th:text="${order.orderState}"></td>
+                    <td th:id="'state-text-b-' + ${order.id}" th:text="${order.orderState}" class="ps-3"></td>
                     <td colspan="3">
                         <!-- 배합시작 버튼-->
                         <form th:action="@{/order/{id}/first-process(id=${order.id})}" method="post" style="display:inline;">

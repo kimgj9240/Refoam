@@ -33,12 +33,12 @@
         <table class="table table-hover table-striped">
             <thead>
             <tr>
-                <th>#</th>
+                <th class="ps-3">#</th>
                 <th>ID</th>
                 <th>이름</th>
             </tr>
             <tr>
-                <th>직위</th>
+                <th class="ps-3">직위</th>
                 <th>연락처</th>
                 <th> # </th>
             </tr>
@@ -46,12 +46,12 @@
             <tbody>
             <th:block th:each="employee, index : ${paging}">
                 <tr>
-                    <td th:text="${employee.id}">1</td>
+                    <td th:text="${employee.id}" class="ps-3">1</td>
                     <td th:text="${employee.loginId}">ID</td>
                     <td th:text="${employee.username}">name</td>
                 </tr>
                 <tr>
-                    <td th:text="${employee.position}">position</td>
+                    <td th:text="${employee.position}" class="ps-3">position</td>
                     <td th:text="${employee.email}">phone</td>
                     <td>
                         <a href="#" th:href="@{/employee/{id}/edit(id=${employee.id})}" class="btn btn-sm btn-refoam px-3 me-3" role="button">수 정</a>
