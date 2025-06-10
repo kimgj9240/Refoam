@@ -598,7 +598,7 @@
                             backgroundColor: '#ffffff',
                             width: 30,
                             ranges: [
-                                {startValue: 80, endValue: 80.8, color: '#ff8228'},
+                                {startValue: 80, endValue: 80.8, color: '#68e1a8'},
                                 {startValue: 80.8, endValue: 81.4, color: '#4166f5'},
                                 {startValue: 81.4, endValue: 81.6, color: '#ffc228'},
                                 {startValue: 81.6, endValue: 82, color: '#ff8228'}
@@ -655,10 +655,22 @@
                 }
 
                 update(value) {
-                    if (this._gauge) {
-                        this._gauge.option('value', value);
-                        this._gauge.option('title.text', `${value.toFixed(1)} ºC`);
+                    if (!this._gauge) return;
+                    // ① 값 갱신
+                    this._gauge.option('value', value);
+                    // ② 색상 결정
+                    let color = '#000';              // 기본 검정
+                    if (value > 81.6) {
+                        color = 'red';                 // 임계 상향 돌파 시 빨강
+                    } else if(value >= 81.4 && value <= 81.6) {
+                        color = '#ff8228';
                     }
+                    else if (value < 80.8) {
+                        color = 'green';               // 임계 하향 돌파 시 초록
+                    }
+                    // ③ 텍스트와 색상 적용
+                    this._gauge.option('title.text', `${value.toFixed(1)} ℃`);
+                    this._gauge.option('title.font.color', color);
                 }
             }
 
