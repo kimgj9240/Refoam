@@ -89,15 +89,22 @@ public class HomeController {
 
     @GetMapping("/main")
     public String main(Model model){
-        Map<String, Integer> kpiMap = monitoringService.targetAchievement(100, 400);
+        Map<String, Integer> kpiMap = monitoringService.targetAchievement(150, 250);
 
-        model.addAttribute("achievementRate", kpiMap.get("achievementRate"));
-        model.addAttribute("targetRate", 80);//목표달성률 80 고정
-        model.addAttribute("targetQuantity", kpiMap.get("targetQuantity"));//오늘의 달성목표수량 10단위로만 생성되도록
-        model.addAttribute("targetAchieveQuantity", kpiMap.get("targetAchieveQuantity"));
-        model.addAttribute("okCount", kpiMap.get("okCount"));
-        return "main";}
-    
+        int targetQuantity = kpiMap.getOrDefault("targetQuantity", 0);
+        int okCount = kpiMap.getOrDefault("okCount", 0);
+        int achievementRate = kpiMap.getOrDefault("achievementRate", 0);
+
+        model.addAttribute("achievementRate", achievementRate);
+        model.addAttribute("targetRate", 80); // 목표달성률 80 고정
+        model.addAttribute("targetQuantity", targetQuantity);
+        model.addAttribute("okCount", okCount);
+
+        // targetAchieveQuantity는 Map에 없으니 따로 계산하거나 제거
+        model.addAttribute("targetAchieveQuantity", targetQuantity > 0 ? okCount : 0);
+        return "main";
+    }
+
     // 로그아웃 후 다른 아이디로 로그인했을 때 404 에러 뜨는거 방지용으로 만듦
     @GetMapping("/home")
     public String homeRedirect(Model model) {

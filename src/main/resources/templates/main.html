@@ -4,7 +4,7 @@
     <div class="row mb-5">
         <div class="col-12 col-md-6 col-lg-6">
             <h5 class="text-center mt-lg-2 mt-md-3">
-                오늘의 목표 수량: <span th:text="${targetQuantity}">0</span>개
+                오늘의 목표 수량: <span id="targetCount" th:text="${targetQuantity}">0</span>개
             </h5>
             <div class="tassei">
                 <canvas id="achievementRate"></canvas>
@@ -18,7 +18,7 @@
                     <div class="card shadow-sm h-100">
                         <div class="card-body d-flex flex-column justify-content-center text-center">
                             <h6 class="text-muted mb-2 ">달성 수량</h6>
-                            <h4 class="mb-0" th:text="${okCount} + '개'">0개</h4>
+                            <h4 class="mb-0" id="okCount" th:text="${okCount} + '개'">0개</h4>
                         </div>
                     </div>
                 </div>
@@ -26,7 +26,7 @@
                     <div class="card shadow-sm h-100">
                         <div class="card-body d-flex flex-column justify-content-center text-center">
                             <h6 class="text-muted mb-2">달성률</h6>
-                            <h4 class="mb-0" th:text="${achievementRate} + '%'">0%</h4>
+                            <h4 class="mb-0" id="achievementRateText" th:text="${achievementRate} + '%'">0%</h4>
                         </div>
                     </div>
                 </div>
@@ -34,7 +34,7 @@
                     <div class="card shadow-sm h-100">
                         <div class="card-body d-flex flex-column justify-content-center text-center">
                             <h6 class="text-muted mb-2">남은 수량</h6>
-                            <h4 class="mb-0" th:text="${targetQuantity - okCount} + '개'">0개</h4>
+                            <h4 id="remainingCount" th:text="${(targetQuantity != null and okCount != null) ? (targetQuantity - okCount) + '개' : '0개'}">0개</h4>
                         </div>
                     </div>
                 </div>
@@ -190,6 +190,9 @@
         let gaugeInstances = [];
         let stompClient = null;
         let isConnected = false;
+        let achievementChart = null;
+        let rate = /*[[${achievementRate}]]*/0;
+        let target = /*[[${targetRate}]]*/0;
 
         // 모든 라이브러리 로드 대기 함수
         function waitForLibraries() {
@@ -248,15 +251,19 @@
             console.log('기본 차트 초기화 시작');
 
             // 서버 데이터 가져오기
-            const rate = /*[[${achievementRate}]]*/ 75;
-            const target = /*[[${targetRate}]]*/ 90;
             const isAchieved = rate >= target;
             const barColor = isAchieved ? "rgba(0, 200, 100, 0.7)" : "rgba(63, 0, 255, 0.7)";
 
             // 달성률 차트 (ChartDataLabels 플러그인 없이)
             const achievementCtx = document.getElementById("achievementRate");
+            if (!achievementCtx) return;
+
+            if (achievementChart) {
+                achievementChart.destroy();
+            }
+
             if (achievementCtx) {
-                new Chart(achievementCtx, {
+                achievementChart = new Chart(achievementCtx, {
                     type: "bar",
                     data: {
                         labels: ["목표 달성률"],
@@ -281,12 +288,12 @@
                                 },
                                 title: {
                                     display: true,
-                                    text: "(목표: " + target + "%)",
+                                    text: "(목표: 80%)",
                                 },
                             },
                             y: {
-                                grid: { display: false },
-                                ticks: { display: false },
+                                grid: {display: false},
+                                ticks: {display: false},
                             },
                         },
                         plugins: {
@@ -341,7 +348,7 @@
                             pointHoverRadius: 5,
                             pointStyle: 'rectRot',
                             tension: 0.1,
-                            pointBackgroundColor: function(context) {
+                            pointBackgroundColor: function (context) {
                                 const dataIndex = context.dataIndex;
                                 const value = context.dataset.data[dataIndex];
                                 if (typeof value === 'number') {
@@ -350,7 +357,7 @@
                                 }
                                 return 'blue';
                             },
-                            borderColor: function(context) {
+                            borderColor: function (context) {
                                 if (context.type === 'dataset') {
                                     return 'blue';
                                 }
@@ -369,11 +376,11 @@
                         maintainAspectRatio: false,
                         scales: {
                             x: {
-                                title: { display: true, text: '시간' },
+                                title: {display: true, text: '시간'},
                                 ticks: {
                                     autoSkip: true,
                                     maxTicksLimit: 8,
-                                    callback: function(value, index, values) {
+                                    callback: function (value, index, values) {
                                         const label = this.getLabelForValue(value);
                                         // HH:MM:SS 형식으로 표시 (초까지 포함)
                                         return label || '';
@@ -383,17 +390,17 @@
                             y: {
                                 suggestedMin: 80,
                                 suggestedMax: 82,
-                                title: { display: true, text: '℃' }
+                                title: {display: true, text: '℃'}
                             }
                         },
                         plugins: {
-                            legend: { display: true, position: 'top' },
+                            legend: {display: true, position: 'top'},
                             tooltip: {
                                 callbacks: {
-                                    title: function(context) {
+                                    title: function (context) {
                                         return context[0].label;
                                     },
-                                    label: function(context) {
+                                    label: function (context) {
                                         return `${context.dataset.label}: ${context.parsed.y.toFixed(1)}℃`;
                                     }
                                 }
@@ -477,14 +484,14 @@
 
             try {
                 stompClient = Stomp.over(new SockJS('/ws'));
-                stompClient.connect({}, function(frame) {
+                stompClient.connect({}, function (frame) {
                     console.log('WebSocket 연결 성공:', frame);
                     isConnected = true;
 
                     const names = ['NORMAL', 'BUMP', 'HALF'];
                     names.forEach((name, i) => {
                         // 온도 라인 차트 구독
-                        stompClient.subscribe(`/topic/temperature/${name}`, function(message) {
+                        stompClient.subscribe(`/topic/temperature/${name}`, function (message) {
                             const value = parseFloat(message.body);
                             // HH:MM:SS 형식으로 현재 시간 생성
                             const timeStr = new Date().toLocaleTimeString('ko-KR', {
@@ -521,7 +528,41 @@
                         });
                     });
 
-                }, function(error) {
+                    let alreadySetTarget = false;
+                    let previousOkCount = null;
+                    let previousRate = null;
+
+                    stompClient.subscribe('/topic/achievement', function (message) {
+                        const data = JSON.parse(message.body);
+                        console.log("달성률 메세지 수신: ", data);
+
+                        const newOkCount = data.okCount;
+                        const newRate = parseFloat(data.achievementRate);
+
+                        if (!alreadySetTarget) {
+                            const targetText = document.getElementById("targetCount").innerText;
+                            target = parseFloat(targetText.replace('개', '').trim());
+                            alreadySetTarget = true;
+                        }
+
+                        const isUpdated = (previousOkCount !== newOkCount) || (previousRate !== newRate);
+
+                        if (isUpdated) {
+                            rate = newRate;
+                            previousRate = newOkCount;
+                            previousRate = newRate;
+                        }
+
+                        document.getElementById("okCount").innerText = data.okCount + '개';
+                        document.getElementById("achievementRateText").innerText = newRate + '%';
+
+                        const remaining = target - newOkCount;
+                        document.getElementById("remainingCount").innerText = remaining + '개';
+
+                        initializeBasicCharts();
+                    });
+
+                }, function (error) {
                     console.error('WebSocket 연결 실패:', error);
                     isConnected = false;
 
@@ -538,13 +579,12 @@
         }
 
 
-
         // 게이지 차트 초기화
         function initializeGauges() {
             console.log('게이지 초기화 시작');
 
             class GaugeChart {
-                constructor(el, { initialValue, higherValue, title, subtitle }) {
+                constructor(el, {initialValue, higherValue, title, subtitle}) {
                     this._el = el;
                     this._initialValue = initialValue;
                     this._higherValue = higherValue;
@@ -640,62 +680,6 @@
             console.log(`게이지 ${gaugeInstances.length}개 초기화 완료`);
         }
 
-        // WebSocket 연결 (실제 데이터만 받음)
-        function initializeWebSocketConnection() {
-            console.log('WebSocket 연결 시작');
-
-            if (typeof SockJS === 'undefined' || typeof Stomp === 'undefined') {
-                console.error('WebSocket 라이브러리가 로드되지 않았습니다');
-                return;
-            }
-
-            try {
-                stompClient = Stomp.over(new SockJS('/ws'));
-                stompClient.connect({}, function(frame) {
-                    console.log('WebSocket 연결 성공:', frame);
-                    isConnected = true;
-
-                    const names = ['NORMAL', 'BUMP', 'HALF'];
-                    names.forEach((name, i) => {
-                        // 온도 라인 차트 구독
-                        stompClient.subscribe(`/topic/temperature/${name}`, function(message) {
-                            const value = parseFloat(message.body);
-                            const timeStr = new Date().toLocaleTimeString();
-
-                            console.log(`온도 데이터 수신 ${name}:`, value);
-
-                            // 라인 차트 업데이트
-                            if (temperatureCharts[i]) {
-                                const chart = temperatureCharts[i];
-                                chart.data.labels.push(timeStr);
-                                chart.data.datasets[0].data.push(value);
-
-                                // 최대 포인트 수 제한
-                                if (chart.data.labels.length > 50) {
-                                    chart.data.labels.shift();
-                                    chart.data.datasets[0].data.shift();
-                                }
-
-                                chart.update('none');
-                            }
-
-                            // 게이지 업데이트
-                            if (gaugeInstances[i]) {
-                                gaugeInstances[i].update(value);
-                            }
-                        });
-                    });
-
-                }, function(error) {
-                    console.error('WebSocket 연결 실패:', error);
-                    isConnected = false;
-                });
-
-            } catch (error) {
-                console.error('WebSocket 초기화 오류:', error);
-            }
-        }
-
         // Toast 초기화
         function initializeToast() {
             const btn = document.getElementById("showToastBtn");
@@ -703,7 +687,7 @@
             const toastBody = document.getElementById("toastBody");
 
             if (btn && toastEl && toastBody && typeof bootstrap !== 'undefined') {
-                const toast = new bootstrap.Toast(toastEl, { delay: 10000 });
+                const toast = new bootstrap.Toast(toastEl, {delay: 10000});
 
                 btn.addEventListener("click", function () {
                     toastBody.textContent = "AI 리포트를 불러오는 중입니다...";
@@ -722,6 +706,7 @@
                 });
             }
         }
+
         // 제품별 파이 차트용 전역 변수
         const chartMap = {};
         const productStatMap = JSON.parse(localStorage.getItem("productStatMap")) || {};
@@ -744,7 +729,7 @@
                         labels: ['정상 제품 수', '불량 제품 수'],
                         datasets: [{
                             data: [0, 0],
-                            borderColor: ['#0051b6','rgb(255,99,132)'],
+                            borderColor: ['#0051b6', 'rgb(255,99,132)'],
                             backgroundColor: ['#a6cdfb', '#fdb9b6'],
                             borderWidth: 1
                         }]
@@ -775,7 +760,7 @@
             fetch('/api/production/by-product')
                 .then(res => res.json())
                 .then(data => {
-                    data.forEach(({ productName, okCount, errorCount, timestamp }) => {
+                    data.forEach(({productName, okCount, errorCount, timestamp}) => {
                         updateProductChart(productName, okCount, errorCount, timestamp);
                     });
                 }).catch(err => {
@@ -787,12 +772,12 @@
                 const stomp = Stomp.over(new SockJS("/ws"));
                 stomp.connect({}, () => {
                     stomp.subscribe("/topic/product-count", message => {
-                        const { productName, okCount, errorCount, timestamp } = JSON.parse(message.body);
+                        const {productName, okCount, errorCount, timestamp} = JSON.parse(message.body);
                         updateProductChart(productName, okCount, errorCount, timestamp);
                     });
 
                     // localStorage에 저장된 이전 값 복원
-                    for (const [productName, { okCount, errorCount, timestamp }] of Object.entries(productStatMap)) {
+                    for (const [productName, {okCount, errorCount, timestamp}] of Object.entries(productStatMap)) {
                         updateProductChart(productName, okCount, errorCount, timestamp);
                     }
                 });
@@ -813,7 +798,7 @@
                 date.getDate() !== today.getDate()
             ) return;
 
-            productStatMap[productName] = { okCount, errorCount, timestamp };
+            productStatMap[productName] = {okCount, errorCount, timestamp};
             localStorage.setItem("productStatMap", JSON.stringify(productStatMap));
 
             const chart = chartMap[productName];
