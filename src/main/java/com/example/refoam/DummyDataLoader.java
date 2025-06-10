@@ -79,7 +79,6 @@ public class DummyDataLoader implements CommandLineRunner {
 
         // 7일치 더미 데이터 생
         // 랜덤 인스턴스 생성
-        Random random = new Random();
         for (int d = 6; d > 0; d--) {
             LocalDateTime baseDate = LocalDate.now().minusDays(d).atTime(10, 0);
             List<Integer> qtyValues = List.of(10, 20, 30);
@@ -105,7 +104,7 @@ public class DummyDataLoader implements CommandLineRunner {
                     int sequenceNumber = index % 10 + 1;
                     int lotNumberIndex = index / 10 + 1;
                     DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd"); // 현재 날짜를 YYYYMMDD 형식으로 변환
-                    String currentDate = LocalDateTime.now().format(dateTimeFormatter);
+                    String currentDate = baseDate.format(dateTimeFormatter);
                     String lot = String.format("%02d",lotNumberIndex);
                     String sequence = String.format("%03d",sequenceNumber);
 
