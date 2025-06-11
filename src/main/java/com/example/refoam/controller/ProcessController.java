@@ -26,6 +26,7 @@ public class ProcessController {
     @GetMapping("/{id}/list")
     public String processList(@PathVariable("id") Long orderId, Model model, @RequestParam(value = "page", defaultValue = "0") int page){
         Page<Process> paging = processService.getList(orderId, page);
+        model.addAttribute("misMatchCount",qualityCheckService.getMismatchCount(orderId));
         model.addAttribute("processes",paging);
         model.addAttribute("qualityCheck",qualityCheckService.selectQualityCheck(orderId));
         model.addAttribute("orderId",orderId);

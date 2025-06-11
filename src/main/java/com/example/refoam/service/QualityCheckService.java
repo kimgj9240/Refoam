@@ -84,6 +84,24 @@ public class QualityCheckService {
         Process selectprocess = processService.findOneProcess(orderId).orElseThrow(()-> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
         return selectprocess.getStandard().getQualityCheck();
     }
+
+    public Long getMismatchCount(Long orderId){
+        Process findprocess = processService.findOneProcess(orderId).orElseThrow(()-> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
+        List<Process> processes = processService.findAllOrder(findprocess.getId());
+        Long mismatchCount = processes.stream()
+                .filter(p -> {
+                    String result = p.getStandard().getProductLabel().name();
+                    String label = p.getStandard().getQualityCheck() != null
+                            ? p.getStandard().getQualityCheck().getCheckResult()
+                            : null;
+
+                    return ("양품".equals(label) && (result == null || !"OK".equals(result)))
+                            || ("불량품".equals(label) && "OK".equals(result));
+                })
+                .count();
+        return mismatchCount;
+    }
+
     public Optional<QualityCheck> findOneByStandard(Standard standard){
         return qualityCheckRepository.findByStandard(standard);
     }

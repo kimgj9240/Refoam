@@ -1,6 +1,16 @@
 <html layout:decorate="~{layout}" lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="container mb-5" layout:fragment="content">
-    <h2 class="my-4">공정 결과 (주문번호 : <span th:text="${orderId}"></span>)</h2>
+    <!--<h2 class="my-4">공정 결과 (주문번호 : <span th:text="${orderId}"></span>,
+        <span th:if="${qualityCheck}"> 불일치 건수: <span th:if="${misMatchCount}" th:text="${misMatchCount}">ddd</span></span>)</h2>-->
+    <h2 class="my-4">
+        공정 결과 (주문번호: <span th:text="${orderId}">0000</span>,
+        <span th:if="${misMatchCount}">
+        불일치 건수: <span th:text="${misMatchCount}">0</span>
+        </span>
+        <span th:unless="${misMatchCount}">
+        미검수
+        </span>)
+    </h2>
     <div class="mb-3">
         <div class="d-flex">
             <a href="#" th:href="@{/quality/{id}/check(id=${orderId})}" th:disabled="${qualityCheck==null}"
