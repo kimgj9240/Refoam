@@ -159,8 +159,7 @@ public class MonitoringService {
     }
 
 
-    private Integer cashedTargetQuantity = null;
-    private LocalDate targetDate = null;
+
 
     public Map<String, Integer> targetAchievement(int minTarget, int maxTarget) {
 
@@ -194,10 +193,10 @@ public class MonitoringService {
     public void sendAchievementUpdate() {
         List<Process> todayProcess = processRepository.findTodayProcesses();
 
-        if (todayProcess.isEmpty()) {
-            System.out.println("공정 없음 - 전송 생략");
-            return;
-        }
+//        if (todayProcess.isEmpty()) {
+//            System.out.println("공정 없음 - 전송 생략");
+//            return;
+//        }
 
         int targetQuantity = getTodayTarget(150,250);
 
@@ -214,15 +213,15 @@ public class MonitoringService {
         simpMessagingTemplate.convertAndSend("/topic/achievement", socket);
 
     }
-
-    private int getTodayTarget(int minTarget, int maxTarget) {
+    private Integer cashedTargetQuantity = null;
+    private LocalDate targetDate = null;
+    public int getTodayTarget(int minTarget, int maxTarget) {
         LocalDate today = LocalDate.now();
 
         if (cashedTargetQuantity == null || targetDate == null || !targetDate.equals(today)) {
             Random random = new Random(today.toEpochDay());
             cashedTargetQuantity = minTarget + 50 * random.nextInt((maxTarget - minTarget) / 50 + 1);
             targetDate = today;
-
         }
         return cashedTargetQuantity;
     }

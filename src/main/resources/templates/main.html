@@ -192,7 +192,7 @@
         let isConnected = false;
         let achievementChart = null;
         let rate = /*[[${achievementRate}]]*/0;
-        let target = /*[[${targetRate}]]*/0;
+        let target = /*[[${targetQuantity}]]*/0;
 
         // 모든 라이브러리 로드 대기 함수
         function waitForLibraries() {
@@ -250,19 +250,14 @@
         function initializeBasicCharts() {
             console.log('기본 차트 초기화 시작');
 
-            // 서버 데이터 가져오기
             const isAchieved = rate >= target;
             const barColor = isAchieved ? "rgba(0, 200, 100, 0.7)" : "rgba(63, 0, 255, 0.7)";
 
-            // 달성률 차트 (ChartDataLabels 플러그인 없이)
             const achievementCtx = document.getElementById("achievementRate");
             if (!achievementCtx) return;
 
-            if (achievementChart) {
-                achievementChart.destroy();
-            }
-
-            if (achievementCtx) {
+            if (!achievementChart) {
+                // 차트 최초 생성
                 achievementChart = new Chart(achievementCtx, {
                     type: "bar",
                     data: {
@@ -288,19 +283,16 @@
                                 },
                                 title: {
                                     display: true,
-                                    text: "(목표: 80%)",
+                                    text: `(목표: ${target}%)`,
                                 },
                             },
                             y: {
-                                grid: {display: false},
-                                ticks: {display: false},
+                                grid: { display: false },
+                                ticks: { display: false },
                             },
                         },
                         plugins: {
-                            legend: {
-                                display: true,
-                                position: "top",
-                            },
+                            legend: { display: true, position: "top" },
                             tooltip: {
                                 callbacks: {
                                     label: function (context) {
@@ -309,9 +301,19 @@
                                 },
                             },
                         },
+                        animation: {
+                            duration: 500 // 부드러운 갱신
+                        }
                     },
                 });
+            } else {
+                // 기존 차트 업데이트
+                achievementChart.data.datasets[0].data = [rate];
+                achievementChart.data.datasets[0].backgroundColor = barColor;
+                achievementChart.options.scales.x.title.text = `(목표: ${target}%)`;
+                achievementChart.update();
             }
+
             console.log('기본 차트 초기화 완료');
         }
 

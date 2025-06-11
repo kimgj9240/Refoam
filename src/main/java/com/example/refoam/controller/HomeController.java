@@ -91,7 +91,7 @@ public class HomeController {
     public String main(Model model){
         Map<String, Integer> kpiMap = monitoringService.targetAchievement(150, 250);
 
-        int targetQuantity = kpiMap.getOrDefault("targetQuantity", 0);
+        int targetQuantity = monitoringService.getTodayTarget(150,250);
         int okCount = kpiMap.getOrDefault("okCount", 0);
         int achievementRate = kpiMap.getOrDefault("achievementRate", 0);
 

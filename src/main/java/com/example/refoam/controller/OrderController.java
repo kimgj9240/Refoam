@@ -33,81 +33,41 @@ public class OrderController {
     private final MaterialService materialService;
     private final ProcessRepository processRepository;
 
-    // 제품 생산 페이지
+    // GET 요청
     @GetMapping("/new")
     public String createOrderform(Model model, HttpSession session){
-        // 재료 재고 확인
-        Map<MaterialName, Long> materialQuantities = materialService.getMaterialQuantities();
-        log.info("총 재료 {}", materialQuantities);
-
         Employee loginMember = (Employee) session.getAttribute(SessionConst.LOGIN_MEMBER);
         if(loginMember == null) {
             return "redirect:/login";
         }
 
-        Map<MaterialName, Long> rawMap = materialService.getMaterialQuantities();
-
-        // 재고 차트 순서 고정 (새로고침시 순서 바뀌는 거 방지)
-        Map<MaterialName, Long> materialMap = rawMap.entrySet().stream()
-                .sorted(Map.Entry.comparingByKey())
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (a,b) -> a,
-                        LinkedHashMap::new
-                ));
-
-        List<String> materialLabels = materialMap.keySet().stream()
-                .map(Enum::name)
-                .toList();
-
-        List<Long> materialData = materialMap.values().stream().toList();
-
-        // 원자재 그래프 막대 색 지정
-        Map<MaterialName, String> colorMap = Map.of(
-                MaterialName.EVA, "rgba(217,240,240, 1)",
-                MaterialName.P_BLACK, "rgba(202,202,202, 1)",
-                MaterialName.P_WHITE, "rgba(255,255,255, 1)",
-                MaterialName.P_BLUE, "rgba(213,234,249, 1)",
-                MaterialName.P_RED, "rgba(253,207,223, 1)"
-        );
-
-
-        List<String> materialColors = materialMap.keySet().stream()
-                .map(colorMap::get)
-                .toList();
-
-        model.addAttribute("materialLabels", materialLabels);
-        model.addAttribute("materialData", materialData);
-        model.addAttribute("materialColors", materialColors);
-        model.addAttribute("orderForm",new OrderForm());
+        setChartData(model);
+        model.addAttribute("orderForm", new OrderForm());
         return "order/createOrderForm";
     }
 
-    // 제품 생산 주문 저장
+    // POST 요청
     @PostMapping("/new")
-    public String createOrder(@Valid OrderForm orderForm, BindingResult bindingResult, @ModelAttribute("loginMember") Employee loginMember){
-        // productName에 따른 수량 가져오기
-        Map<MaterialName, Long> requiredMaterialStock = materialService.getRequiredMaterialStock(orderForm.getProductName());
-        log.info("productName에 따른 수량 {}", requiredMaterialStock);
-
-        // 주문 수량이 10 이상, 10단위인지 확인
-        if (orderForm.getOrderQuantity() < 10 || orderForm.getOrderQuantity() % 10 != 0) {
-            bindingResult.rejectValue("orderQuantity", "invalidQuantity", "주문 수량은 10개 이상이며, 10단위로만 가능합니다.");
-            return "order/createOrderForm";
-        }
+    public String createOrder(@Valid OrderForm orderForm, BindingResult bindingResult,
+                              @ModelAttribute("loginMember") Employee loginMember, Model model){
 
         if(bindingResult.hasErrors()){
+            setChartData(model);
             return "order/createOrderForm";
         }
 
-        //재고가 충분한지 검사, 부족하면 글로벌 에러 발생
         if(!materialService.isEnoughMaterial(orderForm.getProductName(),orderForm.getOrderQuantity())){
             bindingResult.reject("notEnoughMaterial","재고가 부족합니다.");
+            setChartData(model);
             return "order/createOrderForm";
         }
 
-        //processRepository.findAllByOrder_Id()
+        if (orderForm.getOrderQuantity() < 10 || orderForm.getOrderQuantity() % 10 != 0) {
+            bindingResult.rejectValue("orderQuantity", "invalidQuantity", "주문 수량은 10개 이상이며, 10단위로만 가능합니다.");
+            setChartData(model);
+            return "order/createOrderForm";
+        }
+
         Orders order = Orders.builder()
                 .productName(orderForm.getProductName())
                 .orderQuantity(orderForm.getOrderQuantity())
@@ -117,7 +77,6 @@ public class OrderController {
                 .build();
 
         orderService.newOrder(order);
-
         return "redirect:/order/list";
     }
 
@@ -157,4 +116,40 @@ public class OrderController {
 
         return "redirect:/order/list";
     }
+
+    private void setChartData(Model model) {
+        Map<MaterialName, Long> rawMap = materialService.getMaterialQuantities();
+
+        Map<MaterialName, Long> materialMap = rawMap.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (a,b) -> a,
+                        LinkedHashMap::new
+                ));
+
+        List<String> materialLabels = materialMap.keySet().stream()
+                .map(Enum::name)
+                .toList();
+
+        List<Long> materialData = materialMap.values().stream().toList();
+
+        Map<MaterialName, String> colorMap = Map.of(
+                MaterialName.EVA, "rgba(217,240,240, 1)",
+                MaterialName.P_BLACK, "rgba(202,202,202, 1)",
+                MaterialName.P_WHITE, "rgba(255,255,255, 1)",
+                MaterialName.P_BLUE, "rgba(213,234,249, 1)",
+                MaterialName.P_RED, "rgba(253,207,223, 1)"
+        );
+
+        List<String> materialColors = materialMap.keySet().stream()
+                .map(colorMap::get)
+                .toList();
+
+        model.addAttribute("materialLabels", materialLabels);
+        model.addAttribute("materialData", materialData);
+        model.addAttribute("materialColors", materialColors);
+    }
 }
+
