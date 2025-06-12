@@ -99,7 +99,13 @@ public class OrderController {
         String state = Math.random() < 0.95 ? "배합완료" : "배합실패";
         order.setOrderState(state);
 
-        // 저장*/
+        // WebSocket으로 배합 상태 브로드캐스트
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("orderId", id);
+        payload.put("state", state);
+
+        messagingTemplate.convertAndSend("/topic/mixing", payload);
+        // 저장
         orderService.save(order);
 
         return "redirect:/order/list?page=" + page;
@@ -120,11 +126,23 @@ public class OrderController {
 
     // 주문 취소
     @GetMapping("/{id}/delete")
-    public String deleteOrder(@PathVariable ("id") Long id){
-        orderService.findOneOrder(id).orElseThrow(() -> new IllegalArgumentException("해당 주문은 존재하지 않습니다."));
-        orderService.deleteOrder(id);
+    public String deleteOrder(@PathVariable ("id") Long id, RedirectAttributes redirectAttributes){
+        try {
+            Orders order = orderService.findOneOrder(id)
+                    .orElseThrow(() -> new IllegalArgumentException("해당 주문은 존재하지 않습니다."));
 
-        return "redirect:/order/list";
+            if (!order.getOrderState().equals("준비 중")) {
+                redirectAttributes.addFlashAttribute("errorMessage", "이미 진행된 공정입니다.");
+                return "redirect:/order/list";
+            }
+
+            orderService.deleteOrder(id);
+            return "redirect:/order/list";
+
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "이미 삭제된 주문입니다.");
+            return "redirect:/order/list";
+        }
     }
 
     private void setChartData(Model model) {

@@ -275,6 +275,9 @@
                         if (button) {
                             button.disabled = true;
                         }
+                        button.style.display = 'none';
+                        button.offsetHeight; // 강제 reflow
+                        button.style.display = '';
                     });
                 });
             }, function (error) {
