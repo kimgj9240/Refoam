@@ -321,8 +321,8 @@
         function initializeTemperatureCharts() {
             console.log('온도 차트 초기화 시작');
 
-            const HIGH_THRESHOLD = 81.4;
-            const LOW_THRESHOLD = 80.8;
+            const HIGH_THRESHOLD = 81.8;
+            const LOW_THRESHOLD = 80.6;
             const MAX_POINTS = 50;
             const names = ['NORMAL', 'BUMP', 'HALF'];
             const letters = ['A', 'B', 'C'];
@@ -662,12 +662,12 @@
                     this._gauge.option('value', value);
                     // ② 색상 결정
                     let color = '#000';              // 기본 검정
-                    if (value > 81.6) {
+                    if (value > 81.8) {
                         color = 'red';                 // 임계 상향 돌파 시 빨강
-                    } else if(value >= 81.4 && value <= 81.6) {
+                    } else if(value >= 81.4 && value <= 81.8) {
                         color = '#ff8228';
                     }
-                    else if (value < 80.8) {
+                    else if (value < 80.6) {
                         color = 'green';               // 임계 하향 돌파 시 초록
                     }
                     // ③ 텍스트와 색상 적용
@@ -701,6 +701,11 @@
             const toastBody = document.getElementById("toastBody");
 
             if (btn && toastEl && toastBody && typeof bootstrap !== 'undefined') {
+                // 투명도 삭제
+                toastEl.style.opacity = "1";
+                toastEl.style.backgroundColor = "#ffffff";
+                toastEl.style.color = "#000000";
+
                 const toast = new bootstrap.Toast(toastEl, {delay: 10000});
 
                 btn.addEventListener("click", function () {

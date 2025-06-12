@@ -4,12 +4,12 @@
     <div class="row g-2  mb-5">
         <div class="col-md-6 col-lg-4 col-12 ">
             <div class="tassei-err h-100">
-            <canvas id="todayErrorChart"></canvas>
+                <canvas id="todayErrorChart"></canvas>
             </div>
         </div>
         <div class="col-md-6 col-lg-8 col-12 ">
             <div class="tassei-err h-100">
-            <canvas id="weeklyLineChart"></canvas>
+                <canvas id="weeklyLineChart"></canvas>
             </div>
         </div>
     </div>
@@ -254,6 +254,10 @@
             const btn = document.getElementById('showErrorToastBtn');
             const toastEl = document.getElementById('errorToast');
             const toastBody = document.getElementById('errorToastBody');
+            // 투명도 삭제
+            toastEl.style.opacity = "1";
+            toastEl.style.backgroundColor = "#ffffff";
+            toastEl.style.color = "#000000";
 
             const toast = new bootstrap.Toast(toastEl, { delay: 10000 });
 
