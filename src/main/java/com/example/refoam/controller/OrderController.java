@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -32,6 +34,7 @@ public class OrderController {
     private final OrderService orderService;
     private final MaterialService materialService;
     private final ProcessRepository processRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
     // GET 요청
     @GetMapping("/new")
@@ -80,6 +83,7 @@ public class OrderController {
         return "redirect:/order/list";
     }
 
+    // 배합 공정
     @PostMapping("/{id}/first-process")
     public String mixOrder(@PathVariable("id") Long id, @RequestParam(value = "page", defaultValue = "0") int page) {
         Orders order = orderService.findOneOrder(id)
@@ -89,6 +93,12 @@ public class OrderController {
         String state = Math.random() < 0.95 ? "배합완료" : "배합실패";
         order.setOrderState(state);
 
+        // WebSocket으로 배합 상태 브로드캐스트
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("orderId", id);
+        payload.put("state", state);
+
+        messagingTemplate.convertAndSend("/topic/mixing", payload);
         // 저장
         orderService.save(order);
 
