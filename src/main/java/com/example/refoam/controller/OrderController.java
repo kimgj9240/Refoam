@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -85,21 +86,20 @@ public class OrderController {
 
     // 배합 공정
     @PostMapping("/{id}/first-process")
-    public String mixOrder(@PathVariable("id") Long id, @RequestParam(value = "page", defaultValue = "0") int page) {
+    public String mixOrder(@PathVariable("id") Long id, @RequestParam(value = "page", defaultValue = "0") int page, RedirectAttributes redirectAttributes) {
         Orders order = orderService.findOneOrder(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 주문은 존재하지 않습니다."));
+        //여기부터
+        if (!order.getOrderState().equals("준비 중")) {
+            redirectAttributes.addFlashAttribute("errorMessage", "이미 진행된 공정입니다.");
+            return "redirect:/order/list?page=" + page;
+        }
 
         // 95% 배합 완료 : 5% 배합 실패
         String state = Math.random() < 0.95 ? "배합완료" : "배합실패";
         order.setOrderState(state);
 
-        // WebSocket으로 배합 상태 브로드캐스트
-        Map<String, Object> payload = new HashMap<>();
-        payload.put("orderId", id);
-        payload.put("state", state);
-
-        messagingTemplate.convertAndSend("/topic/mixing", payload);
-        // 저장
+        // 저장*/
         orderService.save(order);
 
         return "redirect:/order/list?page=" + page;
