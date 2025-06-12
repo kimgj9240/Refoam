@@ -66,7 +66,13 @@
             <p>검수결과</p>
             <span th:text="${process.order.productName.name()}">NORMAL60</span> 제품은 <span
                 th:classappend="${process.standard.qualityCheck != null and process.standard.productLabel != null and process.standard.qualityCheck.checkResult != process.standard.productLabel.name() ? ' text-bg-warning' : ''}"
-                th:text="${process.standard.qualityCheck.checkResult}">양품</span>으로 판정되었습니다.
+                th:text="${process.standard.qualityCheck.checkResult}">양품</span>으로 판정되었습니다.<br>
+            <span
+                    th:if="((${process.standard.productLabel.name() == 'OK' and process.standard.qualityCheck.checkResult != '양품'})
+                       or
+                       (${process.standard.productLabel.name() != 'OK' and process.standard.qualityCheck.checkResult != '불량품'}))">
+                    검수 결과 불일치 담당자 확인필요
+            </span>
         </div>
     </div>
     <div class="modal-footer">
