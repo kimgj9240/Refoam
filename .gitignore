@@ -38,3 +38,6 @@ out/
 
 #######추가########
 application.yml
+##### 추가 #####
+build/reports/problems/problems-report.html
+
