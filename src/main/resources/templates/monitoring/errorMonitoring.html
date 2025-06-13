@@ -13,14 +13,14 @@
             </div>
         </div>
     </div>
-    <button id="showErrorToastBtn" class="btn btn-primary position-fixed bottom-0 end-0 m-4" style="z-index: 1100;">
+    <button id="showErrorToastBtn" class="btn btn-refoam position-fixed bottom-0 end-0 m-4" style="z-index: 1100;">
         📋 리포트 보기
     </button>
     <div class="position-fixed bottom-0 mb-5 end-0 p-3" style="z-index: 1100;">
         <div id="errorToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
-                <strong class="me-auto">📋 AI 리포트</strong>
-                <small class="text-muted">지금</small>
+                <strong class="refoam-font me-auto">📋 AI 리포트</strong>
+                <small class="gray-font">방금 전</small>
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div class="toast-body">
@@ -261,7 +261,7 @@
             toastEl.style.backgroundColor = "#ffffff";
             toastEl.style.color = "#000000";
 
-            const toast = new bootstrap.Toast(toastEl, { delay: 10000 });
+            const toast = new bootstrap.Toast(toastEl, {delay: 10000});
 
             btn.addEventListener('click', function () {
                 toastBody.textContent = "AI 리포트를 불러오는 중입니다..."

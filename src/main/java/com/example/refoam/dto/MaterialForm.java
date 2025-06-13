@@ -16,7 +16,7 @@ public class MaterialForm {
     @NotNull(message = "원재료 명은 필수입니다.")
     private MaterialName materialName;
     @NotNull(message = "수량은 필수입니다.")
-    private int materialQuantity;
+    private Integer materialQuantity;
     private LocalDateTime materialDate;
     private Employee employee;
 }

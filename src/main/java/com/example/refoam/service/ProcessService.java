@@ -66,10 +66,10 @@ public class ProcessService {
                 // 로트넘버 생성
                 int sequenceNumber = index % 10 + 1;
                 int lotNumberIndex = index / 10 + 1;
-                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd"); // 현재 날짜를 YYYYMMDD 형식으로 변환
+                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyMMdd"); // 현재 날짜를 YYYYMMDD 형식으로 변환
                 String currentDate = LocalDateTime.now().format(dateTimeFormatter);
                 String lot = String.format("%02d",lotNumberIndex);
-                String sequence = String.format("%03d",sequenceNumber);
+                String sequence = String.format("%02d",sequenceNumber);
 
                 String lotNumber = o.getProductName().name() + "_" + o.getId() + "_"
                         + lot + "_" + sequence + "_" + currentDate;

@@ -44,8 +44,8 @@ public class DummyDataLoader implements CommandLineRunner {
         employeeService.save(employee);
 
         Employee employee2 = Employee.builder()
-                .loginId("test2")
-                .username("직원")
+                .loginId("testtest2")
+                .username("직원입니다")
                 .password("1111")
                 .position(PositionName.STAFF)
                 .email("refoam.test@gmail.com")
@@ -103,10 +103,10 @@ public class DummyDataLoader implements CommandLineRunner {
                     final int index = i;
                     int sequenceNumber = index % 10 + 1;
                     int lotNumberIndex = index / 10 + 1;
-                    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd"); // 현재 날짜를 YYYYMMDD 형식으로 변환
+                    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyMMdd"); // 현재 날짜를 YYYYMMDD 형식으로 변환
                     String currentDate = baseDate.format(dateTimeFormatter);
                     String lot = String.format("%02d",lotNumberIndex);
-                    String sequence = String.format("%03d",sequenceNumber);
+                    String sequence = String.format("%02d",sequenceNumber);
 
                     String lotNumber = orders1.getProductName().name() + "_" + orders1.getId() + "_"
                             + lot + "_" + sequence + "_" + currentDate;

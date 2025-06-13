@@ -2,17 +2,17 @@
 <div class="container mb-5" layout:fragment="content">
     <h2 class="my-4">주문 리스트</h2>
     <div class="table-responsive table-lg">
-        <table class="table table-hover table-striped">
+        <table class="table table-hover text-center table-striped">
             <thead>
             <tr>
-                <th class="text-center"> #</th>
+                <th class="table-font text-center">번호</th>
                 <th>제품명</th>
-                <th>주문수량</th>
+                <th>수량</th>
                 <th>주문날짜</th>
-                <th>담당직원</th>
-                <th>공정상태</th>
+                <th>등록자</th>
+                <th>상태</th>
                 <th class="text-center">공정관리</th>
-                <th>실시간현황</th>
+                <th>현황</th>
             </tr>
             </thead>
             <tbody>
@@ -54,7 +54,7 @@
                     <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${order.id}" class="btn btn-delete btn-sm disabled" th:if="${order.orderState != '준비 중'}"> 주문취소</button>
                 </td>
                 <td>
-                    <span th:id="'progress-text-a-' + ${order.id}">[[${order.completedCount}]] / [[${order.orderQuantity}]] </span>
+                    <span th:id="'progress-text-a-' + ${order.id}">[[${order.completedCount}]] / [[${order.orderQuantity}]]</span>
                     <span th:id="'status-light-a-' + ${order.id}" class="status-light" th:classappend="
                         ${order.completedCount} == 0 ? '' :
                         (${order.errorRate} < 0.1 ? 'green-light' :
@@ -65,26 +65,25 @@
         </table>
     </div>
     <div class="table-responsive table-md">
-        <table class="table table-hover table-striped">
+        <table class="table table-font double-stripe align-middle text-center">
             <colgroup>
-                <col style="width: 20%">   <!--md 사이즈 화면 비율로 조정 # -->
-                <col style="width: 15%">  <!-- 제품명 -->
-                <col style="width: 20%">  <!-- 주문수량 -->
-                <col style="width: 20%">  <!-- md 사이즈에서만 날짜포맷 변경 주문날짜  -->
-                <col style="width: 25%">  <!-- 담당직원 -->
+                <col style="width: 25%">   <!--md 사이즈 화면 비율로 조정 # -->
+                <col style="width: 25%">  <!-- 제품명 -->
+                <col style="width: 25%">  <!-- 주문수량 -->
+                <col style="width: 25%">  <!-- md 사이즈에서만 날짜포맷 변경 주문날짜  -->
             </colgroup>
             <thead>
-            <tr>
-                <th class="ps-3 ">#</th>
+            <tr class="text-center">
+                <th>번호</th>
                 <th>제품명</th>
-                <th>주문수량</th>
-                <th>주문날짜</th>
-                <th>담당직원</th>
+                <th>수량</th>
+                <th>등록자</th>
             </tr>
-            <tr>
-                <th class="ps-3">공정상태</th>
-                <th colspan="3">공정관리</th>
-                <th>실시간현황</th>
+            <tr class="text-center">
+                <th>주문날짜</th>
+                <th>상태</th>
+                <th>공정관리</th>
+                <th>현황</th>
             </tr>
             </thead>
             <tbody>
@@ -93,20 +92,21 @@
                     <td th:text="${order.id}" class="ps-3">1</td>
                     <td th:text="${order.productName}"></td>
                     <td th:text="${order.orderQuantity}"></td>
-                    <td th:text="${#temporals.format(order.orderDate,'MM-dd HH:mm')}"></td>
                     <td th:text="${order.employee.username}"></td>
                 </tr>
                 <tr>
+                    <td th:text="${#temporals.format(order.orderDate,'MM-dd HH:mm')}"></td>
                     <td th:id="'state-text-b-' + ${order.id}" th:text="${order.orderState}" class="ps-3"></td>
-                    <td colspan="3">
+                    <td>
                         <!-- 배합시작 버튼-->
                         <form th:action="@{/order/{id}/first-process(id=${order.id})}" method="post" style="display:inline;">
                             <input type="hidden" name="page" th:value="${ordersList.number}" />
                             <button  th:id="'mixing-button-b-' + ${order.id}" type="submit"
-                                    class="btn btn-sm btn-refoam me-2"
+                                    class="btn btn-sm btn-refoam btn-font me-2"
                                     th:disabled="${order.orderState != '준비 중'}">배합시작</button>
                         </form>
                         <!-- 공정시작 버튼 -->
+                        <br>
 
                         <form th:if="${order.orderState != '공정완료'}"
                               th:id="'process-start-form-b-' + ${order.id}"
@@ -115,19 +115,20 @@
                             <input type="hidden" name="page" th:value="${ordersList.number}" />
                             <button id="start-btn-b-[[${order.id}]]"
                                     type="submit"
-                                    class="btn btn-light border border-1 border-dark btn-sm me-2"
+                                    class="btn btn-light border border-1 border-dark btn-sm btn-font me-2"
                                     th:disabled="${order.orderState != '배합완료'}">공정시작</button>
                         </form>
 
                         <!-- 공정완료 버튼 자리 확보용 (처음에는 공백) -->
-                        <a th:if="${order.orderState == '공정완료'}"
-                            th:href="@{/process/{id}/list(id=${order.id})}"
-                            class="btn btn-dark btn-sm border me-2">공정결과</a>
-                        <span th:id="'process-result-placeholder-b-' + ${order.id}"></span>
+<!--                        <a th:if="${order.orderState == '공정완료'}"-->
+<!--                            th:href="@{/process/{id}/list(id=${order.id})}"-->
+<!--                            class="btn btn-dark btn-sm btn-font me-2">공정결과</a>-->
+                        <button type="button"  class="btn btn-dark btn-sm btn-font me-2" th:if="${order.orderState == '공정완료'}" th:onclick="|location.href='@{/process/{id}/list(id=${order.id})}'|"> 공정결과</button>
+                        <span th:id="'process-result-placeholder-b-' + ${order.id}"></span><br>
                         <!-- 주문취소 버튼 -->
-                        <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${order.id}" class="btn btn-delete btn-sm " th:if="${order.orderState == '준비 중'}"> 주문취소</button>
+                        <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${order.id}" class="btn btn-delete btn-sm btn-font me-2" th:if="${order.orderState == '준비 중'}">주문취소</button>
 
-                        <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${order.id}" class="btn btn-delete btn-sm disabled" th:if="${order.orderState != '준비 중'}"> 주문취소</button>
+                        <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${order.id}" class="btn btn-delete btn-sm btn-font me-2 disabled" th:if="${order.orderState != '준비 중'}">주문취소</button>
                     </td>
                     <td>
                         <span th:id="'progress-text-b-' + ${order.id}">[[${order.completedCount}]] / [[${order.orderQuantity}]]</span>

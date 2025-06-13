@@ -3,15 +3,15 @@
     <h2 class="my-4">직원 리스트</h2>
 
     <div class="table-responsive d-none d-lg-block">
-        <table class="table table-hover table-striped">
+        <table class="table table-hover text-center table-striped">
             <thead>
             <tr>
-                <th class="text-center"> #</th>
+                <th>번호</th>
                 <th>ID</th>
                 <th>이름</th>
                 <th>직위</th>
-                <th>연락처</th>
-                <th class="text-center"> #</th>
+                <th>이메일</th>
+                <th>관리</th>
             </tr>
             </thead>
             <tbody>
@@ -22,49 +22,42 @@
                 <td th:text="${employee.position}">position</td>
                 <td th:text="${employee.email}">email</td>
                 <td class="text-center">
-                    <a href="#" th:href="@{/employee/{id}/edit(id=${employee.id})}"
-                       class="btn btn-sm btn-refoam px-3 me-3" role="button">수 정</a>
-                    <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${employee.id}"
-                            class="btn btn-delete btn-sm px-3">삭 제
-                    </button>
+                    <a href="#" th:href="@{/employee/{id}/edit(id=${employee.id})}" class="btn btn-sm btn-refoam px-3 me-3" role="button">수 정</a>
+                    <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${employee.id}" class="btn btn-delete btn-sm px-3">삭 제</button>
                 </td>
             </tr>
             </tbody>
         </table>
     </div>
     <div class="table-responsive d-block d-lg-none">
-        <table class="table table-hover table-striped">
+        <table class="table text-center align-middle table-striped">
+            <colgroup>
+                <col style="width: 15%">   <!--번호 -->
+                <col style="width: 25%">  <!-- ID -->
+                <col style="width: 20%">  <!-- 이름 -->
+                <col style="width: 20%">  <!-- 직위-->
+                <col style="width: 25%">  <!-- 버튼 -->
+            </colgroup>
             <thead>
             <tr>
-                <th class="ps-3">#</th>
+                <th>번호</th>
                 <th>ID</th>
                 <th>이름</th>
-                <th class="ps-3">직위</th>
-            </tr>
-            <tr>
-                <th colspan="3">연락처</th>
-                <th> # </th>
+                <th>직위</th>
+                <th>관리</th>
             </tr>
             </thead>
             <tbody>
             <th:block th:each="employee, index : ${paging}">
                 <tr>
-                    <td th:text="${employee.id}" class="ps-3">1</td>
+                    <td th:text="${employee.id}">1</td>
                     <td th:text="${employee.loginId}">ID</td>
                     <td th:text="${employee.username}">name</td>
-                    <td th:text="${employee.position}" class="ps-3">position</td>
-                </tr>
-                <tr>
-                    <td colspan="3" th:text="${employee.email}">phone</td>
+                    <td th:text="${employee.position}">position</td>
                     <td>
-                        <div class="d-flex flex-nowrap gap-2">
-                            <a href="#" th:href="@{/employee/{id}/edit(id=${employee.id})}"
-                               class="btn btn-sm btn-refoam w-50" role="button">수 정</a>
-                            <button type="button"
-                                    th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${employee.id}"
-                                    class="btn btn-delete btn-sm w-50">삭 제
-                            </button>
-                        </div>
+                        <button type="button" class="btn btn-sm btn-refoam mb-1"
+                                th:onclick="|location.href='@{/employee/{id}/edit(id=${employee.id})}'|">수 정</button>
+                        <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${employee.id}" class="btn btn-delete btn-sm mb-1">삭 제</button>
                     </td>
                 </tr>
             </th:block>

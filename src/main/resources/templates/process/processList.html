@@ -3,13 +3,13 @@
     <!--<h2 class="my-4">공정 결과 (주문번호 : <span th:text="${orderId}"></span>,
         <span th:if="${qualityCheck}"> 불일치 건수: <span th:if="${misMatchCount}" th:text="${misMatchCount}">ddd</span></span>)</h2>-->
     <h2 class="my-4">
-        공정 결과 (주문번호: <span th:text="${orderId}">0000</span>,
+        공정 결과 <span class="fs-4">(주문번호: <span th:text="${orderId}">0000</span>,
         <span th:if="${misMatchCount}">
         불일치 건수: <span th:text="${misMatchCount}">0</span>
         </span>
         <span th:unless="${misMatchCount}">
-        미검수
-        </span>)
+        -
+        </span>)</span>
     </h2>
     <div class="mb-3">
         <div class="d-flex">
@@ -22,11 +22,10 @@
     </div>
 
     <div class="table-responsive table-lg">
-        <table class="table table-hover table-striped">
+        <table class="table text-center table-striped">
             <thead>
             <tr>
-                <th class="text-center">lotNumber</th>
-
+                <th>lotNumber</th>
                 <th>금형온도</th>
                 <th>충전시간</th>
                 <th>최고사출압</th>
@@ -34,18 +33,18 @@
                 <th>공정일자</th>
                 <th>라벨</th>
                 <th>검수결과</th>
-                <th class="text-center"> #</th>
+                <th>상세보기</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="process : ${processes}">
-                <td th:text="${process.lotNumber}" class="text-center">lotNumber</td>
+                <td th:text="${process.lotNumber}">lotNumber</td>
 
                 <td th:text="${process.standard.moldTemperature}"></td>
                 <td th:text="${process.standard.timeToFill}">50</td>
                 <td th:text="${process.standard.injPressurePeak}">50</td>
                 <td th:text="${process.standard.screwPosEndHold}">50</td>
-                <td th:text="${#temporals.format(process.processDate,'yy-MM-dd HH:mm')}">2000-00-00 00:00</td>
+                <td th:text="${#temporals.format(process.processDate,'yy-MM-dd HH:mm:ss')}">2000-00-00 00:00</td>
                 <td th:text="${process.standard.productLabel.name()}"></td>
                 <td><span th:if="${process.standard.qualityCheck != null}" th:text="${process.standard.qualityCheck.checkResult}"></span></td>
                 <td class="text-center">
@@ -53,7 +52,7 @@
                             class="btn btn-refoam btn-sm open-quality-modal"
                             th:data-process-id="${process.id}"
                             th:disabled="${process.standard.qualityCheck == null}">
-                        품질검수
+                        상세
                     </button>
                 </td>
             </tr>
@@ -61,21 +60,27 @@
         </table>
     </div>
     <div class="table-responsive table-md">
-        <table class="table table-hover table-striped">
+        <table class="table table-font2 text-center align-middle double-stripe">
+            <colgroup>
+                <col style="width: 35%">   <!--lotNumber # -->
+                <col style="width: 15%">  <!-- 라벨 -->
+                <col style="width: 25%">  <!-- 검수결과 -->
+                <col style="width: 25%">  <!--버튼  -->
+            </colgroup>
             <thead>
             <tr>
-                <th colspan="2" class="ps-3">lotNumber</th>
+                <th colspan="2" class="txt-minus">lotNumber</th>
                 <!--<th>제품명</th>-->
                 <th>금형온도</th>
                 <th>충전시간</th>
-                <th>최고사출압</th>
+<!--                <th>최고사출압</th>-->
             </tr>
             <tr>
-                <th>보압끝점</th>
+<!--                <th>보압끝점</th>-->
                 <th>공정일자</th>
                 <th>라벨</th>
                 <th>검수결과</th>
-                <th>#</th>
+                <th>상세보기</th>
             </tr>
             </thead>
             <tbody>
@@ -85,11 +90,11 @@
                     <!--<td th:text="${process.order.productName}">EVA</td>-->
                     <td th:text="${process.standard.moldTemperature}">50</td>
                     <td th:text="${process.standard.timeToFill}">50</td>
-                    <td th:text="${process.standard.injPressurePeak}">50</td>
+<!--                    <td th:text="${process.standard.injPressurePeak}">50</td>-->
                 </tr>
                 <tr>
-                    <td th:text="${process.standard.screwPosEndHold}">50</td>
-                    <td th:text="${#temporals.format(process.processDate,'yy-MM-dd HH:mm')}">20-00-00 00:00</td>
+<!--                    <td th:text="${process.standard.screwPosEndHold}">50</td>-->
+                    <td th:text="${#temporals.format(process.processDate,'MM-dd HH:mm:ss')}">20-00-00 00:00</td>
                     <td th:text="${process.standard.productLabel}"></td>
                     <td><span th:if="${process.standard.qualityCheck != null}" th:text="${process.standard.qualityCheck.checkResult}"></span></td>
                     <td>
@@ -97,7 +102,7 @@
                                 class="btn btn-refoam btn-sm open-quality-modal-md"
                                 th:data-process-id="${process.id}"
                                 th:disabled="${process.standard.qualityCheck == null}">
-                            품질검수
+                            상세
                         </button>
                     </td>
                 </tr>
@@ -115,22 +120,22 @@
     <nav th:if="${!processes.isEmpty()}">
         <ul class="pagination justify-content-center">
             <li class="page-item" th:classappend="${processes.first} ? 'disabled'">
-                <a class="page-link logo-font fw-normal" th:href="@{|?page=0|}"><i
-                        class="bi bi-chevron-double-left"></i>First</a>
+                <a class="page-link" th:href="@{|?page=0|}"><i
+                        class="bi bi-chevron-double-left"></i>처음</a>
             </li>
             <li class="page-item" th:classappend="${!processes.hasPrevious()}?'disabled'">
-                <a class="page-link ps-0" th:href="@{|?page=${processes.number -1}|}"><i class="bi bi-chevron-left"></i>Previous</a>
+                <a class="page-link ps-0" th:href="@{|?page=${processes.number -1}|}"><i class="bi bi-chevron-left"></i>이전</a>
             </li>
             <li class="page-item" th:each="page:${#numbers.sequence(0,processes.totalPages -1)}"
                 th:classappend="${page==processes.number}?'active'"
                 th:if="${page >= processes.number -4 and page <= processes.number +4}">
                 <a class="page-link" th:text="${page + 1}" th:href="@{|?page=${page}|}">1</a></li>
             <li class="page-item" th:classappend="${!processes.hasNext()}?'disabled'">
-                <a class="page-link pe-0" th:href="@{|?page=${processes.number +1}|}">Next <i
+                <a class="page-link pe-0" th:href="@{|?page=${processes.number +1}|}">다음<i
                         class="bi bi-chevron-right"></i></a>
             </li>
             <li class="page-item" th:classappend="${processes.last} ? 'disabled'">
-                <a class="page-link " th:href="@{|?page=${processes.totalPages -1}|}">Last<i
+                <a class="page-link " th:href="@{|?page=${processes.totalPages -1}|}">마지막<i
                         class="bi bi-chevron-double-right"></i></a>
             </li>
         </ul>

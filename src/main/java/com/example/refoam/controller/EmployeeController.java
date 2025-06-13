@@ -132,6 +132,5 @@ public class EmployeeController {
         log.info("삭제 id? {}", employee.getId());
         employeeService.deleteEmployee(employee.getId());
         return "redirect:/employee/list";
-
     }
 }

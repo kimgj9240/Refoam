@@ -15,7 +15,7 @@
             </div>
             <div class="mb-2">
                 <label class="form-label fw-bold" th:for="*{orderQuantity}">수량</label>
-                <input class="form-control" type="number" min="10" step="10" th:field="*{orderQuantity}">
+                <input class="form-control" type="number" min="10" max="30" step="10" th:field="*{orderQuantity}" placeholder="10개부터 최대 30개까지 주문 가능합니다">
             </div>
             <div class="text-end">
                 <button type="submit" class="btn btn-refoam">생산 등록</button>
@@ -74,6 +74,11 @@
                     }
                 },
             }
+        });
+        window.addEventListener("DOMContentLoaded", function () {
+            connectWebSocket();
+            /* alert 처리 */
+            [[${errorMessage != null}]] ? alert([[${errorMessage}]]) : null;
         });
     </script>
 </div>

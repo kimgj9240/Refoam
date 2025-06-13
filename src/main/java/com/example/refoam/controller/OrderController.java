@@ -12,15 +12,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -32,6 +35,7 @@ public class OrderController {
     private final OrderService orderService;
     private final MaterialService materialService;
     private final ProcessRepository processRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
     // GET 요청
     @GetMapping("/new")
@@ -49,12 +53,17 @@ public class OrderController {
     // POST 요청
     @PostMapping("/new")
     public String createOrder(@Valid OrderForm orderForm, BindingResult bindingResult,
-                              @ModelAttribute("loginMember") Employee loginMember, Model model){
+                              @ModelAttribute("loginMember") Employee loginMember, Model model, RedirectAttributes redirectAttributes){
 
         if(bindingResult.hasErrors()){
             setChartData(model);
             return "order/createOrderForm";
         }
+//        //여기부터
+//        if (orderForm.getOrderQuantity() > 30) {
+//            redirectAttributes.addFlashAttribute("errorMessage", "최대 30개까지만 주문할 수 있습니다.");
+//            return "redirect:/order/createOrderForm";
+//        }
 
         if(!materialService.isEnoughMaterial(orderForm.getProductName(),orderForm.getOrderQuantity())){
             bindingResult.reject("notEnoughMaterial","재고가 부족합니다.");
@@ -80,15 +89,27 @@ public class OrderController {
         return "redirect:/order/list";
     }
 
+    // 배합 공정
     @PostMapping("/{id}/first-process")
-    public String mixOrder(@PathVariable("id") Long id, @RequestParam(value = "page", defaultValue = "0") int page) {
+    public String mixOrder(@PathVariable("id") Long id, @RequestParam(value = "page", defaultValue = "0") int page, RedirectAttributes redirectAttributes) {
         Orders order = orderService.findOneOrder(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 주문은 존재하지 않습니다."));
+        //여기부터
+        if (!order.getOrderState().equals("준비 중")) {
+            redirectAttributes.addFlashAttribute("errorMessage", "이미 진행된 공정입니다.");
+            return "redirect:/order/list?page=" + page;
+        }
 
         // 95% 배합 완료 : 5% 배합 실패
         String state = Math.random() < 0.95 ? "배합완료" : "배합실패";
         order.setOrderState(state);
 
+        // WebSocket으로 배합 상태 브로드캐스트
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("orderId", id);
+        payload.put("state", state);
+
+        messagingTemplate.convertAndSend("/topic/mixing", payload);
         // 저장
         orderService.save(order);
 
@@ -110,11 +131,23 @@ public class OrderController {
 
     // 주문 취소
     @GetMapping("/{id}/delete")
-    public String deleteOrder(@PathVariable ("id") Long id){
-        orderService.findOneOrder(id).orElseThrow(() -> new IllegalArgumentException("해당 주문은 존재하지 않습니다."));
-        orderService.deleteOrder(id);
+    public String deleteOrder(@PathVariable ("id") Long id, RedirectAttributes redirectAttributes){
+        try {
+            Orders order = orderService.findOneOrder(id)
+                    .orElseThrow(() -> new IllegalArgumentException("해당 주문은 존재하지 않습니다."));
 
-        return "redirect:/order/list";
+            if (!order.getOrderState().equals("준비 중")) {
+                redirectAttributes.addFlashAttribute("errorMessage", "이미 진행된 공정입니다.");
+                return "redirect:/order/list";
+            }
+
+            orderService.deleteOrder(id);
+            return "redirect:/order/list";
+
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "이미 삭제된 주문입니다.");
+            return "redirect:/order/list";
+        }
     }
 
     private void setChartData(Model model) {

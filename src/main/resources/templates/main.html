@@ -3,7 +3,7 @@
     <h2 class="my-4">오늘의 달성률</h2>
     <div class="row mb-5">
         <div class="col-12 col-md-6 col-lg-6">
-            <h5 class="text-center mt-lg-2 mt-md-3">
+            <h5 class="gray-font text-center mt-lg-2 mt-md-3">
                 오늘의 목표 수량: <span id="targetCount" th:text="${targetQuantity}">0</span>개
             </h5>
             <div class="tassei">
@@ -17,24 +17,24 @@
                 <div class="col">
                     <div class="card shadow-sm h-100">
                         <div class="card-body d-flex flex-column justify-content-center text-center">
-                            <h6 class="text-muted mb-2 ">달성 수량</h6>
-                            <h4 class="mb-0" id="okCount" th:text="${okCount} + '개'">0개</h4>
+                            <h6 class="refoam-font mb-2">달성 수량</h6>
+                            <h6 class="gray-font mb-0" id="okCount" th:text="${okCount} + '개'">0개</h6>
                         </div>
                     </div>
                 </div>
                 <div class="col">
                     <div class="card shadow-sm h-100">
                         <div class="card-body d-flex flex-column justify-content-center text-center">
-                            <h6 class="text-muted mb-2">달성률</h6>
-                            <h4 class="mb-0" id="achievementRateText" th:text="${achievementRate} + '%'">0%</h4>
+                            <h6 class="refoam-font mb-2">달성률</h6>
+                            <h6 class="gray-font mb-0" id="achievementRateText" th:text="${achievementRate} + '%'">0%</h6>
                         </div>
                     </div>
                 </div>
                 <div class="col">
                     <div class="card shadow-sm h-100">
                         <div class="card-body d-flex flex-column justify-content-center text-center">
-                            <h6 class="text-muted mb-2">남은 수량</h6>
-                            <h4 id="remainingCount" th:text="${(targetQuantity != null and okCount != null) ? (targetQuantity - okCount) + '개' : '0개'}">0개</h4>
+                            <h6 class="refoam-font mb-2">남은 수량</h6>
+                            <h6 class="gray-font mb-0" id="remainingCount" th:text="${(targetQuantity != null and okCount != null) ? (targetQuantity - okCount) + '개' : '0개'}">0개</h6>
                         </div>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
         <div class="container pe-0 ps-0">
             <div class="row justify-content-between gx-4 gy-4">
                 <div class="col-12 col-lg-4">
-                    <h5> NORMAL</h5>
+                    <p class="gray-font fw-bold text-center">NORMAL</p>
                     <div class="d-flex flex-column align-items-center">
                         <div class="gauge mb-3"></div>
                         <div class="chart-wrapper w-100">
@@ -56,7 +56,7 @@
                     </div>
                 </div>
                 <div class="col-12 col-lg-4">
-                    <h5> BUMP</h5>
+                    <p class="gray-font fw-bold text-center">BUMP</p>
                     <div class="d-flex flex-column align-items-center">
                         <div class="gauge mb-3"></div>
                         <div class="chart-wrapper w-100">
@@ -65,7 +65,7 @@
                     </div>
                 </div>
                 <div class="col-12 col-lg-4">
-                    <h5>HALF</h5>
+                    <p class="gray-font fw-bold text-center">HALF</p>
                     <div class="d-flex flex-column align-items-center">
                         <div class="gauge mb-3"></div>
                         <div class="chart-wrapper w-100">
@@ -76,12 +76,6 @@
             </div>
         </div>
     </div>
-
-    <!--<div class="col-lg-12 my-lg-2">
-        <h2 class="my-4">생산량 통계</h2>
-        <canvas id="monitoringChart2" class="mt-3" height="215"></canvas>
-    </div>-->
-
     <h2 class="mb-4">제품별 생산 현황</h2>
     <div class="row">
         <div class="col-12 col-lg-4">
@@ -100,8 +94,8 @@
     <div class="position-fixed bottom-0 mb-5 end-0 p-3" style="z-index: 1100">
         <div id="aiReportToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
-                <strong class="me-auto">📋 AI 리포트</strong>
-                <small class="text-muted">방금 전</small>
+                <strong class="refoam-font me-auto">📋 AI 리포트</strong>
+                <small class="gray-font">방금 전</small>
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div class="toast-body">
