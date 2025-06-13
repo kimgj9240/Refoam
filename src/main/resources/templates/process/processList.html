@@ -94,7 +94,7 @@
                 </tr>
                 <tr>
 <!--                    <td th:text="${process.standard.screwPosEndHold}">50</td>-->
-                    <td th:text="${#temporals.format(process.processDate,'MM-dd HH:mm:ss')}">20-00-00 00:00</td>
+                    <td th:text="${#temporals.format(process.processDate,'MM-dd HH:mm:ss')}" class="txt-minus-date">20-00-00 00:00</td>
                     <td th:text="${process.standard.productLabel}"></td>
                     <td><span th:if="${process.standard.qualityCheck != null}" th:text="${process.standard.qualityCheck.checkResult}"></span></td>
                     <td>
