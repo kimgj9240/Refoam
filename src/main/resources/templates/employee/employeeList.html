@@ -15,10 +15,11 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="employee, index : ${paging}">
-                <td th:text="${employee.id}" class="text-center">1</td>
+<!--            dto에서 가져오는거라서 content를 해야지 작동합니다 -->
+            <tr th:each="employee, index : ${paging.content}">
+            <td th:text="${employee.id}" class="text-center">1</td>
                 <td th:text="${employee.loginId}">ID</td>
-                <td th:text="${employee.username}">name</td>
+                <td th:text="${employee.displayName}">name</td>
                 <td th:text="${employee.position}">position</td>
                 <td th:text="${employee.email}">email</td>
                 <td class="text-center">
@@ -48,11 +49,11 @@
             </tr>
             </thead>
             <tbody>
-            <th:block th:each="employee, index : ${paging}">
-                <tr>
+            <th:block th:each="employee, index : ${paging.content}">
+            <tr>
                     <td th:text="${employee.id}">1</td>
                     <td th:text="${employee.loginId}">ID</td>
-                    <td th:text="${employee.username}">name</td>
+                    <td th:text="${employee.displayName}">name</td>
                     <td th:text="${employee.position}">position</td>
                     <td>
                         <button type="button" class="btn btn-sm btn-refoam mb-1"
@@ -65,8 +66,8 @@
         </table>
     </div>
     <!-- 테이블 아래에 위치, employee마다 모달 한 번씩 반복 -->
-    <th:block th:each="employee : ${paging}">
-        <div class="modal fade"
+    <th:block th:each="employee : ${paging.content}">
+    <div class="modal fade"
              th:id="'modal__' + ${employee.id}"
              tabindex="-1"
              aria-hidden="true">
@@ -77,7 +78,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body"
-                         th:text="|ID: ${employee.loginId}, 이름: ${employee.username}님을 삭제하시겠습니까?|">
+                         th:text="|ID: ${employee.loginId}, 이름: ${employee.displayName}님을 삭제하시겠습니까?|">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-refoam" data-bs-dismiss="modal">취소</button>

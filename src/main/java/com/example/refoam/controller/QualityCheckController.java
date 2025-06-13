@@ -23,10 +23,25 @@ public class QualityCheckController {
         qualityCheckService.getQualityCheck(orderId);
         return "redirect:/process/{id}/list";
     }
+
     @GetMapping("/modal/{processId}")
     public String getQualityModal(@PathVariable Long processId, Model model) {
-        Process process = processService.findOneProcess(processId).orElseThrow(()-> new IllegalArgumentException("해당 공정이 존재하지 않습니다."));
+        Process process = processService.findOneProcess(processId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 공정이 존재하지 않습니다."));
+
+        // ✅ 담당자 이름 세팅 (퇴사자 or null 대응)
+        if (process.getOrder() != null && process.getOrder().getEmployee() != null) {
+            String displayName = process.getOrder().getEmployee().getUsername();
+            if (!process.getOrder().getEmployee().isActive()) {
+                displayName += " (퇴사)";
+            }
+            process.setProcessDisplayName(displayName);
+        } else {
+            process.setProcessDisplayName("직원 없음");
+        }
+
         model.addAttribute("process", process);
-        return "fragments/qualityModal :: modalContent"; // Thymeleaf 조각 반환
+        return "fragments/qualityModal :: modalContent";
     }
+
 }

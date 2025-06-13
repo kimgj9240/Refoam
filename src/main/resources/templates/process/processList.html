@@ -39,7 +39,6 @@
             <tbody>
             <tr th:each="process : ${processes}">
                 <td th:text="${process.lotNumber}">lotNumber</td>
-
                 <td th:text="${process.standard.moldTemperature}"></td>
                 <td th:text="${process.standard.timeToFill}">50</td>
                 <td th:text="${process.standard.injPressurePeak}">50</td>
@@ -62,8 +61,8 @@
     <div class="table-responsive table-md">
         <table class="table table-font2 text-center align-middle double-stripe">
             <colgroup>
-                <col style="width: 35%">   <!--lotNumber # -->
-                <col style="width: 15%">  <!-- 라벨 -->
+                <col style="width: 40%">   <!--lotNumber # -->
+                <col style="width: 10%">  <!-- 라벨 -->
                 <col style="width: 25%">  <!-- 검수결과 -->
                 <col style="width: 25%">  <!--버튼  -->
             </colgroup>

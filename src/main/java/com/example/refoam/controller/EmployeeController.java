@@ -2,9 +2,11 @@ package com.example.refoam.controller;
 
 import com.example.refoam.domain.Employee;
 import com.example.refoam.domain.PositionName;
+import com.example.refoam.dto.EmployeeDto;
 import com.example.refoam.dto.EmployeeForm;
 import com.example.refoam.dto.EmployeeUpdateForm;
 import com.example.refoam.service.EmployeeService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +63,7 @@ public class EmployeeController {
     public String list(Model model, @RequestParam(value = "page", defaultValue = "0") int page) {
 //        List<Employee> employees = employeeService.employeeList();
 
-        Page<Employee> paging = this.employeeService.getList(page);
+        Page<EmployeeDto> paging = employeeService.getList(page); // DTO 기반 페이징
 
         model.addAttribute("paging", paging);
 
@@ -69,6 +71,7 @@ public class EmployeeController {
         model.addAttribute("activeMenu", 1);
         return "employee/employeeList";
     }
+
     @GetMapping("/{employeeId}/edit")
     public String update(@PathVariable("employeeId") Long employeeId, Model model){
         Employee updEmployee =  employeeService.findOneEmployee(employeeId).orElseThrow(()-> new IllegalArgumentException("해당 직원을 찾을 수 없습니다"));
@@ -91,7 +94,7 @@ public class EmployeeController {
 
 
     @PostMapping("/{employeeId}/edit")
-    public String updateEmployeeForm(@Valid @ModelAttribute("employeeForm")EmployeeUpdateForm employeeForm, BindingResult bindingResult, Model model ){
+    public String updateEmployeeForm(@Valid @ModelAttribute("employeeForm")EmployeeUpdateForm employeeForm, BindingResult bindingResult, Model model , HttpSession session){
         if (bindingResult.hasErrors()) {
             Employee employee = employeeService.findOneEmployee(employeeForm.getId()).orElseThrow(()-> new IllegalArgumentException("해당 직원을 찾을 수 없습니다."));
 
@@ -117,13 +120,33 @@ public class EmployeeController {
                 .sendMail(employeeForm.isSendMail())
                 .build();
         employeeService.save(updateEmployee);
-        return "redirect:/employee/list";
+        // 로그인한 사용자 직위 확인 후 리다이렉트
+        Employee loginUser = (Employee) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (loginUser != null && loginUser.getPosition() == PositionName.ADMIN) {
+            return "redirect:/employee/list";
+        } else {
+            return "redirect:/main";
+        }
     }
 
     @GetMapping("/{employeeId}/delete")
-    public String deleteEmployee(@PathVariable("employeeId") Long employeeId, RedirectAttributes redirectAttributes) {
+    public String deleteEmployee(@PathVariable("employeeId") Long employeeId, RedirectAttributes redirectAttributes, HttpSession session) {
         log.info("직원 id ? {}", employeeId);
         Employee employee = employeeService.findOneEmployee(employeeId).orElseThrow(()-> new IllegalArgumentException("해당 직원을 찾을 수 없습니다."));
+
+        Employee loginUser = (Employee) session.getAttribute(SessionConst.LOGIN_MEMBER);
+
+        // 로그인 안 되어있거나 매니저가 아님
+        if (loginUser == null || loginUser.getPosition() != PositionName.ADMIN) {
+            redirectAttributes.addFlashAttribute("errorMessage", "삭제 권한이 없습니다.");
+            return "redirect:/employee/list";
+        }
+
+        // 본인 계정은 삭제 불가
+        if (loginUser.getId().equals(employeeId)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "자기 자신의 계정은 삭제할 수 없습니다.");
+            return "redirect:/employee/list";
+        }
         //여기부터
         if (employee.getLoginId().equals("test")) {
             redirectAttributes.addFlashAttribute("errorMessage", "관리자계정은 삭제 할 수 없습니다.");

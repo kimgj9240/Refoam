@@ -33,9 +33,26 @@ public class MaterialService {
     public void delete(Long id){
         materialRepository.deleteById(id);
     }
-    public List<Material> selectAll(){
-        return materialRepository.findAll();
+
+    // 퇴사자 있을 경우 때문에 수정함
+    public List<Material> selectAll() {
+        List<Material> materials = materialRepository.findAll();
+
+        materials.forEach(material -> {
+            if (material.getEmployee() != null) {
+                String displayName = material.getEmployee().getUsername();
+                if (!material.getEmployee().isActive()) {
+                    displayName += " (퇴사)";
+                }
+                material.setMaterialDisplayName(displayName);
+            } else {
+                material.setMaterialDisplayName("정보 없음");
+            }
+        });
+
+        return materials;
     }
+
     public Optional<Material> findOne(Long id){
         return materialRepository.findById(id);
     }
@@ -97,10 +114,26 @@ public class MaterialService {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("id"));
 
-        PageRequest pageable = PageRequest.of(page,12,Sort.by(sorts));
+        PageRequest pageable = PageRequest.of(page, 12, Sort.by(sorts));
+        Page<Material> pageResult = materialRepository.findAll(pageable);
 
-        return this.materialRepository.findAll(pageable);
+        pageResult.forEach(material -> {
+            if (material.getEmployee() != null) {
+                String displayName = material.getEmployee().getUsername();
+                if (!material.getEmployee().isActive()) {
+                    displayName += " (퇴사)";
+                }
+                material.setMaterialDisplayName(displayName);
+            } else {
+                material.setMaterialDisplayName("정보 없음");
+            }
+        });
+
+        return pageResult;
+
+//        return this.materialRepository.findAll(pageable);
     }
+
     /*public List<MaterialChart> getMaterialChart() {
         List<Material> materials = materialRepository.findAll();
 

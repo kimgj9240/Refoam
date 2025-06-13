@@ -149,9 +149,22 @@ public class ProcessService {
         return processRepository.findById(processId);
     }
 
+    // 퇴사자 표시를 위해 수정
     public List<Process> findAllOrder(Long orderId) {
-        return processRepository.findAllByOrder_Id(orderId);
+        List<Process> processes = processRepository.findAllByOrder_Id(orderId);
+
+        for (Process p : processes) {
+            Employee e = p.getOrder().getEmployee();
+            String displayName = e.getUsername();
+            if (!e.isActive()) {
+                displayName += " (퇴사)";
+            }
+            p.setProcessDisplayName(displayName);  // transient 필드 세팅
+        }
+
+        return processes;
     }
+
 
     public List<MoldTempForm> findRecentMoldTemperatures(String productName) {
         List<Process> processes = processRepository.findTop20ByOrder_ProductNameOrderByProcessDateDesc(ProductName.valueOf(productName));
@@ -210,8 +223,20 @@ public class ProcessService {
     }
 
     // 페이지네이션 구현용 메서드
-    public Page<Process> getList(Long orderId, int page){
+    public Page<Process> getList(Long orderId, int page) {
         PageRequest pageable = PageRequest.of(page, 12);
-        return this.processRepository.findAllByOrder_Id(orderId,pageable);
+        Page<Process> pageResult = this.processRepository.findAllByOrder_Id(orderId, pageable);
+
+        // ✅ 퇴사자 이름 표시 추가
+        return pageResult.map(p -> {
+            Employee e = p.getOrder().getEmployee();
+            String displayName = e.getUsername();
+            if (!e.isActive()) {
+                displayName += " (퇴사)";
+            }
+            p.setProcessDisplayName(displayName);
+            return p;
+        });
     }
+
 }

@@ -14,7 +14,7 @@ public class LoginService {
     private final EmployeeRepository employeeRepository;
 
     public Employee login(String loginId, String password){
-        Employee employee = employeeRepository.findByLoginId(loginId).orElse(null);
+        Employee employee = employeeRepository.findByLoginIdAndActiveTrue(loginId).orElse(null);
 
         if (employee == null){
             return null;

@@ -1,5 +1,6 @@
 package com.example.refoam.controller;
 
+import com.example.refoam.domain.Employee;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -24,6 +25,12 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
             return false;
         }
 
+        // 퇴사자 여부 검사
+        Object memberObj = session.getAttribute(SessionConst.LOGIN_MEMBER);
+        if (memberObj instanceof Employee employee && !employee.isActive()) {
+            response.sendRedirect("/?error=retired");
+            return false;
+        }
 
         // 로그인 되어 있음 → 정상 진행
         return true;

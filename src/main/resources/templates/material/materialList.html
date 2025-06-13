@@ -19,7 +19,7 @@
                 <td th:text="${material.materialName}">EVA</td>
                 <td th:text="${material.materialQuantity}">50</td>
                 <td th:text="${#temporals.format(material.materialDate,'yyyy-MM-dd HH:mm')}">2000-00-00 00:00</td>
-                <td th:text="${material.employee.username}">관리자</td>
+                <td th:text="${material.materialDisplayName}">관리자</td>
                 <td class="text-center">
                     <a href="#" th:href="@{/material/{id}/edit(id=${material.id})}" class="btn btn-refoam btn-sm px-3 me-3" role="button">수 정</a>
                     <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${material.id}" class="btn btn-delete btn-sm px-3">삭 제</button>
@@ -51,7 +51,7 @@
                 </tr>
                 <tr>
                     <td th:text="${#temporals.format(material.materialDate,'yyyy-MM-dd HH:mm')}" class="ps-3">2000-00-00 00:00</td>
-                    <td>관리자</td>
+                    <td th:text="${material.materialDisplayName}">직원명</td>
                     <td>
                         <a href="#" th:href="@{/material/{id}/edit(id=${material.id})}" class="btn btn-sm btn-refoam px-3 mb-1" role="button">수 정</a>
                         <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${material.id}" class="btn btn-delete btn-sm px-3 mb-1">삭 제</button>

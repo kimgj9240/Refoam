@@ -1,4 +1,4 @@
-<html layout:decorate="~{layout}" lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html layout:decorate="~{layout}" lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <div class="container mb-5" layout:fragment="content">
     <div class="row">
         <div class="col-md-2"></div>
@@ -22,10 +22,18 @@
             </div>
             <div class="mb-2">
                 <label class="form-label fw-bold" th:for="*{position}">직위</label>
-                <select class="form-select" th:field="*{position}">
+                <!-- 관리자면 선택 가능 -->
+                <select class="form-select"
+                        th:if="${session.loginMember != null and session.loginMember.position != null and session.loginMember.position.name() == 'ADMIN'}"
+                        th:field="*{position}">
                     <option value="">직위를 선택하세요</option>
-                    <option th:each="positionName : ${T(com.example.refoam.domain.PositionName).values()}" th:text="${positionName}" th:value="${positionName}"></option>
+                    <option th:each="positionName : ${T(com.example.refoam.domain.PositionName).values()}"
+                            th:text="${positionName}" th:value="${positionName}"></option>
                 </select>
+                <!-- 스태프 등 관리자 외일 경우 읽기 전용 -->
+                <input class="form-control"
+                       th:if="${session.loginMember == null or session.loginMember.position == null or session.loginMember.position.name() != 'ADMIN'}"
+                       th:value="*{position}" disabled/>
             </div>
             <div class="mb-3">
                 <label class="form-label fw-bold" th:for="*{email}">연락처</label>
@@ -45,10 +53,25 @@
                 </div>
             </div>
             <div class="text-end">
-                <a th:href="@{/employee/list}" class="btn btn-dark me-3">리스트</a>
+                <!-- 관리자일 경우: 직원 리스트로 이동 -->
+                <a th:if="${session.loginMember != null and session.loginMember.position != null and session.loginMember.position.name() == 'ADMIN'}"
+                   th:href="@{/employee/list}" class="btn btn-dark me-3">리스트</a>
+
+                <!-- 관리자 외의 경우: 메인 페이지로 이동 -->
+                <a th:if="${session.loginMember == null or session.loginMember.position == null or session.loginMember.position.name() != 'ADMIN'}"
+                   th:href="@{/main}" class="btn btn-dark me-3">메인으로</a>
+
                 <button type="submit" class="btn btn-refoam me-3">수정</button>
-                <button type="button" class="btn btn-delete" data-bs-toggle="modal" data-bs-target="#exampleModal">삭제</button>
+
+                <!-- 관리자만 삭제 가능 -->
+                <button type="button" class="btn btn-delete"
+                        th:if="${session.loginMember != null and session.loginMember.position != null and session.loginMember.position.name() == 'ADMIN'}"
+                        data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    삭제
+                </button>
             </div>
+
+
             <!-- Modal -->
             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
