@@ -30,7 +30,7 @@
                     <option th:each="positionName : ${T(com.example.refoam.domain.PositionName).values()}"
                             th:text="${positionName}" th:value="${positionName}"></option>
                 </select>
-                <!-- 스태프 등 관리자 외일 경우 읽기 전용 -->
+                <!-- 스태프 등 관리자 외일 경우 읽기 전용  -->
                 <input class="form-control"
                        th:if="${session.loginMember == null or session.loginMember.position == null or session.loginMember.position.name() != 'ADMIN'}"
                        th:value="*{position}" disabled/>
