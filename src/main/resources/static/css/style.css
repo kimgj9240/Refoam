@@ -14,6 +14,18 @@ h1,h2,h3,h4,h5,.logo-font {
     font-optical-sizing: auto;
 }
 
+.result-font{
+    font-size: 0.9em;
+}
+
+.refoam-font{
+    color: #4166F5;
+}
+
+.gray-font{
+    color: #6f6f6f;
+}
+
 body {
     font-family: 'Noto Sans KR', sans-serif;
     font-weight: 400;
@@ -114,6 +126,20 @@ body {
     transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
 }
 
+.dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%; /* 버튼 바로 아래 */
+    left: 0;    /* 왼쪽 맞춤 */
+    z-index: 1500;
+    /* 원하는 만큼 이동 가능 */
+    margin-top: 10px;  /* 아래로 10px 내려줌 */
+    margin-left: 20px; /* 오른쪽으로 20px 이동 */
+}
+
 .dropdown-item:hover {
     color: #4166F5;
     font-weight: 700;
@@ -123,6 +149,8 @@ body {
     background-color: #cfe5f9;
     color: #4166F5;
 }
+
+
 
 .nav-bg {
     background-color: #ddf0f6;
@@ -174,6 +202,14 @@ body {
     --bs-btn-disabled-border-color: #FF8228;
 }
 
+.btn-font{
+    width: 80px;
+    height : 30px;
+    font-size : 0.9em;
+    padding : 0;
+    margin-bottom: 2px;
+}
+
 /* 페이지네이션 */
 .page-link {
     padding: var(--bs-pagination-padding-y) var(--bs-pagination-padding-x);
@@ -209,7 +245,13 @@ body {
     width: 100% !important;
     height: 100% !important;
 }
-
+/* 에러모니터링 7일 생산량 차트*/
+.chart-box {
+    position: relative;
+    width: 100%;
+    height: 45vh;
+    max-height: 400px;
+}
 
 /* 햄버거 버튼 메뉴 관련 */
 .navbar-toggler{
@@ -221,8 +263,21 @@ body {
 }
 
 /* table size 설정 */
-@media (max-width: 999px) {
+@media (max-width: 999px) and (min-width: 540px) {
     .table-lg{  display: none;
+    }
+    .table-font{
+        font-size:1em;
+    }
+}
+@media (max-width: 540px)  {
+    .table-lg{  display: none;
+    }
+    .table-font{
+        font-size:0.9em;
+    }
+    .table-font2{
+        font-size:0.8em;
     }
 }
 @media (min-width: 999px) {
@@ -230,7 +285,7 @@ body {
     }
 }
 
-/* 테이블 색상 영역 */
+ /*테이블 색상 영역 */
 .table {
     --bs-table-accent-bg:  #ddf0f6 ;
     --bs-table-color: #000;
@@ -250,6 +305,21 @@ body {
     --bs-table-color-type: var(--bs-table-striped-color);
     --bs-table-bg-type: #fff;
 }
+
+.double-stripe > tbody > tr:nth-child(4n-3),
+.double-stripe > tbody > tr:nth-child(4n-2) {
+    /*background-color: #ffffff !important;*/
+    --bs-table-color-type: var(--bs-table-striped-color);
+    --bs-table-bg-type: #fff;
+}
+
+.double-stripe > tbody > tr:nth-child(4n-1),
+.double-stripe > tbody > tr:nth-child(4n) {
+    /*background-color: #f0f8ff !important;*/
+    --bs-table-color-type: var(--bs-table-striped-color);
+    --bs-table-bg-type: rgba(221, 240, 246, 0.4);
+}
+
 
 /* 공정결과용 테이블 색상만 따로 지정 */
 .table-processes {

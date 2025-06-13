@@ -53,12 +53,17 @@ public class OrderController {
     // POST 요청
     @PostMapping("/new")
     public String createOrder(@Valid OrderForm orderForm, BindingResult bindingResult,
-                              @ModelAttribute("loginMember") Employee loginMember, Model model){
+                              @ModelAttribute("loginMember") Employee loginMember, Model model, RedirectAttributes redirectAttributes){
 
         if(bindingResult.hasErrors()){
             setChartData(model);
             return "order/createOrderForm";
         }
+//        //여기부터
+//        if (orderForm.getOrderQuantity() > 30) {
+//            redirectAttributes.addFlashAttribute("errorMessage", "최대 30개까지만 주문할 수 있습니다.");
+//            return "redirect:/order/createOrderForm";
+//        }
 
         if(!materialService.isEnoughMaterial(orderForm.getProductName(),orderForm.getOrderQuantity())){
             bindingResult.reject("notEnoughMaterial","재고가 부족합니다.");

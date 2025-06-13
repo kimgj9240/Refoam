@@ -1,18 +1,25 @@
 <div th:fragment="modalContent">
     <div class="modal-header">
-        <h1 class="modal-title fs-5" id='exampleModalLabel'>검수 결과</h1>
+        <h1 class="modal-title fs-4" id='exampleModalLabel'>상세보기</h1>
         <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
     </div>
     <div class="modal-body">
-        <table class="table table-bordered  border-dark table-striped-columns table-processes">
+        <table class="table text-center align-middle table-bordered border-dark table-striped-columns table-processes table-font">
+            <colgroup>
+                <col style="width: 25%">   <!--lotNumber # -->
+                <col style="width: 25%">  <!-- 라벨 -->
+                <col style="width: 25%">  <!-- 검수결과 -->
+                <col style="width: 25%">  <!--버튼  -->
+                <!--                <col style="width: 25%">  &lt;!&ndash; 담당직원 &ndash;&gt;-->
+            </colgroup>
             <tbody>
             <tr>
                 <td>lotNumber</td>
-                <td class="text-center" colspan="3" th:text="${process.lotNumber}">1</td>
+                <td colspan="3" th:text="${process.lotNumber}">1</td>
             </tr>
             <tr>
                 <td>공정일자</td>
-                <td th:text="${#temporals.format(process.processDate,'yyyy-MM-dd HH:mm')}">2025-05-01
+                <td th:text="${#temporals.format(process.processDate,'yy-MM-dd HH:mm:ss')}">2025-05-01
                     14:00
                 </td>
                 <td>담당자</td>
@@ -62,17 +69,30 @@
             </tr>
             </tbody>
         </table>
-        <div>
-            <p>검수결과</p>
-            <span th:text="${process.order.productName.name()}">NORMAL60</span> 제품은 <span
-                th:classappend="${process.standard.qualityCheck != null and process.standard.productLabel != null and process.standard.qualityCheck.checkResult != process.standard.productLabel.name() ? ' text-bg-warning' : ''}"
-                th:text="${process.standard.qualityCheck.checkResult}">양품</span>으로 판정되었습니다.<br>
-            <span
-                    th:if="((${process.standard.productLabel.name() == 'OK' and process.standard.qualityCheck.checkResult != '양품'})
-                       or
-                       (${process.standard.productLabel.name() != 'OK' and process.standard.qualityCheck.checkResult != '불량품'}))">
-                    검수 결과 불일치 담당자 확인필요
-            </span>
+        <div class="text-center">
+            <p class="fs-5 fw-bold">검수결과</p>
+            <div>
+                <!--        불일치        -->
+                <span th:if="((${process.standard.productLabel.name() == 'OK' and process.standard.qualityCheck.checkResult != '양품'}))">
+                    정상으로 분류되었으나<br> 검수 시스템에서 <span
+                        th:classappend="${process.standard.qualityCheck != null and process.standard.productLabel != null and process.standard.qualityCheck.checkResult != process.standard.productLabel.name() ? ' text-bg-warning' : ''}"
+                        th:text="${process.standard.qualityCheck.checkResult}">양품</span>으로 예측하였습니다.<br>
+                    자세한 확인이 필요합니다.
+                </span>
+                <span th:if="((${process.standard.productLabel.name() != 'OK' and process.standard.qualityCheck.checkResult != '불량품'}))">
+                    불량품으로 분류되었으나<br> 검수 시스템에서 <span
+                        th:classappend="${process.standard.qualityCheck != null and process.standard.productLabel != null and process.standard.qualityCheck.checkResult != process.standard.productLabel.name() ? ' text-bg-warning' : ''}"
+                        th:text="${process.standard.qualityCheck.checkResult}">양품</span>으로 예측하였습니다.<br>
+                    자세한 확인이 필요합니다.
+                </span>
+                <!--        일치        -->
+                <span th:if="((${process.standard.productLabel.name() == 'OK' and process.standard.qualityCheck.checkResult == '양품'})
+                or (${process.standard.productLabel.name() != 'OK' and process.standard.qualityCheck.checkResult == '불량품'}))">
+                    <span th:text="${process.order.productName.name()}">NORMAL60</span> 제품은 <span
+                        th:classappend="${process.standard.qualityCheck != null and process.standard.productLabel != null and process.standard.qualityCheck.checkResult != process.standard.productLabel.name() ? ' text-bg-warning' : ''}"
+                        th:text="${process.standard.qualityCheck.checkResult}">양품</span>으로 판정되었습니다.
+                </span>
+            </div>
         </div>
     </div>
     <div class="modal-footer">

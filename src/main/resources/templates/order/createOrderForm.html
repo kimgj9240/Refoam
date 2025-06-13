@@ -75,6 +75,11 @@
                 },
             }
         });
+        window.addEventListener("DOMContentLoaded", function () {
+            connectWebSocket();
+            /* alert 처리 */
+            [[${errorMessage != null}]] ? alert([[${errorMessage}]]) : null;
+        });
     </script>
 </div>
 </html>

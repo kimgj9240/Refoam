@@ -21,7 +21,7 @@
             <ul id="alert-dropdown-xs"
                 class="dropdown-menu dropdown-menu-end alert-dropdown mt-2"
                 aria-labelledby="alertDropdown"
-                style="max-height: 300px; overflow-y: auto; width: 320px;">
+                style="max-height: 300px; overflow-y: auto; width: 280px; transform: translateX(30px); /* ← 오른쪽으로 20px 이동 */">
                 <!-- JS에서 알림 항목 동적으로 렌더링 -->
             </ul>
         </div>
@@ -168,6 +168,22 @@
 
         setInterval(fetchAlerts, 30000); //  30초마다 갱신
         window.addEventListener("DOMContentLoaded", fetchAlerts);
+
+        document.addEventListener('click', function (event) {
+            // 현재 열린 드롭다운 요소들 선택
+            const openDropdowns = document.querySelectorAll('.dropdown-menu.show');
+
+            openDropdowns.forEach(function(dropdown) {
+                // 클릭된 대상이 드롭다운 영역 안에 있는지 검사
+                if (!dropdown.parentElement.contains(event.target)) {
+                    const toggleButton = dropdown.parentElement.querySelector('[data-bs-toggle="dropdown"]');
+                    const bsDropdown = bootstrap.Dropdown.getInstance(toggleButton);
+                    if (bsDropdown) {
+                        bsDropdown.hide();
+                    }
+                }
+            });
+        });
     </script>
 </nav>
 

@@ -21,6 +21,23 @@
 <!--스크립트 영역-->
 <script th:src="@{/js/bootstrap.bundle.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('click', function (event) {
+        const navbarCollapse = document.getElementById('navbarNavDropdown');
+        const toggler = document.querySelector('.navbar-toggler');
+
+        // 메뉴가 열려있는지 확인 (Bootstrap 5는 'show' 클래스로 판별)
+        const isOpen = navbarCollapse.classList.contains('show');
+
+        // 바깥 클릭 감지
+        if (isOpen && !navbarCollapse.contains(event.target) && !toggler.contains(event.target)) {
+            const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
+            if (bsCollapse) {
+                bsCollapse.hide();
+            }
+        }
+    });
+</script>
 <th:block layout:fragment="scripts"></th:block>
 </body>
 </html>
