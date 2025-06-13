@@ -54,7 +54,7 @@
                     <td>관리자</td>
                     <td>
                         <a href="#" th:href="@{/material/{id}/edit(id=${material.id})}" class="btn btn-sm btn-refoam px-3 mb-1" role="button">수 정</a>
-                        <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${material.id}" class="btn btn-delete btn-sm px-3">삭 제</button>
+                        <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${material.id}" class="btn btn-delete btn-sm px-3 mb-1">삭 제</button>
                     </td>
                 </tr>
             </th:block>
