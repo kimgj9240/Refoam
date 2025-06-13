@@ -28,7 +28,7 @@
             </div>
         </div>
     </div>
-    <canvas id="monitoringChart" width="900" height="400"></canvas>
+    <canvas class="chart-box" id="monitoringChart" width="900" height="400"></canvas>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script th:inline="javascript">
         //차트용 스크립트 합침
@@ -104,19 +104,20 @@
                     ],
                 },
                 options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
                     elements: {
                         bar: {
                             borderWidth: 2,
                         }
                     },
-                    responsive: true,
                     plugins: {
                         title: {
                             display: true,
                             text: "생산량 통계",
                         },
                         legend: {
-                            position: "top",
+                            position: "bottom",
                         },
                     },
                     scales: {
@@ -128,6 +129,7 @@
                             ticks: {
                                 autoSkip: true,
                                 maxRotation: 45,
+                                minRotation: 20
                             },
                         },
                         y: {

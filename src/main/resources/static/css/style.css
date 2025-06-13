@@ -229,6 +229,19 @@ body {
     .table-md{  display: none;
     }
 }
+/* 테이블 sm보다 작을 때 폰트, 패딩 크기 */
+@media (max-width: 520px) {
+    table td,th {
+        font-size: 0.8rem;
+    }
+
+    .table-responsive.table-md button,
+    .table-responsive.table-md td,
+    .table-responsive.table-md th {
+        padding: 0.25rem 0.4rem; /* 여백도 같이 줄이기 */}
+}
+
+
 
 /* 테이블 색상 영역 */
 .table {
@@ -290,6 +303,14 @@ body {
     }
 
 }
+
+.chart-box {
+    position: relative;
+    width: 100%;
+    height: 45vh;
+    max-height: 400px;
+}
+
 /* 메인 + 에러모니터링 제일 윗 상단 */
 .tassei .tassei-err{
     width: 100%;

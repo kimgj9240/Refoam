@@ -2,7 +2,7 @@
 <div class="container mb-5" layout:fragment="content">
     <h2 class="my-4">직원 리스트</h2>
 
-    <div class="table-responsive table-lg">
+    <div class="table-responsive d-none d-lg-block">
         <table class="table table-hover table-striped">
             <thead>
             <tr>
@@ -22,24 +22,27 @@
                 <td th:text="${employee.position}">position</td>
                 <td th:text="${employee.email}">email</td>
                 <td class="text-center">
-                    <a href="#" th:href="@{/employee/{id}/edit(id=${employee.id})}" class="btn btn-sm btn-refoam px-3 me-3" role="button">수 정</a>
-                    <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${employee.id}" class="btn btn-delete btn-sm px-3">삭 제</button>
+                    <a href="#" th:href="@{/employee/{id}/edit(id=${employee.id})}"
+                       class="btn btn-sm btn-refoam px-3 me-3" role="button">수 정</a>
+                    <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${employee.id}"
+                            class="btn btn-delete btn-sm px-3">삭 제
+                    </button>
                 </td>
             </tr>
             </tbody>
         </table>
     </div>
-    <div class="table-responsive table-md">
+    <div class="table-responsive d-block d-lg-none">
         <table class="table table-hover table-striped">
             <thead>
             <tr>
                 <th class="ps-3">#</th>
                 <th>ID</th>
                 <th>이름</th>
+                <th class="ps-3">직위</th>
             </tr>
             <tr>
-                <th class="ps-3">직위</th>
-                <th>연락처</th>
+                <th colspan="3">연락처</th>
                 <th> # </th>
             </tr>
             </thead>
@@ -49,13 +52,19 @@
                     <td th:text="${employee.id}" class="ps-3">1</td>
                     <td th:text="${employee.loginId}">ID</td>
                     <td th:text="${employee.username}">name</td>
+                    <td th:text="${employee.position}" class="ps-3">position</td>
                 </tr>
                 <tr>
-                    <td th:text="${employee.position}" class="ps-3">position</td>
-                    <td th:text="${employee.email}">phone</td>
+                    <td colspan="3" th:text="${employee.email}">phone</td>
                     <td>
-                        <a href="#" th:href="@{/employee/{id}/edit(id=${employee.id})}" class="btn btn-sm btn-refoam px-3 me-3" role="button">수 정</a>
-                        <button type="button" th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${employee.id}" class="btn btn-delete btn-sm px-3">삭 제</button>
+                        <div class="d-flex flex-nowrap gap-2">
+                            <a href="#" th:href="@{/employee/{id}/edit(id=${employee.id})}"
+                               class="btn btn-sm btn-refoam w-50" role="button">수 정</a>
+                            <button type="button"
+                                    th:attr="data-bs-toggle='modal', data-bs-target='#modal__' + ${employee.id}"
+                                    class="btn btn-delete btn-sm w-50">삭 제
+                            </button>
+                        </div>
                     </td>
                 </tr>
             </th:block>
@@ -89,18 +98,23 @@
     <nav th:if="${!paging.isEmpty()}">
         <ul class="pagination justify-content-center">
             <li class="page-item" th:classappend="${paging.first} ? 'disabled'">
-                <a class="page-link logo-font fw-normal" th:href="@{|?page=0|}"><i class="bi bi-chevron-double-left"></i>First</a>
+                <a class="page-link" th:href="@{|?page=0|}"><i
+                        class="bi bi-chevron-double-left"></i>처음</a>
             </li>
-            <li class="page-item"  th:classappend="${!paging.hasPrevious()}?'disabled'">
-                <a class="page-link ps-0" th:href="@{|?page=${paging.number -1}|}"><i class="bi bi-chevron-left"></i>Previous</a>
+            <li class="page-item" th:classappend="${!paging.hasPrevious()}?'disabled'">
+                <a class="page-link ps-0" th:href="@{|?page=${paging.number -1}|}"><i class="bi bi-chevron-left"></i>이전</a>
             </li>
-            <li class="page-item" th:each="page:${#numbers.sequence(0,paging.totalPages -1)}" th:classappend="${page==paging.number}?'active'" th:if="${page >= paging.number -4 and page <= paging.number +4}">
+            <li class="page-item" th:each="page:${#numbers.sequence(0,paging.totalPages -1)}"
+                th:classappend="${page==paging.number}?'active'"
+                th:if="${page >= paging.number -4 and page <= paging.number +4}">
                 <a class="page-link" th:text="${page + 1}" th:href="@{|?page=${page}|}">1</a></li>
             <li class="page-item" th:classappend="${!paging.hasNext()}?'disabled'">
-                <a class="page-link pe-0" th:href="@{|?page=${paging.number +1}|}">Next <i class="bi bi-chevron-right"></i></a>
+                <a class="page-link pe-0" th:href="@{|?page=${paging.number +1}|}">다음<i
+                        class="bi bi-chevron-right"></i></a>
             </li>
             <li class="page-item" th:classappend="${paging.last} ? 'disabled'">
-                <a class="page-link " th:href="@{|?page=${paging.totalPages -1}|}">Last<i class="bi bi-chevron-double-right"></i></a>
+                <a class="page-link " th:href="@{|?page=${paging.totalPages -1}|}">마지막<i
+                        class="bi bi-chevron-double-right"></i></a>
             </li>
         </ul>
     </nav>

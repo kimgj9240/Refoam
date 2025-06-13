@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -120,13 +121,15 @@ public class EmployeeController {
     }
 
     @GetMapping("/{employeeId}/delete")
-    public String deleteEmployee(@PathVariable("employeeId") Long employeeId) {
+    public String deleteEmployee(@PathVariable("employeeId") Long employeeId, RedirectAttributes redirectAttributes) {
         log.info("직원 id ? {}", employeeId);
-
         Employee employee = employeeService.findOneEmployee(employeeId).orElseThrow(()-> new IllegalArgumentException("해당 직원을 찾을 수 없습니다."));
-
+        //여기부터
+        if (employee.getLoginId().equals("test")) {
+            redirectAttributes.addFlashAttribute("errorMessage", "관리자계정은 삭제 할 수 없습니다.");
+            return "redirect:/employee/list";
+        }
         log.info("삭제 id? {}", employee.getId());
-
         employeeService.deleteEmployee(employee.getId());
         return "redirect:/employee/list";
 
