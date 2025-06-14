@@ -61,22 +61,22 @@
     <div class="table-responsive table-md">
         <table class="table table-font2 text-center align-middle double-stripe">
             <colgroup>
-                <col style="width: 40%">   <!--lotNumber # -->
-                <col style="width: 10%">  <!-- 라벨 -->
+                <col style="width: 25%">   <!--lotNumber # -->
+                <col style="width: 25%">  <!-- 라벨 -->
                 <col style="width: 25%">  <!-- 검수결과 -->
                 <col style="width: 25%">  <!--버튼  -->
             </colgroup>
             <thead>
             <tr>
-                <th colspan="2" class="txt-minus">lotNumber</th>
+                <th colspan="1" class="ps-4">lotNumber</th>
                 <!--<th>제품명</th>-->
                 <th>금형온도</th>
                 <th>충전시간</th>
-<!--                <th>최고사출압</th>-->
+                <th>최고사출압</th>
             </tr>
             <tr>
 <!--                <th>보압끝점</th>-->
-                <th>공정일자</th>
+                <th class="ps-4">공정일자</th>
                 <th>라벨</th>
                 <th>검수결과</th>
                 <th>상세보기</th>
@@ -85,15 +85,15 @@
             <tbody>
             <th:block th:each="process : ${processes}">
                 <tr>
-                    <td colspan="2" th:text="${process.lotNumber}">lotNumber</td>
+                    <td colspan="1" th:text="${process.lotNumber}" class="ps-4">lotNumber</td>
                     <!--<td th:text="${process.order.productName}">EVA</td>-->
                     <td th:text="${process.standard.moldTemperature}">50</td>
                     <td th:text="${process.standard.timeToFill}">50</td>
-<!--                    <td th:text="${process.standard.injPressurePeak}">50</td>-->
+                    <td th:text="${process.standard.injPressurePeak}">50</td>
                 </tr>
                 <tr>
 <!--                    <td th:text="${process.standard.screwPosEndHold}">50</td>-->
-                    <td th:text="${#temporals.format(process.processDate,'MM-dd HH:mm:ss')}" class="txt-minus-date">20-00-00 00:00</td>
+                    <td th:text="${#temporals.format(process.processDate,'MM-dd HH:mm:ss')}" class="ps-4">20-00-00 00:00</td>
                     <td th:text="${process.standard.productLabel}"></td>
                     <td><span th:if="${process.standard.qualityCheck != null}" th:text="${process.standard.qualityCheck.checkResult}"></span></td>
                     <td>

@@ -31,9 +31,17 @@
                             th:text="${positionName}" th:value="${positionName}"></option>
                 </select>
                 <!-- 스태프 등 관리자 외일 경우 읽기 전용  -->
+                <!-- 보여지는 비활성 input -->
                 <input class="form-control"
                        th:if="${session.loginMember == null or session.loginMember.position == null or session.loginMember.position.name() != 'ADMIN'}"
                        th:value="*{position}" disabled/>
+
+                <!-- 숨겨서 값만 서버로 보냄 이렇게 안하면 아무것도 건드리지 않은채 수정 버튼 누르면 null 값 되버려서 방지용으로 넣음-->
+                <input type="hidden"
+                       th:if="${session.loginMember == null or session.loginMember.position == null or session.loginMember.position.name() != 'ADMIN'}"
+                       th:field="*{position}"/>
+
+
             </div>
             <div class="mb-3">
                 <label class="form-label fw-bold" th:for="*{email}">연락처</label>
