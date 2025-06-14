@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@100..900&display=swap');
 
-h1,h2,h3,h4,h5,.logo-font {
+h1, h2, h3, h4, h5, .logo-font {
     font-family: 'Do Hyeon', sans-serif;
     font-weight: 400;
     font-style: normal;
@@ -14,15 +14,15 @@ h1,h2,h3,h4,h5,.logo-font {
     font-optical-sizing: auto;
 }
 
-.result-font{
+.result-font {
     font-size: 0.9em;
 }
 
-.refoam-font{
+.refoam-font {
     color: #4166F5;
 }
 
-.gray-font{
+.gray-font {
     color: #6f6f6f;
 }
 
@@ -36,7 +36,7 @@ body {
 /* header 영역  */
 /* 로그인 홈 배경이미지 */
 .bg-login {
-    background-image: linear-gradient(to top,rgba(0, 0, 0, 0.8),rgba(0, 0, 0, 0.2)) , url('../images/refoam_login_bg.jpeg');
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.2)), url('../images/refoam_login_bg.jpeg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -48,29 +48,34 @@ body {
 
 /* dropdown size */
 @media (min-width: 768px) {
-    .errorAlert-xs{  display: none;
+    .errorAlert-xs {
+        display: none;
     }
 }
+
 @media (max-width: 767px) {
-    .errorAlert-lg{  display: none;
+    .errorAlert-lg {
+        display: none;
     }
 }
+
 .alert-dropdown {
-    width: 100%;            /* 부모 요소 기준으로 가득 차도록 */
-    min-width: 240px;       /* 너무 작지 않게 최소값 설정 */
-    max-width: 90vw;        /* 화면 너비의 90%를 넘지 않도록 */
-    max-height: 300px;      /* 높이는 그대로 */
+    width: 100%; /* 부모 요소 기준으로 가득 차도록 */
+    min-width: 240px; /* 너무 작지 않게 최소값 설정 */
+    max-width: 90vw; /* 화면 너비의 90%를 넘지 않도록 */
+    max-height: 300px; /* 높이는 그대로 */
     overflow-y: auto;
 }
 
 
 /* nav 영역 */
-@media (min-width:300px) and (max-width:860px) {
-    .md-hidden{  display: none;
+@media (min-width: 300px) and (max-width: 860px) {
+    .md-hidden {
+        display: none;
     }
 }
 
-@media (max-width:767px) {
+@media (max-width: 767px) {
     .nav-account {
         background: #FFF;
         padding: 10px 5px;
@@ -88,12 +93,12 @@ body {
     margin-left: -16px;
 }
 
-.badge-size{
-    min-width: 1.5rem;        /* 최소 너비 */
+.badge-size {
+    min-width: 1.5rem; /* 최소 너비 */
     /* 높이 */
     font-size: 0.75rem;
     padding: 4px 6px;
-    display: flex;            /* 가운데 정렬용 */
+    display: flex; /* 가운데 정렬용 */
     align-items: center;
     justify-content: center;
 }
@@ -133,11 +138,12 @@ body {
 .dropdown-menu {
     position: absolute;
     top: 100%; /* 버튼 바로 아래 */
-    left: 0;    /* 왼쪽 맞춤 */
+    left: 0; /* 왼쪽 맞춤 */
     z-index: 1500;
     /* 원하는 만큼 이동 가능 */
-    margin-top: 10px;  /* 아래로 10px 내려줌 */
-    margin-left: 20px; /* 오른쪽으로 20px 이동 */
+    margin-top: 10px; /* 아래로 10px 내려줌 */
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .dropdown-item:hover {
@@ -168,7 +174,7 @@ body {
 /* 컨텐츠 영역 */
 .btn-refoam {
     --bs-btn-color: #fff;
-    --bs-btn-bg : #4166F5;
+    --bs-btn-bg: #4166F5;
     --bs-btn-border-color: #4166F5;
     --bs-btn-hover-color: #fff;
     --bs-btn-hover-bg: #0b5ed7;
@@ -185,11 +191,11 @@ body {
 
 .btn-delete {
     --bs-btn-color: #fff;
-    --bs-btn-bg : #FF8228;
+    --bs-btn-bg: #FF8228;
     --bs-btn-border-color: #FF8228;
     --bs-btn-hover-color: #fff;
     --bs-btn-hover-bg: #ff6944;
-    --bs-btn-hover-border-color: #ff6944; ;
+    --bs-btn-hover-border-color: #ff6944;;
     --bs-btn-focus-shadow-rgb: 49, 132, 253;
     --bs-btn-active-color: #fff;
     --bs-btn-active-bg: #ff6944;;
@@ -200,11 +206,11 @@ body {
     --bs-btn-disabled-border-color: #FF8228;
 }
 
-.btn-font{
+.btn-font {
     width: 80px;
-    height : 30px;
-    font-size : 0.9em;
-    padding : 0;
+    height: 30px;
+    font-size: 0.9em;
+    padding: 0;
     margin-bottom: 2px;
 }
 
@@ -231,18 +237,19 @@ body {
 .page-item.active .page-link {
     z-index: 3;
     color: #ddf0f6;
-    background-color:  #4166F5;
-
+    background-color: #4166F5;
 }
 
 /* main 차트 관련*/
 .chart-wrapper {
-    height: 300px;   /* 고정 높이만 커스텀으로 지정 */
+    height: 300px; /* 고정 높이만 커스텀으로 지정 */
 }
+
 .chart-wrapper canvas {
     width: 100% !important;
     height: 100% !important;
 }
+
 /* 에러모니터링 7일 생산량 차트*/
 .chart-box {
     position: relative;
@@ -252,58 +259,86 @@ body {
 }
 
 /* 햄버거 버튼 메뉴 관련 */
-.navbar-toggler{
+.navbar-toggler {
     background-color: #ddf0f6;
 }
 
-.navbar-toggler-icon{
+.navbar-toggler-icon {
     filter: invert(29%) sepia(91%) saturate(2127%) hue-rotate(221deg) brightness(101%) contrast(92%);
 }
 
 /* table size 설정 */
 @media (max-width: 999px) and (min-width: 540px) {
-    .table-lg{  display: none;
-    }
-    .table-font{
-        font-size:1em;
+    .table-lg {
+        display: none;
     }
 
-    .txt-minus{
-        text-indent: -78px;
+    .table-font {
+        font-size: 1em;
     }
 }
-@media (max-width: 540px)  {
-    .table-lg{  display: none;
-    }
-    .table-font{
-        font-size:0.9em;
-    }
-    .table-font2{
-        font-size:0.8em;
+
+@media (max-width: 540px) {
+    .table-lg {
+        display: none;
     }
 
-    .txt-minus{
-        text-indent: -62px;
+    .table-font {
+        font-size: 0.9em;
     }
 
-    .txt-minus-date{
-        /*text-indent: -12px;*/
+    .table-font2 {
+        font-size: 0.8em;
     }
 }
+
+/* 모바일화면일 때 theader의 글자 줄바꿈이 되더라도 원하는 곳에서 줄바꿈하게하기위해서 */
+.mobile-br {
+    display: inline;
+}
+
+.mobile-br2 {
+    display: none;
+}
+
+@media (max-width: 450px) {
+    .mobile-br {
+        display: block;
+    }
+
+    .mobile-br2 {
+        display: block;
+        height: 0.8em;
+    }
+
+    /* 모바일에서만 금형온도,라벨을 왼쪽으로 더 가게 하기 위함 */
+    th:nth-child(2),
+    td:nth-child(2) {
+        padding-left: 0.6rem;
+    }
+
+    /* 모바일에선 처음, 마지막 페이지네이션 버튼 숨기기용*/
+    .page-item.page-first,
+    .page-item.page-last {
+        display: none !important;
+    }
+}
+
 @media (min-width: 999px) {
-    .table-md{  display: none;
+    .table-md {
+        display: none;
     }
 }
 
 
 /* 테이블 색상 영역 */
 .table {
-    --bs-table-accent-bg:  #ddf0f6 ;
+    --bs-table-accent-bg: #ddf0f6;
     --bs-table-color: #000;
 }
 
 .table-hover > tbody > tr:hover > * {
-    --bs-table-bg-state:  rgba(65, 102, 245,0.2);
+    --bs-table-bg-state: rgba(65, 102, 245, 0.2);
 
 }
 
@@ -358,7 +393,7 @@ body {
 }
 
 /* 모달에서 에러 뜨는 테이블 색상 적용하기 위해 필요함*/
-.table-processes tbody tr td.bg-warning:nth-child(even){
+.table-processes tbody tr td.bg-warning:nth-child(even) {
     background-color: #ffc107 !important;
 }
 
@@ -366,14 +401,14 @@ body {
 /* ai 리포트 크기    */
 @media (min-width: 768px) {
     .toast {
-        --bs-toast-max-width: 60vh !important ;
+        --bs-toast-max-width: 60vh !important;
         width: 60vh !important;
     }
 
 }
 
 /* 메인 + 에러모니터링 제일 윗 상단 */
-.tassei .tassei-err{
+.tassei .tassei-err {
     width: 100%;
 }
 
@@ -385,7 +420,7 @@ body {
 /* lg 이상(px 이상)일 때: 3:1 비율 */
 @media (min-width: 768px) {
     .tassei {
-        aspect-ratio: 3 / 1;   /* 가로:세로 = 3:1 */
+        aspect-ratio: 3 / 1; /* 가로:세로 = 3:1 */
     }
 
 }
@@ -398,13 +433,13 @@ body {
 /* md 이하(px 미만)일 때: 4:1 비율 */
 @media (max-width: 767px) {
     .tassei {
-        aspect-ratio: 4 / 1;   /* 가로:세로 = 4:1 */
+        aspect-ratio: 4 / 1; /* 가로:세로 = 4:1 */
     }
 }
 
 .tassei canvas {
-    width: 100% !important;   /* 부모 너비(=100%) 꽉 채우기 */
-    height: 100% !important;  /* 부모 높이도 100% 꽉 채우기 */
+    width: 100% !important; /* 부모 너비(=100%) 꽉 채우기 */
+    height: 100% !important; /* 부모 높이도 100% 꽉 채우기 */
 }
 
 canvas {
@@ -417,7 +452,6 @@ input::placeholder {
     color: #595959 !important;
     opacity: 1;
 }
-
 
 
 .footer-bg {

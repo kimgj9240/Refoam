@@ -168,19 +168,19 @@
     </th:block>
     <nav th:if="${!ordersList.isEmpty()}">
         <ul class="pagination justify-content-center">
-            <li class="page-item" th:classappend="${ordersList.first} ? 'disabled'">
+            <li class="page-item page-first" th:classappend="${ordersList.first} ? 'disabled'">
                 <a class="page-link" th:href="@{|?page=0|}"><i class="bi bi-chevron-double-left"></i>처음</a>
             </li>
             <li class="page-item"  th:classappend="${!ordersList.hasPrevious()}?'disabled'">
                 <a class="page-link ps-0" th:href="@{|?page=${ordersList.number -1}|}"><i class="bi bi-chevron-left"></i>이전</a>
             </li>
-            <li class="page-item" th:each="page:${#numbers.sequence(0,ordersList.totalPages -1)}" th:classappend="${page==ordersList.number}?'active'" th:if="${page >= ordersList.number -4 and page <= ordersList.number +4}">
+            <li class="page-item" th:each="page:${#numbers.sequence(0,ordersList.totalPages -1)}" th:classappend="${page==ordersList.number}?'active'" th:if="${page >= ordersList.number -2 and page <= ordersList.number +2}">
                 <a class="page-link" th:text="${page + 1}" th:href="@{|?page=${page}|}">1</a></li>
             <li class="page-item" th:classappend="${!ordersList.hasNext()}?'disabled'">
                 <a class="page-link pe-0" th:href="@{|?page=${ordersList.number +1}|}">다음<i class="bi bi-chevron-right"></i></a>
             </li>
-            <li class="page-item" th:classappend="${ordersList.last} ? 'disabled'">
-                <a class="page-link " th:href="@{|?page=${ordersList.totalPages -1}|}">마지막<i class="bi bi-chevron-double-right"></i></a>
+            <li class="page-item page-last" th:classappend="${ordersList.last} ? 'disabled'">
+                <a class="page-link" th:href="@{|?page=${ordersList.totalPages -1}|}">마지막<i class="bi bi-chevron-double-right"></i></a>
             </li>
         </ul>
     </nav>
