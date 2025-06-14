@@ -433,7 +433,7 @@ body {
 /* md 이하(px 미만)일 때: 4:1 비율 */
 @media (max-width: 767px) {
     .tassei {
-        aspect-ratio: 4 / 1; /* 가로:세로 = 4:1 */
+        aspect-ratio: 4 / 1.2; /* 가로:세로 = 4:1 */
     }
 }
 
