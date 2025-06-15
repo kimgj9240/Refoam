@@ -2,22 +2,23 @@
 <div class="container mb-5" layout:fragment="content">
     <h2 class="my-4">오늘의 달성률</h2>
     <div class="row mb-5">
-        <div class="col-12 col-md-6 col-lg-6">
-            <h5 class="gray-font text-center mt-lg-2 mt-md-3">
-                오늘의 목표 수량: <span id="targetCount" th:text="${targetQuantity}">0</span>개
-            </h5>
+        <div class="col-12 col-lg-6">
+            <p class="fs-5 archive-font text-center mt-lg-1 mt-md-3 mb-2">
+                오늘의 목표 수량: <span class="refoam-font fw-bold" id="targetCount" th:text="${targetQuantity}">0</span>개
+            </p>
             <div class="tassei">
                 <canvas id="achievementRate"></canvas>
             </div>
         </div>
 
-        <div class="col-12 col-md-6 col-lg-6 ">
+        <div class="col-12 col-lg-6 ">
             <div class="mt-3"> </div>
             <div class="row gx-3 pt-md-4 pb-3 h-100">
                 <div class="col">
                     <div class="card shadow-sm h-100">
                         <div class="card-body d-flex flex-column justify-content-center text-center">
-                            <h6 class="refoam-font mb-2">달성 수량</h6>
+                            <p class="my-1">✅</p>
+                            <h6 class="refoam-font mb-2 fw-bold">달성 수량</h6>
                             <h6 class="gray-font mb-0" id="okCount" th:text="${okCount} + '개'">0개</h6>
                         </div>
                     </div>
@@ -25,7 +26,8 @@
                 <div class="col">
                     <div class="card shadow-sm h-100">
                         <div class="card-body d-flex flex-column justify-content-center text-center">
-                            <h6 class="refoam-font mb-2">달성률</h6>
+                            <p class="my-1">📊</p>
+                            <h6 class="refoam-font mb-2 fw-bold">달성률</h6>
                             <h6 class="gray-font mb-0" id="achievementRateText" th:text="${achievementRate} + '%'">0%</h6>
                         </div>
                     </div>
@@ -33,7 +35,8 @@
                 <div class="col">
                     <div class="card shadow-sm h-100">
                         <div class="card-body d-flex flex-column justify-content-center text-center">
-                            <h6 class="refoam-font mb-2">남은 수량</h6>
+                            <p class="my-1">📦</p>
+                            <h6 class="refoam-font mb-2 fw-bold">남은 수량</h6>
                             <h6 class="gray-font mb-0" id="remainingCount" th:text="${(targetQuantity != null and okCount != null) ? (targetQuantity - okCount) + '개' : '0개'}">0개</h6>
                         </div>
                     </div>
@@ -77,15 +80,24 @@
         </div>
     </div>
     <h2 class="mb-4">제품별 생산 현황</h2>
-    <div class="row">
-        <div class="col-12 col-lg-4">
-            <canvas class="my-2" id="chart-NORMAL" width="200" height="200"></canvas>
+    <div class="row align-content-center">
+        <div class="col-12 col-lg-4 text-center mb-4">
+            <div class="product-card card shadow-sm rounded-3 p-3">
+                <canvas class="my-2 product-chart" id="chart-NORMAL"></canvas>
+                <div class="my-2" id="count-NORMAL">정상: 0개 / 불량: 0개</div>
+            </div>
         </div>
-        <div class="col-12 col-lg-4">
-            <canvas class="my-2" id="chart-BUMP" width="200" height="200"></canvas>
+        <div class="col-12 col-lg-4 text-center mb-4">
+            <div class="product-card card shadow-sm rounded-3 p-3">
+                <canvas class="my-2 product-chart" id="chart-BUMP"></canvas>
+                <div class="my-2" id="count-BUMP">정상: 0개 / 불량: 0개</div>
+            </div>
         </div>
-        <div class="col-12 col-lg-4">
-            <canvas class="my-2" id="chart-HALF" width="200" height="200"></canvas>
+        <div class="col-12 col-lg-4 text-center">
+            <div class="product-card card shadow-sm rounded-3 p-3">
+                <canvas class="my-2 product-chart" id="chart-HALF"></canvas>
+                <div class="my-2" id="count-HALF">정상: 0개 / 불량: 0개</div>
+            </div>
         </div>
     </div>
     <button id="showToastBtn" class="btn btn-refoam position-fixed bottom-0 end-0 m-4" style="z-index: 1100;">
@@ -277,7 +289,7 @@
                                 },
                                 title: {
                                     display: true,
-                                    text: `(목표: ${target}%)`,
+                                    text: `(목표: 80%)`,
                                 },
                             },
                             y: {
@@ -728,7 +740,6 @@
         function initializeProductChart() {
             console.log('제품별 파이 차트 초기화 시작');
 
-            // 차트 초기화
             productNames.forEach(name => {
                 const ctx = document.getElementById(`chart-${name}`);
                 if (!ctx) {
@@ -736,49 +747,70 @@
                     return;
                 }
 
-                chartMap[name] = new Chart(ctx.getContext("2d"), {
+                const chart = new Chart(ctx.getContext("2d"), {
                     type: 'pie',
                     data: {
-                        labels: ['정상 제품 수', '불량 제품 수'],
+                        labels: ['정상', '불량'],
                         datasets: [{
                             data: [0, 0],
-                            borderColor: ['#0051b6', 'rgb(255,99,132)'],
-                            backgroundColor: ['#a6cdfb', '#fdb9b6'],
-                            borderWidth: 1
+                            backgroundColor: ['#75b4ff', '#f8aa70'],
+                            borderWidth: 2
                         }]
                     },
                     options: {
                         responsive: true,
                         plugins: {
+                            datalabels: {
+                                color: '#000',
+                                formatter: (value) => value + '개',
+                                anchor: 'end',
+                                align: 'start',
+                                offset: 10,
+                                font: { weight: 'bold', size: 14 }
+                            },
                             title: {
                                 display: true,
-                                text: `${name} 제품 생산 비율`
+                                text: name,
+                                font: { size: 16, weight: 'bold' }
                             },
-                            legend: {
-                                position: 'bottom'
-                            },
+                            legend: { position: 'top' },
                             tooltip: {
                                 callbacks: {
-                                    label: function (context) {
-                                        return `${context.label}: ${context.parsed}개`;
-                                    }
+                                    label: (context) => `${context.label}: ${context.parsed}개`
                                 }
                             }
                         }
-                    }
+                    },
+                    // 데이터가 없을 때
+                    plugins: [{
+                        id: 'emptyDataPlugin',
+                        beforeDraw: (chart) => {
+                            const dataSum = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                            if (dataSum === 0) {
+                                const { width, height, ctx } = chart;
+                                ctx.save();
+                                ctx.font = "26px 'Noto Sans'";
+                                ctx.fillStyle = '#999';
+                                ctx.textAlign = 'center';
+                                ctx.textBaseline = 'middle';
+                                ctx.fillText("준비 중", width / 2, height / 2 + 30);
+                                ctx.restore();
+                            }
+                        }
+                    }]
                 });
+
+                chartMap[name] = chart;
             });
 
-            // 초기 데이터 로딩
+            // 초기 데이터 로드
             fetch('/api/production/by-product')
                 .then(res => res.json())
                 .then(data => {
                     data.forEach(({productName, okCount, errorCount, timestamp}) => {
                         updateProductChart(productName, okCount, errorCount, timestamp);
                     });
-                }).catch(err => {
-                console.error("초기 제품 데이터 불러오기 실패:", err);
-            });
+                }).catch(err => console.error("초기 제품 데이터 불러오기 실패:", err));
 
             // WebSocket 연결 및 구독
             if (typeof Stomp !== 'undefined' && typeof SockJS !== 'undefined') {
@@ -789,19 +821,13 @@
                         updateProductChart(productName, okCount, errorCount, timestamp);
                     });
 
-                    // localStorage에 저장된 이전 값 복원
                     for (const [productName, {okCount, errorCount, timestamp}] of Object.entries(productStatMap)) {
                         updateProductChart(productName, okCount, errorCount, timestamp);
                     }
                 });
-            } else {
-                console.warn("WebSocket 라이브러리가 로드되지 않아 제품 차트 WebSocket은 비활성화됩니다.");
             }
-
-            console.log('제품별 파이 차트 초기화 완료');
         }
 
-        // 차트 업데이트 함수
         function updateProductChart(productName, okCount, errorCount, timestamp) {
             const date = new Date(timestamp);
             const today = new Date();
@@ -819,6 +845,12 @@
 
             chart.data.datasets[0].data = [okCount, errorCount];
             chart.update();
+
+            // 수량 표시 업데이트
+            const countDiv = document.getElementById(`count-${productName}`);
+            if (countDiv) {
+                countDiv.innerText = `【 정상: ${okCount}개 | 불량: ${errorCount}개 】`;
+            }
         }
 
         // 연결 상태 체크 함수 (디버깅용)

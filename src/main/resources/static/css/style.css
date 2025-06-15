@@ -14,6 +14,11 @@ h1, h2, h3, h4, h5, .logo-font {
     font-optical-sizing: auto;
 }
 
+.archive-font{
+    font-weight: 400;
+    font-style: normal;
+}
+
 .result-font {
     font-size: 0.9em;
 }
@@ -425,9 +430,11 @@ body {
 
 }
 
+/* md 사이즈 */
 @media (max-width: 991px) and (min-width: 758px) {
-
-
+    .tassei {
+        aspect-ratio: 4 / 1.2; /* 가로:세로 = 4:1 */
+    }
 }
 
 /* md 이하(px 미만)일 때: 4:1 비율 */
@@ -442,10 +449,27 @@ body {
     height: 100% !important; /* 부모 높이도 100% 꽉 채우기 */
 }
 
-canvas {
+canvas:not(.product-chart){
     border: 1px solid #ddd;
 }
 
+/* 제품별 차트 md 구간 (768px ~ 991px)일 때만 확대 */
+@media (min-width: 768px) and (max-width: 991px) {
+    .product-chart {
+        display: block;
+        width: 100% !important;
+        height: auto !important;
+        max-width: 500px; /* 최대 크기도 조금 제한 가능 */
+        margin: 0 auto;
+    }
+    .product-card{
+        display: block;
+        width: 100% !important;
+        height: auto !important;
+        max-width: 500px; /* 최대 크기도 조금 제한 가능 */
+        margin: 0 auto;
+    }
+}
 
 /* 플레이스홀더 색상 오류때메 만듦*/
 input::placeholder {

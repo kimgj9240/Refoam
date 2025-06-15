@@ -61,27 +61,28 @@
                             label: 'NORMAL',
                             data: normalOk,
                             type: 'line',
-                            borderColor: 'rgb(154,103,255)',
+                            borderColor: 'rgba(154,103,255,0.6)',
                             backgroundColor: 'rgb(156,156,255)',
                             yAxisID: 'y',
+                            tension: 0.2
                         },
                         {
                             label: 'BUMP',
                             data: bumpOk,
                             type: 'line',
-                            borderColor: 'rgb(147,147,147)',
+                            borderColor: 'rgba(147,147,147,0.6)',
                             backgroundColor: 'rgb(173,177,190)',
                             yAxisID: 'y',
-
+                            tension: 0.2
                         },
                         {
                             label: 'HALF',
                             data: halfOk,
                             type: 'line',
-                            borderColor: 'rgb(255,99,132)',
+                            borderColor: 'rgba(255,99,132,0.6)',
                             backgroundColor: 'rgb(255,171,189)',
                             yAxisID: 'y',
-
+                            tension: 0.2
                         },//여기까지
                         {
                             label: "총 주문 건수",
@@ -115,6 +116,10 @@
                         title: {
                             display: true,
                             text: "생산량 통계",
+                            font: {
+                                size: 16,
+                                weight: 'bold',
+                            }
                         },
                         legend: {
                             position: "bottom",
@@ -189,7 +194,11 @@
                 plugins: {
                     title: {
                         display: true,
-                        text: '7일 발생한 에러'
+                        text: '7일 발생한 에러',
+                        font: {
+                            size: 16,
+                            weight: 'bold',
+                        }
                     },
                     legend: {
                         position: 'top',
@@ -239,11 +248,20 @@
             },
             options: {
                 responsive: true,
+                layout:{
+                    padding:{
+                        bottom:20
+                    }
+                },
                 maintainAspectRatio: false,
                 plugins: {
                     title: {
                         display: true,
-                        text: '오늘 발생한 에러 건수'
+                        text: '오늘 발생한 에러 건수',
+                        font: {
+                            size: 16,
+                            weight: 'bold',
+                        }
                     },
                     legend: {
                         position: 'top'

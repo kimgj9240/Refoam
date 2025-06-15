@@ -28,16 +28,20 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script th:inline="javascript">
-        const materialLabels = /*[[${materialLabels}]]*/ [];
+        const materialLabels = ['EVA','WHITE','BLACK','BLUE','RED'];
         const materialData = /*[[${materialData}]]*/ [];
         const materialColors = /*[[${materialColors}]]*/ [];
 
+        // 수량 표시
+        const labelsWithCount = materialLabels.map((label, index) => {
+            return [label, `${materialData[index]}개`];
+        });
 
         const ctx2 = document.getElementById('materialChart').getContext('2d');
         new Chart(ctx2, {
             type: 'bar',
             data: {
-                labels: ['EVA','WHITE','BLACK','BLUE','RED'],
+                labels: labelsWithCount,
                 datasets: [{
                     label: '원재료별 수량',
                     data: materialData,
@@ -54,6 +58,9 @@
                 }]
             },
             options: {
+                layout:{
+                  padding:10
+                },
                 responsive: true,
                 scales: {
                     y: {
@@ -64,9 +71,6 @@
                         ticks: { stepSize : 100 }
                     },
                     x: {
-                        title: {
-                            display: true, text: '원재료'
-                        },
                         beginAtZero: true,
                         grid: {
                             color: 'transparent',
