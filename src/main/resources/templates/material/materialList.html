@@ -109,4 +109,10 @@
         </ul>
     </nav>
 </div>
+<script th:inline="javascript">
+    const errorMessage = /*[[${errorMessage}]]*/ null;
+    if (errorMessage) {
+        alert(errorMessage);
+    }
+</script>
 </html>

@@ -5,6 +5,7 @@ import com.example.refoam.dto.MaterialChart;
 import com.example.refoam.repository.AlertLogRepository;
 import com.example.refoam.repository.MaterialRepository;
 
+import com.example.refoam.repository.OrderMaterialRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class MaterialService {
     private final MaterialRepository materialRepository;
+    private final OrderMaterialRepository orderMaterialRepository;
     private final AlertLogRepository alertLogRepository;
 
     @Transactional
@@ -31,7 +33,17 @@ public class MaterialService {
     }
     @Transactional
     public void delete(Long id){
-        materialRepository.deleteById(id);
+        Material material = materialRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 재료가 존재하지 않습니다."));
+        // 삭제하려는 재료를 사용하는 주문이 존재할 시
+        boolean isReferenced = orderMaterialRepository.existsByMaterial(material);
+        if (isReferenced) {
+            List<Long> orderIds = orderMaterialRepository.findOrderIdsByMaterial(material);
+            String message = "해당 재료를 사용하는 주문이 존재하여 삭제할 수 없습니다.\n(주문 번호: "
+                    + orderIds.stream().map(String::valueOf).collect(Collectors.joining(", ")) + ")";
+            throw new IllegalStateException(message);
+        }
+        materialRepository.delete(material);
     }
 
     // 퇴사자 있을 경우 때문에 수정함

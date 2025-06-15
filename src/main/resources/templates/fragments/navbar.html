@@ -7,6 +7,8 @@
             <img src="/images/logo_name.svg" alt="logo" class="my-2 md-hidden nav-img">
         </a>
         <!-- 종 아이콘 + 알림 배지 -->
+        <!-- 오디오 알림 추가 -->
+        <audio id="alertSound" src="/sounds/refoam_notify.mp3" preload="auto"></audio>
         <div class="nav-item dropdown position-relative errorAlert-xs ms-auto">
             <a href="#" id="alertDropdown-xs" data-bs-toggle="dropdown" aria-expanded="false" class="nav-link p-0">
                 <img src="/images/bell-fill.svg" alt="알림">
@@ -68,7 +70,7 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li th:if="${loginMember.position.name() != 'STAFF'}"><a class="dropdown-item nav-font"
-                                                                                 th:href="@{/employee/list}">직원리스트</a>
+                                                                                 th:href="@{/employee/list}">직원 리스트</a>
                         </li>
                         <li th:if="${loginMember.position.name() != 'STAFF'}"><a class="dropdown-item nav-font"
                                                                                  th:href="@{/employee/new}">직원 정보 등록</a>
@@ -85,7 +87,7 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item nav-font" th:href="@{/material/list}">재고 리스트</a></li>
-                        <li><a class="dropdown-item nav-font" th:href="@{/material/new}">재고입력발주</a></li>
+                        <li><a class="dropdown-item nav-font" th:href="@{/material/new}">재고 발주</a></li>
 
                     </ul>
                 </li>
@@ -95,19 +97,23 @@
                         공정관리
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item nav-font" th:href="@{/order/new}">제품생산</a></li>
-                        <li><a class="dropdown-item nav-font" th:href="@{/order/list}">주문리스트</a></li>
+                        <li><a class="dropdown-item nav-font" th:href="@{/order/new}">제품 생산</a></li>
+                        <li><a class="dropdown-item nav-font" th:href="@{/order/list}">주문 리스트</a></li>
                     </ul>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link nav-font" th:href="@{/monitoring/main}"
-                       th:classappend="${activeMenu == 4} ? ' active' : ''">에러모니터링</a>
+                       th:classappend="${activeMenu == 4} ? ' active' : ''">에러 모니터링</a>
                 </li>
             </ul>
         </div>
     </div>
     <!-- 메뉴바 끝 -->
     <script>
+        <!--    알림 발생 사운드 (PC만)    -->
+        // localStorage에서 이전 알림 수를 가져오기
+        let previousAlertCount = parseInt(localStorage.getItem('previousAlertCount')) || 0;
+
         async function fetchAlerts() {
             try {
                 const countRes = await fetch('/api/alerts/count');
@@ -126,6 +132,15 @@
                     badge2.style.display = 'none';
                 }
 
+                // 새 알림 감지
+                if (alertCount > previousAlertCount) {
+                    playAlertSound();
+                }
+
+                // localStorage에도 저장
+                previousAlertCount = alertCount;
+                localStorage.setItem('previousAlertCount', alertCount);
+
                 const listRes = await fetch('/api/alerts/unread');
                 const alerts = await listRes.json();
 
@@ -140,23 +155,20 @@
                 } else {
                     alerts.forEach(alert => {
                         const orderId = alert.orderId;
-                        const materialName = alert.materialName ?? '이름 없음'; // fallback 처리
-
+                        const materialName = alert.materialName ?? '이름 없음';
                         const label = orderId != null
                             ? `<strong>[주문 ${orderId}]</strong>`
                             : `<strong>[원재료 ${materialName}]</strong>`;
-
                         const href = orderId != null
                             ? `/alert/read/${alert.id}?orderId=${orderId}`
                             : `/alert/read/${alert.id}?materialId=${alert.materialId}`;
-
                         const item = document.createElement('li');
                         item.innerHTML = `
-                            <a class="dropdown-item border-bottom alert-item py-2" href="${href}">
-                                <div>${label}</div>
-                                <div>${alert.message}</div>
-                            </a>
-                        `;
+                    <a class="dropdown-item border-bottom alert-item py-2" href="${href}">
+                        <div>${label}</div>
+                        <div>${alert.message}</div>
+                    </a>
+                `;
                         dropdown.appendChild(item);
                         dropdown2.appendChild(item.cloneNode(true));
                     });
@@ -166,15 +178,22 @@
             }
         }
 
-        setInterval(fetchAlerts, 30000); //  30초마다 갱신
+        function playAlertSound() {
+            const audio = document.getElementById('alertSound');
+            if (audio) {
+                audio.volume = 0.5;
+                audio.play().catch(e => console.log('사운드 재생 실패:', e));
+            }
+        }
+
+        // 초기 실행시 count 먼저 읽고 시작
         window.addEventListener("DOMContentLoaded", fetchAlerts);
+        setInterval(fetchAlerts, 30000);
 
+        // 드롭다운 외부 클릭 시 자동 닫힘
         document.addEventListener('click', function (event) {
-            // 현재 열린 드롭다운 요소들 선택
             const openDropdowns = document.querySelectorAll('.dropdown-menu.show');
-
             openDropdowns.forEach(function(dropdown) {
-                // 클릭된 대상이 드롭다운 영역 안에 있는지 검사
                 if (!dropdown.parentElement.contains(event.target)) {
                     const toggleButton = dropdown.parentElement.querySelector('[data-bs-toggle="dropdown"]');
                     const bsDropdown = bootstrap.Dropdown.getInstance(toggleButton);

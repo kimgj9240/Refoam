@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -114,9 +115,13 @@ public class MaterialController {
     }
 
     @GetMapping("/{id}/delete")
-    public String delete(@PathVariable("id") Long id){
-        Material delMaterial = materialService.findOne(id).orElseThrow(()-> new IllegalArgumentException("해당 제품을 찾을 수 없습니다."));
-        materialService.delete(delMaterial.getId());
+    public String delete(@PathVariable("id") Long id, RedirectAttributes redirectAttributes){
+        // 삭제 실패 에러
+        try {
+            materialService.delete(id);
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
         return "redirect:/material/list";
     }
 }
