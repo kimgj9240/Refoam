@@ -1,9 +1,23 @@
 <html layout:decorate="~{layout}" lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<div class="container mb-5 text-center" layout:fragment="content">
-    <h2 class="py-4">400 에러 페이지</h2>
-    <p>요청하신 내용에 문제가 있어 서버가 처리할 수 없습니다.</p>
-    <p>요청하신 내용을 다시 확인하시고, 문제가 지속될 경우 관리자에게 문의하십시오.</p>
-    <p> <a class="navbar-brand nav-font refoam-font" th:href="@{/main}">메인페이지로</a></p>
+<div class="error-page" layout:fragment="content">
 
+    <div class="error-wrapper">
+        <h2 class="py-4">400대 에러 페이지</h2>
+        <p>요청하신 내용에 문제가 있어 서버가 처리할 수 없습니다.</p>
+        <p>요청하신 내용을 다시 확인하시고, 문제가 지속될 경우 관리자에게 문의하십시오.</p>
+
+        <div class="error-buttons">
+            <a class="navbar-brand nav-font refoam-font" th:href="@{/main}">메인페이지로</a>
+            <br>
+            <span>Help me out</span>
+        </div>
+    </div>
+
+    <div class="error-space">
+        <div class="error-blackhole"></div>
+        <div class="error-ship">
+            <img src="/images/rocket.png" alt="rocket" />
+        </div>
+    </div>
 </div>
 </html>
