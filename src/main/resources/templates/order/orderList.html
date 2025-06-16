@@ -21,7 +21,9 @@
                 <td th:text="${order.productName}"></td>
                 <td th:text="${order.orderQuantity}"></td>
                 <td th:text="${#temporals.format(order.orderDate,'yyyy-MM-dd HH:mm')}"></td>
-                <td th:text="${order.employee.username}"></td>
+                <td th:text="${order.employee.username}"
+                    th:classappend="${!order.employee.active} ? 'text-decoration-line-through'">
+                </td>
                 <td th:id="'state-text-a-' + ${order.id}" th:text="${order.orderState}"></td>
                 <td class="text-center">
                     <!-- 배합시작 버튼-->
@@ -92,7 +94,10 @@
                     <td th:text="${order.id}" class="ps-3">1</td>
                     <td th:text="${order.productName}"></td>
                     <td th:text="${order.orderQuantity}"></td>
-                    <td th:text="${order.employee.username}"></td>
+                    <td th:text="${order.employee.username}"
+                        th:classappend="${!order.employee.active} ? 'text-decoration-line-through'">
+                    </td>
+
                 </tr>
                 <tr>
                     <td th:text="${#temporals.format(order.orderDate,'MM-dd HH:mm')}"></td>
