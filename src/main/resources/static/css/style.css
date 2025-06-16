@@ -528,7 +528,6 @@ a {
     margin: 0 10vw;
     overflow: hidden;
     color: #138FF2;
-    font-family: Roboto, sans-serif;
 }
 
 .error-wrapper {
@@ -545,8 +544,7 @@ a {
 }
 
 .error-wrapper p {
-    width: 95%;
-    font-size: 1.5em;
+    width: 100%;
     line-height: 1.4;
 }
 
