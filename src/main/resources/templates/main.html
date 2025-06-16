@@ -111,13 +111,12 @@
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div class="toast-body">
-                <span style="white-space: pre-line; margin-bottom: 0;" id="toastBody">AI 분석 리포트 불러오는 중...</span>
+                <div class="pre-line mb-0 test-dark bg-white" id="toastBody">AI 분석 리포트 불러오는 중...</div>
             </div>
         </div>
     </div>
     <!-- 스크립트 로딩 순서 중요 -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
     <script>
         // jQuery 중복 로딩 체크
         if (typeof jQuery === 'undefined') {
@@ -722,7 +721,7 @@
                     fetch("/ai-summary")
                         .then((res) => res.text())
                         .then((text) => {
-                            toastBody.textContent = text;
+                            toastBody.innerHTML = text.replace(/\n/g, "<br>");
                             toast.show();
                         })
                         .catch((err) => {
