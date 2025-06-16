@@ -28,7 +28,7 @@ public class QualityCheckService {
     private final QualityCheckRepository qualityCheckRepository;
     private final StandardService standardService;
     private final ProcessService processService;
-    private final String FLASK_URL = "http://localhost:5000/quality";
+    private final String FLASK_URL = "http://localhost:8000/quality";
     @Transactional
     public void getQualityCheck(Long orderId) {
         Process findprocess = processService.findOneProcess(orderId).orElseThrow(()-> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));

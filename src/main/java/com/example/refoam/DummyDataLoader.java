@@ -20,7 +20,7 @@ import java.util.stream.IntStream;
 
 import static java.lang.Math.round;
 
-@Component
+//@Component
 @AllArgsConstructor
 public class DummyDataLoader implements CommandLineRunner {
     private final EmployeeService employeeService;

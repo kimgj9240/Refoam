@@ -25,7 +25,7 @@ import java.util.List;
 @Slf4j
 public class PredictService {
     private final PredictionRecordRepository predictionRecordRepository;
-    private final String FLASK_URL = "http://localhost:5000/predict";
+    private final String FLASK_URL = "http://localhost:8000/predict";
 
     public PredictResult getPrediction(PredictRequest request) {
 
