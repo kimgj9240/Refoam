@@ -22,6 +22,7 @@ public class CustomErrorController implements ErrorController {
             if(statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()){
                 return "error/5XX";
             }
+            return "error/err";
         }
         return "error/err";
     }
