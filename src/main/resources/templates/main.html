@@ -199,6 +199,7 @@
         let achievementChart = null;
         let rate = /*[[${achievementRate}]]*/0;
         let target = /*[[${targetQuantity}]]*/0;
+        let targetRate = /*[[${targetRate}]]*/0;
 
         // 모든 라이브러리 로드 대기 함수
         function waitForLibraries() {
@@ -256,7 +257,7 @@
         function initializeBasicCharts() {
             console.log('기본 차트 초기화 시작');
 
-            const isAchieved = rate >= target;
+            const isAchieved = rate >= targetRate;
             const barColor = isAchieved ? "rgba(0, 200, 100, 0.7)" : "rgba(63, 0, 255, 0.7)";
 
             const achievementCtx = document.getElementById("achievementRate");
@@ -289,7 +290,7 @@
                                 },
                                 title: {
                                     display: true,
-                                    text: `(목표: 80%)`,
+                                    text: `(목표: ${targetRate}%)`,
                                 },
                             },
                             y: {
@@ -316,7 +317,7 @@
                 // 기존 차트 업데이트
                 achievementChart.data.datasets[0].data = [rate];
                 achievementChart.data.datasets[0].backgroundColor = barColor;
-                achievementChart.options.scales.x.title.text = `(목표: ${target}%)`;
+                achievementChart.options.scales.x.title.text = `(목표: 80%)`;
                 achievementChart.update();
             }
 
@@ -712,7 +713,7 @@
                 toastEl.style.backgroundColor = "#ffffff";
                 toastEl.style.color = "#000000";
 
-                const toast = new bootstrap.Toast(toastEl, {delay: 10000});
+                const toast = new bootstrap.Toast(toastEl, {autohide: false});
 
                 btn.addEventListener("click", function () {
                     toastBody.textContent = "AI 리포트를 불러오는 중입니다...";
