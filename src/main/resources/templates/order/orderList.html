@@ -247,7 +247,7 @@
                         }
 
                         // 공정완료 상태 시 버튼 전환
-                        if (orderState === '공정완료') {
+                        /*if (orderState === '공정완료') {
                             const form = document.querySelector(`#process-start-form-${prefix}-${orderId}`);
                             const placeholder = document.querySelector(`#process-result-placeholder-${prefix}-${orderId}`);
 
@@ -257,6 +257,32 @@
                                 const resultLink = document.createElement("a");
                                 resultLink.href = `/process/${orderId}/list`;
                                 resultLink.className = "btn btn-dark btn-sm border me-2";
+                                resultLink.textContent = "공정결과";
+                                placeholder.appendChild(resultLink);
+                            }
+                        }*/
+                        if (orderState === '공정완료') {
+                            const formSelector = `#process-start-form-${prefix}-${orderId}`;
+                            const placeholderSelector = `#process-result-placeholder-${prefix}-${orderId}`;
+
+                            const form = document.querySelector(formSelector);
+                            const placeholder = document.querySelector(placeholderSelector);
+
+                            if (form) form.remove();
+
+                            if (placeholder && !placeholder.querySelector('a')) {
+                                const resultLink = document.createElement("a");
+                                resultLink.href = `/process/${orderId}/list`;
+
+                                // prefix에 따라 className 다르게 지정
+                                if (prefix === 'a') {
+                                    resultLink.className = "btn btn-dark btn-sm border me-2";
+                                } else if (prefix === 'b') {
+                                    resultLink.className = "btn btn-dark btn-sm btn-font-socket me-2";
+                                } else {
+                                    resultLink.className = "btn btn-dark btn-sm btn-font-socket me-2"; // 기본값
+                                }
+
                                 resultLink.textContent = "공정결과";
                                 placeholder.appendChild(resultLink);
                             }

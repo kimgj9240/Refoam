@@ -219,6 +219,13 @@ body {
     margin-bottom: 2px;
 }
 
+.btn-font-socket {
+    width: 80px;
+    height: 30px;
+    font-size: 0.9em;
+    margin-bottom: 2px;
+}
+
 /* 페이지네이션 */
 .page-link {
     padding: var(--bs-pagination-padding-y) var(--bs-pagination-padding-x);
