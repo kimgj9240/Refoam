@@ -83,7 +83,7 @@ public class OrderService {
 
                 material.setMaterialQuantity((int) (materialQuantity-minQuantity)); // 10 - 10
                 // Alert: 재고 100 이하 시 알림   =>재고 부족 알림 누락된 부분 추가
-                if (materialQuantity - minQuantity <= 100) {
+                if (materialQuantity - minQuantity <= 100 && materialQuantity > 0) {
                     boolean alerted = alertLogRepository.existsByMaterialAndCheckedFalse(material);
                     if (!alerted) {
                         AlertLog alert = AlertLog.builder()
