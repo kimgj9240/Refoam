@@ -2,6 +2,7 @@ package com.example.refoam.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -16,7 +17,8 @@ import java.util.Map;
 @Slf4j
 public class DiscordNotifier {
     // 디스코드 알림용 클래스
-    private String webhookUrl = "https://discord.com/api/webhooks/1377189847684481034/PNy7HmUgr900hSQI6_pz-XA-lRqCFqlnxJ71EorTDIvjKw5-Ffh4dIGVZR0J-W58IjzW";
+    @Value("${discord.webhook-url}")
+    private String webhookUrl;
 
     private final RestTemplate restTemplate = new RestTemplate();
 
